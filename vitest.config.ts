@@ -1,16 +1,20 @@
 import { fileURLToPath } from 'node:url'
 import { resolve } from 'node:path'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import { vitepressDemo } from 'vite-plugin-vitepress-demo'
+import vue from '@vitejs/plugin-vue'
 
 const base = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineConfig({
   plugins: [
+    vue(),
     vueJsx(),
-    vitepressDemo(),
   ],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+  },
   resolve: {
     alias: [
       {
