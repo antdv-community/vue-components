@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
+import VueJsxAutoProps from 'unplugin-vue-tsx-auto-props/vite'
 
 export interface BuildCommonOptions {
   external?: string[]
@@ -12,6 +13,7 @@ export function buildCommon(opt: BuildCommonOptions) {
     plugins: [
       vue(),
       vueJsx(),
+      VueJsxAutoProps(),
       dts({
         entryRoot: opt.inputDir ?? 'src',
         outDir: 'dist',

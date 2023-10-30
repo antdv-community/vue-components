@@ -1,4 +1,3 @@
-// 不让ts检查这个文件
 // eslint-disable-next-line ts/ban-ts-comment
 // @ts-nocheck
 function createArray() {

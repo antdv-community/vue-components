@@ -24,6 +24,7 @@
     "prettier": "^3.0.3",
     "tsup": "^7.2.0",
     "typescript": "^5.2.2",
+    "unplugin-vue-tsx-auto-props": "^0.4.1",
     "vite": "^4.5.0",
     "vite-plugin-dts": "^3.6.0",
     "vite-plugin-vitepress-demo": "^2.1.0",
