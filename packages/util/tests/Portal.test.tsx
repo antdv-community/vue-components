@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { defineComponent, onMounted, ref } from 'vue'
 import { mount } from '@vue/test-utils'
-import PortalWrapper from '../src/PortalWrapper'
+import PortalWrapper, { getOpenCount } from '../src/PortalWrapper'
 import Portal from '../src/Portal'
 
 describe('portal', () => {
@@ -130,6 +130,69 @@ describe('portal', () => {
       }))
 
       expect(dom?.childElementCount).toEqual(1)
+      wrapper.unmount()
+    })
+  })
+
+  describe('openCount', () => {
+    it('start as 0', () => {
+      expect(getOpenCount()).toEqual(0)
+
+      const wrapper = mount(
+        <PortalWrapper visible={false}>{() => <div>2333</div>}</PortalWrapper>,
+      )
+      expect(getOpenCount()).toEqual(0)
+
+      const wrapper1 = mount(<PortalWrapper visible>{() => <div>2333</div>}</PortalWrapper>)
+      expect(getOpenCount()).toEqual(1)
+
+      wrapper.unmount()
+      wrapper1.unmount()
+    })
+
+    it('correct count', () => {
+      const Demo = defineComponent({
+        props: {
+          count: Number,
+          visible: Boolean,
+        },
+        setup(props) {
+          return () => {
+            const { count, visible } = props
+            const getItem = (index: number) => {
+              return (
+                <>
+                  <PortalWrapper key={index} visible={visible}>
+                    {() => <div>2333</div>}
+                  </PortalWrapper>
+                </>
+              )
+            }
+            return (
+              <>
+                {Array.from({ length: count as any }).fill(null).map((_, index) => getItem(index))}
+              </>
+            )
+          }
+        },
+      })
+
+      expect(getOpenCount()).toEqual(0)
+
+      let wrapper = mount(<Demo count={1} visible />)
+      expect(getOpenCount()).toEqual(1)
+      wrapper.unmount()
+
+      wrapper = mount(<Demo count={2} visible />)
+      expect(getOpenCount()).toEqual(2)
+      wrapper.unmount()
+
+      wrapper = mount(<Demo count={1} visible />)
+      expect(getOpenCount()).toEqual(1)
+      wrapper.unmount()
+
+      wrapper = mount(<Demo count={1} visible={false} />)
+      expect(getOpenCount()).toEqual(0)
       wrapper.unmount()
     })
   })
