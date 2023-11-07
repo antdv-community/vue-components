@@ -1,17 +1,17 @@
 {
   "name": "@vue-components/util",
-  "version": "0.0.1",
   "type": "module",
-  "main": "dist/index.js",
+  "version": "0.0.1",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     },
     "./dist/*": "./dist/*",
     "./package.json": "./package.json"
   },
+  "main": "dist/index.js",
   "peerDependencies": {
     "vue": "^3.0.0"
   },

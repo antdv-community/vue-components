@@ -72,13 +72,10 @@ export function backLastFocusNode() {
     try {
       // 元素可能已经被移动了
       lastFocusElement.focus()
-
-      /* eslint-disable no-empty */
     }
     catch (e) {
       // empty
     }
-    /* eslint-enable no-empty */
   }
 }
 

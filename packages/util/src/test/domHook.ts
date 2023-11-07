@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 const NO_EXIST = { __NOT_EXIST: true }
 
 export type ElementClass = Function
@@ -64,4 +63,3 @@ export function spyElementPrototype(Element: ElementClass, propName: string, pro
     [propName]: property,
   })
 }
-/* eslint-enable */

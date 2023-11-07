@@ -11,7 +11,7 @@ describe('toArray', () => {
         children = slots.default?.()
         return <ul>{slots.default?.()}</ul>
       }
-    }
+    },
   })
   it('basic', () => {
     const wrapper = mount(
@@ -19,11 +19,11 @@ describe('toArray', () => {
         <li key={1}>1</li>
         <li key={2}>2</li>
         <li key={3}>3</li>
-      </UL>
+      </UL>,
     )
     const nodes = toArray(children)
     expect(nodes).toHaveLength(3)
-    expect(nodes.map((v) => v.key)).toEqual([1, 2, 3])
+    expect(nodes.map(v => v.key)).toEqual([1, 2, 3])
     wrapper.unmount()
   })
 
@@ -32,11 +32,11 @@ describe('toArray', () => {
       <UL>
         <li key={1}>1</li>
         {[<li key={2}>2</li>, <li key={3}>3</li>]}
-      </UL>
+      </UL>,
     )
     const nodes = toArray(children)
     expect(nodes).toHaveLength(3)
-    expect(nodes.map((v) => v.key)).toEqual([1, 2, 3])
+    expect(nodes.map(v => v.key)).toEqual([1, 2, 3])
     wrapper.unmount()
   })
 
@@ -54,11 +54,11 @@ describe('toArray', () => {
             <li key="5">5</li>
           </>
         </Fragment>
-      </UL>
+      </UL>,
     )
     const nodes = toArray(children)
     expect(nodes).toHaveLength(5)
-    expect(nodes.map((v) => v.key)).toEqual([1, '2', '3', '4', '5'])
+    expect(nodes.map(v => v.key)).toEqual([1, '2', '3', '4', '5'])
     wrapper.unmount()
   })
 
@@ -80,12 +80,12 @@ describe('toArray', () => {
           </>
         </Fragment>
         {undefined}
-      </UL>
+      </UL>,
     )
 
     const nodes = toArray(children, { keepEmpty: true })
     expect(nodes).toHaveLength(9)
-    expect(nodes.map((c) => c && c.key)).toEqual([
+    expect(nodes.map(c => c && c.key)).toEqual([
       null,
       '1',
       '2',
@@ -94,7 +94,7 @@ describe('toArray', () => {
       '4',
       undefined,
       '5',
-      null
+      null,
     ])
     wrapper.unmount()
   })

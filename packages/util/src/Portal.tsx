@@ -5,6 +5,10 @@ export interface PortalProps {
   getContainer: () => HTMLElement
 }
 
-const Portal = defineComponent<PortalProps>((props, ctx) => {})
+const Portal = defineComponent<PortalProps>((props, ctx) => {
+  return () => {
+    return ctx.slots.default?.()
+  }
+})
 
 export default Portal
