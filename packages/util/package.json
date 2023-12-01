@@ -12,10 +12,12 @@
     "./package.json": "./package.json"
   },
   "main": "dist/index.js",
+  "scripts": {
+    "build": "vite build"
+  },
   "peerDependencies": {
     "vue": "^3.0.0"
   },
   "dependencies": {
-
   }
 }

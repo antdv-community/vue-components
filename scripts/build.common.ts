@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
-import VueJsxAutoProps from 'unplugin-vue-tsx-auto-props/vite'
+import VueJsxAutoProps from 'vite-plugin-tsx-auto-props'
 
 export interface BuildCommonOptions {
   external?: string[]
