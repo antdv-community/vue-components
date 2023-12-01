@@ -1,5 +1,5 @@
 import { Teleport, defineComponent, onBeforeUnmount, onMounted, onUnmounted, shallowRef } from 'vue'
-import canUseDom from '@vue-components/util/Dom/canUseDom.ts'
+import canUseDom from './Dom/canUseDom'
 
 export interface PortalProps {
   didUpdate?: (prevProps: PortalProps) => void

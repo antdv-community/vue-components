@@ -1,15 +1,15 @@
-import { defineConfig } from 'vite'
+import type { UserConfig } from 'vite'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
 import VueJsxAutoProps from 'vite-plugin-tsx-auto-props'
 
 export interface BuildCommonOptions {
-  external?: string[]
+  external?: string[] | RegExp[] | ((id: string) => boolean) | (string | RegExp)[]
   inputDir?: string
 }
 export function buildCommon(opt: BuildCommonOptions) {
-  return defineConfig({
+  return {
     plugins: [
       vue(),
       vueJsx(),
@@ -17,6 +17,7 @@ export function buildCommon(opt: BuildCommonOptions) {
       dts({
         entryRoot: opt.inputDir ?? 'src',
         outDir: 'dist',
+        exclude: ['**/tests/**/*', '**/*.test.ts', '**/*.test.tsx'],
       }),
     ],
     build: {
@@ -40,9 +41,6 @@ export function buildCommon(opt: BuildCommonOptions) {
           },
         ],
       },
-      lib: {
-        entry: 'src/index.ts',
-      },
     },
-  })
+  } as UserConfig
 }
