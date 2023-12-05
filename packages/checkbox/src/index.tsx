@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import useMergedState from '@vue-components/util/hooks/useMergedState'
+import type { Ref } from 'vue'
 import { computed, defineComponent, shallowRef } from 'vue'
 
 export interface InputHTMLAttributes {
@@ -25,17 +26,18 @@ export interface CheckboxChangeEventTarget extends CheckboxProps {
 export interface CheckBoxInstance {
   focus: () => void
   blur: () => void
-  input: HTMLInputElement | null
+  input: Ref<HTMLInputElement | null>
 }
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes, 'onChange'> {
   prefixCls?: string
   onChange?: (e: CheckboxChangeEvent) => void
+  'onUpdate:checked'?: (value: boolean) => void
 }
 
 export const Checkbox = defineComponent<CheckboxProps>((props, { expose, attrs }) => {
   const inputRef = shallowRef<HTMLInputElement>()
-  const [rawValue, setRawValue] = useMergedState(defaultChecked, {
+  const [rawValue, setRawValue] = useMergedState(props.defaultChecked, {
     value: computed(() => props.checked),
   })
 
@@ -56,6 +58,7 @@ export const Checkbox = defineComponent<CheckboxProps>((props, { expose, attrs }
     if (!('checked' in props))
       setRawValue(e.target?.checked)
 
+    props?.['onUpdate:checked']?.(e.target.checked)
     props?.onChange?.({
       target: {
         ...props,
@@ -74,14 +77,14 @@ export const Checkbox = defineComponent<CheckboxProps>((props, { expose, attrs }
 
   return () => {
     const {
-      prefixCls = 'rc-checkbox',
+      prefixCls = 'vc-checkbox',
       disabled,
       type = 'checkbox',
       title,
 
     } = props
     const classString = classNames(prefixCls, attrs.class as any, {
-      [`${prefixCls}-checked`]: rawValue,
+      [`${prefixCls}-checked`]: rawValue.value,
       [`${prefixCls}-disabled`]: disabled,
     })
     return (
@@ -91,7 +94,7 @@ export const Checkbox = defineComponent<CheckboxProps>((props, { expose, attrs }
           ref={inputRef}
           onChange={handleChange}
           disabled={disabled}
-          checked={!!rawValue}
+          checked={!!rawValue.value}
           type={type}
         />
         <span class={`${prefixCls}-inner`} />

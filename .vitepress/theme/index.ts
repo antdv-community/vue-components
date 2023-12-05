@@ -13,6 +13,6 @@ export default {
   },
   enhanceApp({ app }) {
     // ...
-    app.use('Demo', AntdTheme)
+    app.component('Demo', AntdTheme)
   },
 }
