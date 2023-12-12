@@ -17,6 +17,10 @@ export default defineConfig({
         text: '组件',
         items: [
           { text: 'Checkbox', link: '/components/checkbox/' },
+          {
+            text: 'ResizeObserver',
+            link: '/components/resize-observer/',
+          },
         ],
       },
     ],

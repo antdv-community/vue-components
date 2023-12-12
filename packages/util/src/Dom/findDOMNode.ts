@@ -12,7 +12,7 @@ export function isDOM(node: any): node is HTMLElement | SVGElement {
  */
 export default function findDOMNode<T = Element | Text>(
   _node: MaybeRef<ComponentPublicInstance | HTMLElement | SVGElement>,
-): T {
+): T | null {
   const node = unref(_node)
   if (isDOM(node))
     return (node as unknown) as T

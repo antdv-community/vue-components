@@ -23,6 +23,10 @@ export default defineConfig({
         find: /^@vue-components\/checkbox/,
         replacement: resolve(base, 'packages', 'checkbox', 'src'),
       },
+      {
+        find: /^@vue-components\/resize-observer/,
+        replacement: resolve(base, 'packages', 'resize-observer', 'src'),
+      },
     ],
   },
 })

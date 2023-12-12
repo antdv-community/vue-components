@@ -18,6 +18,9 @@
       "@vue-components/checkbox": [
         "./packages/checkbox/src"
       ],
+      "@vue-components/resize-observer": [
+        "./packages/resize-observer/src"
+      ],
       "@vue-components/util/*": [
         "./packages/util/src/*"
       ]

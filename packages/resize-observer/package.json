@@ -19,9 +19,8 @@
     "vue": "^3.0.0"
   },
   "dependencies": {
+    "@vue-components/util": "workspace:*",
     "classnames": "^2.3.2",
-    "@vue-components/util": "*"
-  },
-  "devDependencies": {
+    "resize-observer-polyfill": "^1.5.1"
   }
 }
