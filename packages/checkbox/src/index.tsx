@@ -51,7 +51,7 @@ export const Checkbox = defineComponent<CheckboxProps>((props, { expose, attrs }
     input: inputRef,
   })
 
-  const handleChange = (e: MouseEvent & { [key: string] }) => {
+  const handleChange = (e: any) => {
     if (props.disabled)
       return
 
@@ -62,7 +62,6 @@ export const Checkbox = defineComponent<CheckboxProps>((props, { expose, attrs }
     props?.onChange?.({
       target: {
         ...props,
-        type,
         checked: e.target.checked,
       },
       stopPropagation() {
@@ -92,7 +91,7 @@ export const Checkbox = defineComponent<CheckboxProps>((props, { expose, attrs }
         <input
           class={`${prefixCls}-input`}
           ref={inputRef}
-          onChange={handleChange}
+          onChange={e => handleChange(e)}
           disabled={disabled}
           checked={!!rawValue.value}
           type={type}

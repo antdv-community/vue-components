@@ -93,6 +93,21 @@ importers:
         specifier: ^3.0.0
         version: 3.3.11(typescript@5.3.3)
 
+  packages/virtual-list:
+    dependencies:
+      '@vue-components/resize-observer':
+        specifier: workspace:*
+        version: 'link:'
+      '@vue-components/util':
+        specifier: workspace:*
+        version: link:../util
+      classnames:
+        specifier: ^2.3.2
+        version: 2.3.2
+      vue:
+        specifier: ^3.0.0
+        version: 3.3.11(typescript@5.3.3)
+
 packages:
 
   /@aashutoshrathi/word-wrap@1.2.6:
