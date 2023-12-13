@@ -27,6 +27,7 @@
     },
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
+    "jsxImportSource": "vue",
     /* Linting */
     "strict": true,
     "noFallthroughCasesInSwitch": true,

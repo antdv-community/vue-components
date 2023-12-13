@@ -3,7 +3,7 @@ import useMergedState from '@vue-components/util/hooks/useMergedState'
 import type { Ref } from 'vue'
 import { computed, defineComponent, shallowRef } from 'vue'
 
-export interface InputHTMLAttributes {
+export interface InputHTMLAttributesType {
   checked?: boolean
   defaultChecked?: boolean
   disabled?: boolean
@@ -29,7 +29,7 @@ export interface CheckBoxInstance {
   input: Ref<HTMLInputElement | null>
 }
 
-export interface CheckboxProps extends Omit<InputHTMLAttributes, 'onChange'> {
+export interface CheckboxProps extends Omit<InputHTMLAttributesType, 'onChange'> {
   prefixCls?: string
   onChange?: (e: CheckboxChangeEvent) => void
   'onUpdate:checked'?: (value: boolean) => void
