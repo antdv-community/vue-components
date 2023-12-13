@@ -1,4 +1,3 @@
-import type { PropType } from 'vue'
 import { defineComponent } from 'vue'
 import { toArray } from '@vue-components/util/Children/toArray'
 import { warning } from '@vue-components/util'
@@ -30,11 +29,6 @@ export interface ResizeObserverProps {
 }
 
 const ResizeObserver = defineComponent<ResizeObserverProps>({
-  props: {
-    data: {},
-    disabled: Boolean,
-    onResize: Function as PropType<ResizeObserverProps['onResize']>,
-  } as any,
   setup(props, { slots }) {
     return () => {
       const childNodes = toArray(slots.default?.())

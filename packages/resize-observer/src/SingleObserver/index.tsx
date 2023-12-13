@@ -1,6 +1,6 @@
 import { defineComponent, inject, onBeforeUnmount, onMounted, shallowRef } from 'vue'
 import findDOMNode from '@vue-components/util/Dom/findDOMNode'
-import type { ResizeObserverProps, SizeInfo } from '../'
+import type { ResizeObserverProps, SizeInfo } from '../index.tsx'
 import { CollectionContext } from '../Collection'
 import { observe, unobserve } from '../utils/observerUtil.ts'
 import DomWrapper from './DomWrapper'
@@ -8,7 +8,6 @@ import DomWrapper from './DomWrapper'
 const SingleObserver = defineComponent<ResizeObserverProps>({
   name: 'SingleObserver',
   inheritAttrs: false,
-  props: ['data', 'disabled', 'onResize'] as any,
   setup(props, { expose, slots }) {
     const elementRef = shallowRef<HTMLElement>()
     const wrapperRef = shallowRef()

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import {} from ""
 import ResizeObserver from '@vue-components/resize-observer'
 
 function onResize(entry: any) {
