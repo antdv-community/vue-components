@@ -1,21 +1,24 @@
 // Firefox has low performance of map.
+import { shallowRef } from 'vue'
+import type { Key } from '../interface.ts'
+
 class CacheMap {
   maps: Record<string, number>
 
   // Used for cache key
   // `useMemo` no need to update if `id` not change
-  id: number = 0
+  id = shallowRef(0)
 
   constructor() {
     this.maps = Object.create(null)
   }
 
-  set(key: React.Key, value: number) {
+  set(key: Key, value: number) {
     this.maps[key as string] = value
-    this.id += 1
+    this.id.value += 1
   }
 
-  get(key: React.Key) {
+  get(key: Key) {
     return this.maps[key as string]
   }
 }

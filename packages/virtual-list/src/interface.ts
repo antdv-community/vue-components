@@ -9,7 +9,7 @@ export type RenderFunc<T> = (
 export type Key = string | number
 
 export interface SharedConfig<T> {
-  getKey: (item: T) => Key
+  getKey: (item: T, index?: number) => Key
 }
 
 export type GetKey<T> = (item: T) => Key
