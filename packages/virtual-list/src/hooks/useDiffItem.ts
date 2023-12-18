@@ -20,4 +20,5 @@ export default function useDiffItem<T>(
   }, {
     immediate: true,
   })
+  return [diffItem]
 }
