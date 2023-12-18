@@ -210,8 +210,8 @@ const List = defineComponent<ListProps<any>>({
 
     function keepInRange(newScrollTop: number) {
       let newTop = newScrollTop
-      if (!Number.isNaN(maxScrollHeightRef.current))
-        newTop = Math.min(newTop, maxScrollHeightRef.current)
+      if (!Number.isNaN(maxScrollHeightRef.value))
+        newTop = Math.min(newTop, maxScrollHeightRef.value)
 
       newTop = Math.max(newTop, 0)
       return newTop
