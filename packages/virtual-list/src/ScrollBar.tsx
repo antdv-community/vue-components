@@ -138,12 +138,12 @@ const ScrollBar = defineComponent<ScrollBarProps>({
     onMounted(() => {
       const scrollbarEle = scrollbarRef.value
       const thumbEle = thumbRef.value
-      scrollbarEle?.addEventListener('touchstart', onScrollbarTouchStart)
-      thumbEle?.addEventListener('touchstart', onThumbMouseDown)
-      window.addEventListener('mousemove', onMouseMove)
-      window.addEventListener('mouseup', onMouseUp)
-      window.addEventListener('touchmove', onMouseMove)
-      window.addEventListener('touchend', onMouseUp)
+      scrollbarEle?.addEventListener('touchstart', onScrollbarTouchStart, { passive: true })
+      thumbEle?.addEventListener('touchstart', onThumbMouseDown, { passive: true })
+      window.addEventListener('mousemove', onMouseMove, { passive: true })
+      window.addEventListener('mouseup', onMouseUp, { passive: true })
+      window.addEventListener('touchmove', onMouseMove, { passive: true })
+      window.addEventListener('touchend', onMouseUp, { passive: true })
     })
 
     onBeforeUnmount(() => {

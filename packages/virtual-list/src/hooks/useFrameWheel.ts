@@ -1,4 +1,5 @@
 import raf from '@vue-components/util/raf'
+import type { ComputedRef, Ref } from 'vue'
 import { shallowRef } from 'vue'
 import isFF from '../utils/isFirefox'
 import useOriginScroll from './useOriginScroll'
@@ -9,10 +10,10 @@ interface FireFoxDOMMouseScrollEvent {
 }
 
 export default function useFrameWheel(
-  inVirtual: boolean,
-  isScrollAtTop: boolean,
-  isScrollAtBottom: boolean,
-  horizontalScroll: boolean,
+  inVirtual: Ref<boolean>,
+  isScrollAtTop: Ref<boolean>,
+  isScrollAtBottom: Ref<boolean>,
+  horizontalScroll: Ref<boolean> | ComputedRef<boolean>,
   /***
      * Return `true` when you need to prevent default event
      */
@@ -93,7 +94,7 @@ export default function useFrameWheel(
     const absY = Math.abs(mergedDeltaY)
 
     if (wheelDirectionRef.value === null)
-      wheelDirectionRef.value = horizontalScroll && absX > absY ? 'x' : 'y'
+      wheelDirectionRef.value = horizontalScroll.value && absX > absY ? 'x' : 'y'
 
     if (wheelDirectionRef.value === 'y')
       onWheelY(event, mergedDeltaY)
@@ -103,7 +104,7 @@ export default function useFrameWheel(
 
   // A patch for firefox
   function onFireFoxScroll(event: FireFoxDOMMouseScrollEvent) {
-    if (!inVirtual)
+    if (!inVirtual.value)
       return
 
     isMouseScrollRef.value = event.detail === wheelValueRef.value

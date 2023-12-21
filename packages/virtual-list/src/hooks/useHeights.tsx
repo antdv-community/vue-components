@@ -16,48 +16,48 @@ export default function useHeights<T>(
     updatedMark: ShallowRef<number>,
   ] {
   const updatedMark = shallowRef(0)
-  const instanceRef = shallowRef(new Map<Key, HTMLElement>())
-  const heightsRef = shallowRef(new CacheMap())
-  const collectRafRef = shallowRef<number>()
+  const instanceRef = new Map<Key, HTMLElement>()
+  const heightsRef = new CacheMap()
+  let collectRafRef: number
 
   function cancelRaf() {
-    if (collectRafRef.value)
-      raf.cancel(collectRafRef.value)
+    if (collectRafRef)
+      raf.cancel(collectRafRef)
   }
 
   function collectHeight(sync = false) {
     cancelRaf()
 
     const doCollect = () => {
-      instanceRef.value.forEach((element, key) => {
+      instanceRef.forEach((element, key) => {
         if (element && element.offsetParent) {
           const htmlElement = findDOMNode<HTMLElement>(element) as HTMLElement
           const { offsetHeight } = htmlElement
-          if (heightsRef.value.get(key) !== offsetHeight)
-            heightsRef.value.set(key, htmlElement.offsetHeight)
+          if (heightsRef.get(key) !== offsetHeight)
+            heightsRef.set(key, htmlElement.offsetHeight)
         }
       })
 
       // Always trigger update mark to tell parent that should re-calculate heights when resized
-      updatedMark.value += 1
+      // updatedMark.value += 1
     }
 
     if (sync)
       doCollect()
     else
-      collectRafRef.value = raf(doCollect)
+      collectRafRef = raf(doCollect)
   }
 
   function setInstanceRef(item: T, instance: HTMLElement) {
     const key = getKey(item)
-    const origin = instanceRef.value.get(key)
+    const origin = instanceRef.get(key)
 
     if (instance) {
-      instanceRef.value.set(key, instance)
+      instanceRef.set(key, instance)
       collectHeight()
     }
     else {
-      instanceRef.value.delete(key)
+      instanceRef.delete(key)
     }
 
     // Instance changed
@@ -73,5 +73,5 @@ export default function useHeights<T>(
     cancelRaf()
   })
 
-  return [setInstanceRef, collectHeight, heightsRef.value, updatedMark]
+  return [setInstanceRef, collectHeight, heightsRef, updatedMark]
 }

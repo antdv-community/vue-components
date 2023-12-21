@@ -1,12 +1,33 @@
-import type { CSSProperties, DefineComponent, VNode, VNodeChild } from 'vue'
-import { computed, defineComponent, shallowRef } from 'vue'
+import type { CSSProperties, DefineComponent, HTMLAttributes, VNode, VNodeChild } from 'vue'
+import {
+  computed,
+  createVNode,
+  defineComponent,
+  onBeforeUnmount,
+  onMounted,
+  shallowRef,
+  toRef,
+  watch,
+  watchPostEffect,
+} from 'vue'
 import classNames from 'classnames'
+import type { ResizeObserverProps } from '@vue-components/resize-observer'
+import ResizeObserver from '@vue-components/resize-observer'
 import type { ScrollPos, ScrollTarget } from './hooks/useScrollTo'
 import type { ExtraRenderInfo, Key, SharedConfig } from './interface.ts'
-import type { ScrollBarDirectionType } from './ScrollBar.tsx'
+import type { ScrollBarDirectionType, ScrollBarRef } from './ScrollBar.tsx'
 import type { InnerProps } from './Filter.tsx'
 import useDiffItem from './hooks/useDiffItem.ts'
 import useHeights from './hooks/useHeights.tsx'
+import useOriginScroll from './hooks/useOriginScroll.ts'
+import useFrameWheel from './hooks/useFrameWheel.ts'
+import useMobileTouchMove from './hooks/useMobileTouchMove.ts'
+import { getSpinSize } from './utils/scrollbarUtil.ts'
+import useScrollTo from './hooks/useScrollTo'
+import { useGetSize } from './hooks/useGetSize.ts'
+import useChildren from './hooks/useChildren.tsx'
+import Filter from './Filter.tsx'
+import ScrollBar from './ScrollBar.tsx'
 
 const EMPTY_DATA = [] as any[]
 
@@ -76,7 +97,7 @@ export interface ListProps<T> {
 
 const List = defineComponent<ListProps<any>>({
   name: 'List',
-  setup(props, { attrs }) {
+  setup(props, { attrs, expose, slots }) {
     // ================================= MISC =================================
     const useVirtual = computed(() => !!(props.virtual !== false && props.height && props.itemHeight))
     const inVirtual = computed(() => useVirtual.value && !!props.data.length && (props.itemHeight! * props.data.length > props.height! || !!props.scrollWidth))
@@ -85,6 +106,7 @@ const List = defineComponent<ListProps<any>>({
     const mergedData = computed(() => props.data || EMPTY_DATA)
     const componentRef = shallowRef<HTMLDivElement>()
     const fillerInnerRef = shallowRef<HTMLDivElement>()
+    const itemHeight = toRef(props, 'itemHeight')
     // =============================== Item Key ===============================
 
     const offsetTop = shallowRef(0)
@@ -116,8 +138,10 @@ const List = defineComponent<ListProps<any>>({
       else
         value = newTop
 
-      // const alignedTop =
-      // componentRef.value?.scrollTop = value
+      const alignedTop = keepInRange(value)
+      if (componentRef.value)
+        componentRef.value.scrollTop = alignedTop
+      return alignedTop
     }
 
     // ================================ Legacy ================================
@@ -128,7 +152,7 @@ const List = defineComponent<ListProps<any>>({
     })
     const diffItemRef = shallowRef()
 
-    const [diffItem] = useDiffItem<any>(mergeData, getKey)
+    const [diffItem] = useDiffItem<any>(mergedData, getKey)
     diffItemRef.value = diffItem.value
 
     // ================================ Height ================================
@@ -136,6 +160,9 @@ const List = defineComponent<ListProps<any>>({
 
     // ========================== Visible Calculation =========================
     const visibleCalculations = computed(() => {
+      if (heightUpdatedMark.value) {
+        // TODO
+      }
       if (!useVirtual.value) {
         return {
           scrollHeight: undefined,
@@ -201,9 +228,24 @@ const List = defineComponent<ListProps<any>>({
         offset: startOffset,
       }
     })
+
+    // ================================= Size =================================
+    const size = shallowRef({ width: 0, height: props.height || 0 })
+    const onHolderResize: ResizeObserverProps['onResize'] = (sizeInfo) => {
+      size.value = {
+        width: sizeInfo.width || sizeInfo.offsetWidth,
+        height: sizeInfo.height || sizeInfo.offsetHeight,
+      }
+    }
+    // Hack on scrollbar to enable flash call
+    const verticalScrollBarRef = shallowRef<ScrollBarRef>()
+    const horizontalScrollBarRef = shallowRef<ScrollBarRef>()
+    const horizontalScrollBarSpinSize = computed(() => getSpinSize(size.value.width, props.scrollWidth))
+    const verticalScrollBarSpinSize = computed(() => getSpinSize(size.value.height, visibleCalculations.value.scrollHeight))
     // =============================== In Range ===============================
     const maxScrollHeight = computed(() => {
       // return
+      return 0
     })
     const maxScrollHeightRef = shallowRef(maxScrollHeight.value)
     maxScrollHeightRef.value = maxScrollHeight.value
@@ -216,13 +258,292 @@ const List = defineComponent<ListProps<any>>({
       newTop = Math.max(newTop, 0)
       return newTop
     }
+    const isScrollAtTop = computed(() => offsetTop.value <= 0)
+    const isScrollAtBottom = computed(() => offsetTop.value >= maxScrollHeightRef.value)
+
+    const originScroll = useOriginScroll(isScrollAtTop, isScrollAtBottom)
+    // ================================ Scroll ================================
+    const getVirtualScrollInfo = () => ({
+      x: isRTL.value ? -offsetLeft.value : offsetLeft.value,
+      y: offsetTop.value,
+    })
+
+    const lastVirtualScrollInfoRef = shallowRef(getVirtualScrollInfo())
+
+    const triggerScroll = () => {
+      if (props.onVirtualScroll) {
+        const nextInfo = getVirtualScrollInfo()
+        // Trigger when offset changed
+        if (
+          lastVirtualScrollInfoRef.value.x !== nextInfo.x
+            || lastVirtualScrollInfoRef.value.y !== nextInfo.y
+        ) {
+          props.onVirtualScroll(nextInfo)
+
+          lastVirtualScrollInfoRef.value = nextInfo
+        }
+      }
+    }
+
+    function onScrollBar(newScrollOffset: number, horizontal?: boolean) {
+      const newOffset = newScrollOffset
+
+      if (horizontal) {
+        offsetLeft.value = newOffset
+        triggerScroll()
+      }
+      else {
+        syncScrollTop(newOffset)
+      }
+    }
+
+    // When data size reduce. It may trigger native scroll event back to fit scroll position
+
+    function onFallbackScroll(e: HTMLDivElement) {
+      const { scrollTop: newScrollTop } = e
+      if (newScrollTop !== offsetTop.value)
+        syncScrollTop(newScrollTop)
+
+      // Trigger origin onScroll
+      props?.onScroll?.(e)
+      triggerScroll()
+    }
+
+    const keepInHorizontalRange = (nextOffsetLeft: number) => {
+      let tmpOffsetLeft = nextOffsetLeft
+      const { scrollWidth = 0 } = props
+      const max = scrollWidth - size.value.width
+      tmpOffsetLeft = Math.max(tmpOffsetLeft, 0)
+      tmpOffsetLeft = Math.min(tmpOffsetLeft, max)
+
+      return tmpOffsetLeft
+    }
+
+    const onWheelDelta: Parameters<typeof useFrameWheel>[4] = (offsetXY, fromHorizontal) => {
+      if (fromHorizontal) {
+        // Horizontal scroll no need sync virtual position
+        const nextOffsetLeft = offsetLeft.value + (isRTL.value ? -offsetXY : offsetXY)
+        offsetLeft.value = keepInHorizontalRange(nextOffsetLeft)
+
+        triggerScroll()
+      }
+      else {
+        syncScrollTop((top) => {
+          return top + offsetXY
+        })
+      }
+    }
+    // Since this added in global,should use ref to keep update
+    const [onRawWheel, onFireFoxScroll] = useFrameWheel(
+      useVirtual,
+      isScrollAtTop,
+      isScrollAtBottom,
+      computed(() => !!props.scrollWidth),
+      onWheelDelta,
+    )
+
+    useMobileTouchMove(useVirtual, componentRef, (deltaY, smoothOffset) => {
+      if (originScroll(deltaY, smoothOffset))
+        return false
+
+      onRawWheel({ preventDefault() {}, deltaY } as WheelEvent)
+      return true
+    })
+    function onMozMousePixelScroll(e: Event) {
+      if (useVirtual.value)
+        e.preventDefault()
+    }
+    onMounted(() => {
+      // Firefox only
+      const componentEle = componentRef.value
+      if (componentEle) {
+        componentEle.addEventListener('wheel', onRawWheel)
+        componentEle.addEventListener('DOMMouseScroll', onFireFoxScroll as any)
+        componentEle.addEventListener('MozMousePixelScroll', onMozMousePixelScroll)
+      }
+    })
+
+    onBeforeUnmount(() => {
+      const componentEle = componentRef.value
+      if (!componentEle)
+        return
+      componentEle.removeEventListener('wheel', onRawWheel)
+      componentEle.removeEventListener('DOMMouseScroll', onFireFoxScroll as any)
+      componentEle.removeEventListener('MozMousePixelScroll', onMozMousePixelScroll as any)
+    })
+
+    watchPostEffect(() => {
+      if (props.scrollWidth)
+        offsetLeft.value = keepInHorizontalRange(offsetLeft.value)
+    })
+
+    // ================================= Ref ==================================
+    const delayHideScrollBar = () => {
+      verticalScrollBarRef.value?.delayHidden()
+      horizontalScrollBarRef.value?.delayHidden()
+    }
+
+    const scrollTo = useScrollTo<any>(
+      componentRef,
+      mergedData,
+      heights,
+      computed(() => props.itemHeight!),
+      getKey,
+      () => collectHeight(true),
+      syncScrollTop,
+      delayHideScrollBar,
+    )
+
+    expose({
+      getScrollInfo: getVirtualScrollInfo,
+      scrollTo: (config) => {
+        function isPosScroll(arg: any): arg is ScrollPos {
+          return arg && typeof arg === 'object' && ('left' in arg || 'top' in arg)
+        }
+        if (isPosScroll(config)) {
+          // Scroll X
+          if (config.left !== undefined)
+            offsetLeft.value = keepInHorizontalRange(config.left)
+
+          // Scroll Y
+          scrollTo(config.top)
+        }
+        else {
+          scrollTo(config)
+        }
+      },
+    } as ListRef)
+
+    watch([() => visibleCalculations.value.start, () => visibleCalculations.value.end, mergedData], ([start, end]) => {
+      if (props.onVisibleChange) {
+        const renderList = mergedData.value.slice(start, end + 1)
+        props.onVisibleChange(renderList, mergedData.value)
+      }
+    }, {
+      flush: 'post',
+    })
+    // ================================ Extra =================================
+    const getSize = useGetSize(mergedData, getKey, heights, itemHeight)
 
     return () => {
-      const { prefixCls = 'rc-virtual-list', data } = props
+      const { prefixCls = 'rc-virtual-list', styles, scrollWidth, innerProps, component = 'div', height, fullHeight = true } = props
       const mergedClassName = classNames(prefixCls, {
         [`${prefixCls}-rtl`]: isRTL.value,
       }, attrs.class as any)
-      return <div>list</div>
+
+      const extraRender = slots?.extraRender ?? props?.extraRender
+      const {
+        scrollHeight,
+        start,
+        end,
+        offset: fillerOffset,
+      } = visibleCalculations.value
+      rangeRef.value.start = start
+      rangeRef.value.end = end
+      const extraContent = extraRender?.({
+        start,
+        end,
+        virtual: inVirtual.value,
+        offsetX: offsetLeft.value,
+        offsetY: fillerOffset,
+        rtl: isRTL.value,
+        getSize,
+      })
+      // ================================ Render ================================
+      const listChildren = useChildren(mergedData.value, start, end, scrollWidth!, setInstanceRef, slots.default as any, sharedConfig)
+      let componentStyle: CSSProperties | null = null
+      if (height) {
+        componentStyle = { [fullHeight ? 'height' : 'maxHeight']: `${height}px`, ...ScrollStyle }
+
+        if (inVirtual.value) {
+          componentStyle.overflowY = 'hidden'
+
+          if (scrollWidth)
+            componentStyle.overflowX = 'hidden'
+
+          if (scrollMoving.value)
+            componentStyle.pointerEvents = 'none'
+        }
+      }
+
+      const containerProps: HTMLAttributes = {}
+      if (isRTL.value)
+        containerProps.dir = 'rtl'
+
+      const divStyle: any[] = [
+        attrs.style,
+        {
+          position: 'relative',
+        },
+      ]
+      const Comp = createVNode(component, {
+        class: `${prefixCls}-holder`,
+        style: componentStyle,
+        ref: componentRef,
+        onScroll: onFallbackScroll,
+        onMouseEnter: delayHideScrollBar,
+      }, {
+        default: () => [
+          <Filter
+            prefixCls={prefixCls}
+            height={scrollHeight!}
+            offsetX={offsetLeft.value}
+            offsetY={fillerOffset}
+            scrollWidth={scrollWidth}
+            onInnerResize={collectHeight}
+            ref={fillerInnerRef}
+            innerProps={innerProps}
+            rtl={isRTL.value}
+            extra={extraContent}
+          >
+            {listChildren}
+          </Filter>,
+        ],
+      })
+
+      return (
+        <div {...attrs} style={divStyle} class={mergedClassName} {...containerProps}>
+          <ResizeObserver onResize={onHolderResize}>
+            {Comp}
+          </ResizeObserver>
+          {
+            inVirtual.value && scrollHeight! > height! && (
+              <ScrollBar
+                ref={verticalScrollBarRef}
+                prefixCls={prefixCls}
+                scrollOffset={offsetTop.value}
+                scrollRange={scrollHeight!}
+                rtl={isRTL.value}
+                onScroll={onScrollBar}
+                onStartMove={onScrollbarStartMove}
+                onStopMove={onScrollbarStopMove}
+                spinSize={verticalScrollBarSpinSize.value}
+                containerSize={size.value.height}
+                style={styles?.verticalScrollBar}
+                thumbStyle={styles?.verticalScrollBarThumb}
+              />
+            )
+          }
+          {
+              inVirtual.value && scrollWidth && (
+                <ScrollBar
+                  ref={horizontalScrollBarRef}
+                  prefixCls={prefixCls}
+                  scrollOffset={offsetLeft.value}
+                  scrollRange={scrollWidth!}
+                  rtl={isRTL.value}
+                  onScroll={onScrollBar}
+                  onStartMove={onScrollbarStartMove}
+                  onStopMove={onScrollbarStopMove}
+                  spinSize={horizontalScrollBarSpinSize.value}
+                  containerSize={size.value.width}
+                  style={styles?.horizontalScrollBar}
+                  thumbStyle={styles?.horizontalScrollBarThumb}
+                />
+              )
+          }
+        </div>
+      )
     }
   },
 })

@@ -1,9 +1,11 @@
 import type { CSSProperties, VNodeChild } from 'vue'
 
 export type RenderFunc<T> = (
-  item: T,
-  index: number,
-  props: { style?: CSSProperties },
+  params: {
+    item: T
+    index: number
+    props: { style?: CSSProperties }
+  }
 ) => VNodeChild
 
 export type Key = string | number

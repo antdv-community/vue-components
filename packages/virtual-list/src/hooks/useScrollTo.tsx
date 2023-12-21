@@ -1,4 +1,4 @@
-import type { Ref } from 'vue'
+import type { ComputedRef, Ref } from 'vue'
 import { shallowRef, watchSyncEffect } from 'vue'
 import { warning } from '@vue-components/util'
 import raf from '@vue-components/util/raf'
@@ -27,10 +27,10 @@ export type ScrollTarget =
     }
 
 export default function useScrollTo<T>(
-  containerRef: Ref<HTMLDivElement>,
+  containerRef: Ref<HTMLDivElement | undefined>,
   data: Ref<T[]>,
   heights: CacheMap,
-  itemHeight: Ref<number>,
+  itemHeight: Ref<number> | ComputedRef<number>,
   getKey: GetKey<T>,
   collectHeight: () => void,
   syncScrollTop: (newTop: number) => void,

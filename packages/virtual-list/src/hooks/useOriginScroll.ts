@@ -1,9 +1,10 @@
-import { shallowRef } from 'vue'
+import type { Ref } from 'vue'
+import { computed, shallowRef } from 'vue'
 
-export default (isScrollAtTop: boolean, isScrollAtBottom: boolean) => {
+export default (isScrollAtTop: Ref<boolean>, isScrollAtBottom: Ref<boolean>) => {
   // Do lock for a wheel when scrolling
   const lockRef = shallowRef(false)
-  const lockTimeoutRef = shallowRef<ReturnType<typeof setTimeout>>(null)
+  const lockTimeoutRef = shallowRef<ReturnType<typeof setTimeout>>()
   function lockScroll() {
     clearTimeout(lockTimeoutRef.value)
 
@@ -15,12 +16,10 @@ export default (isScrollAtTop: boolean, isScrollAtBottom: boolean) => {
   }
 
   // Pass to ref since global add is in closure
-  const scrollPingRef = shallowRef({
-    top: isScrollAtTop,
-    bottom: isScrollAtBottom,
-  })
-  scrollPingRef.value.top = isScrollAtTop
-  scrollPingRef.value.bottom = isScrollAtBottom
+  const scrollPingRef = computed(() => ({
+    top: isScrollAtTop.value,
+    bottom: isScrollAtBottom.value,
+  }))
 
   return (deltaY: number, smoothOffset = false) => {
     const originScroll

@@ -5,7 +5,7 @@ const SMOOTH_PTG = 14 / 15
 
 export default function useMobileTouchMove(
   inVirtual: ComputedRef<boolean>,
-  listRef: Ref<HTMLDivElement>,
+  listRef: Ref<HTMLDivElement | undefined>,
   callback: (offsetY: number, smoothOffset?: boolean) => boolean,
 ) {
   const touchedRef = shallowRef(false)
@@ -52,8 +52,8 @@ export default function useMobileTouchMove(
       touchYRef.value = Math.ceil(e.touches[0].pageY)
 
       elementRef.value = e.target as HTMLElement
-      elementRef.value.addEventListener('touchmove', onTouchMove)
-      elementRef.value.addEventListener('touchend', onTouchEnd)
+      elementRef.value.addEventListener('touchmove', onTouchMove, { passive: true })
+      elementRef.value.addEventListener('touchend', onTouchEnd, { passive: true })
     }
   }
 
@@ -66,7 +66,7 @@ export default function useMobileTouchMove(
 
   onMounted(() => {
     if (inVirtual.value)
-      listRef.value.addEventListener('touchstart', onTouchStart)
+      listRef.value?.addEventListener('touchstart', onTouchStart, { passive: true })
   })
 
   onBeforeUnmount(() => {
@@ -77,7 +77,7 @@ export default function useMobileTouchMove(
 
   onUpdated(() => {
     if (inVirtual.value)
-      listRef.value.addEventListener('touchstart', onTouchStart)
+      listRef.value?.addEventListener('touchstart', onTouchStart, { passive: true })
   })
 
   onBeforeUpdate(() => {

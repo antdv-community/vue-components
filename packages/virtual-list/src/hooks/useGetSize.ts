@@ -11,7 +11,7 @@ export function useGetSize<T>(
   _mergedData: Ref<T[]>,
   getKey: GetKey<T>,
   heights: CacheMap,
-  _itemHeight: Ref<number>,
+  _itemHeight: Ref<number | undefined>,
 ) {
   const sizeComputed = shallowRef<[key2Index: Map<Key, number>, bottomList: number[]]>([new Map(), []])
   watch([_mergedData, heights.id, _itemHeight], () => {
@@ -47,8 +47,8 @@ export function useGetSize<T>(
     }
 
     return {
-      top: bottomList[startIndex - 1] || 0,
-      bottom: bottomList[endIndex],
+      top: bottomList[startIndex! - 1] || 0,
+      bottom: bottomList[endIndex!],
     }
   }
 

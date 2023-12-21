@@ -21,6 +21,10 @@ export default defineConfig({
             text: 'ResizeObserver',
             link: '/components/resize-observer/',
           },
+          {
+            text: 'VirtualList',
+            link: '/components/virtual-list/',
+          },
         ],
       },
     ],

@@ -12,7 +12,7 @@ export interface InnerProps {
 interface FillerProps {
   prefixCls?: string
   /** Virtual filler height. Should be `count * itemMinHeight` */
-  height: number
+  height?: number
   /** Set offset of visible items. Should be the top of start item position */
   offsetY?: number
   offsetX?: number
