@@ -40,7 +40,7 @@ const Filter = defineComponent<FillerProps>({
       innerRef,
     })
     return () => {
-      const { offsetY, offsetX = 0, height, rtl, onInnerResize, innerProps, prefixCls } = props
+      const { offsetY, offsetX, height, rtl, onInnerResize, innerProps, prefixCls } = props
       let outerStyle: CSSProperties = {}
       let innerStyle: CSSProperties = {
         display: 'flex',
@@ -57,7 +57,7 @@ const Filter = defineComponent<FillerProps>({
         innerStyle = {
           ...innerStyle,
           transform: `translateY(${offsetY}px)`,
-          [rtl ? 'marginRight' : 'marginLeft']: `${-offsetX}px`,
+          [rtl ? 'marginRight' : 'marginLeft']: `${-offsetX!}px`,
           position: 'absolute',
           left: 0,
           right: 0,

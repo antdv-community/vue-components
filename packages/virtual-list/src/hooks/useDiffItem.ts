@@ -1,5 +1,5 @@
 import type { ComputedRef, Ref, ShallowRef } from 'vue'
-import { shallowRef, watch } from 'vue'
+import { shallowRef, unref, watch } from 'vue'
 import type { GetKey } from '../interface.ts'
 import { findListDiffIndex } from '../utils/algorithmUtil.ts'
 
@@ -8,10 +8,9 @@ export default function useDiffItem<T>(
   getKey: GetKey<T>,
   onDiff?: (diffIndex: number) => void,
 ) {
-  const prevData = shallowRef(data)
+  const prevData = shallowRef(unref(data))
   const diffItem = shallowRef<T | null>(null)
   watch(data, () => {
-    console.log(data)
     const diff = findListDiffIndex(prevData.value || [], data.value || [], getKey)
     if (diff?.index !== undefined) {
       onDiff?.(diff.index)

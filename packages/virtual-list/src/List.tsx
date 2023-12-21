@@ -100,7 +100,7 @@ const List = defineComponent<ListProps<any>>({
   setup(props, { attrs, expose, slots }) {
     // ================================= MISC =================================
     const useVirtual = computed(() => !!(props.virtual !== false && props.height && props.itemHeight))
-    const inVirtual = computed(() => useVirtual.value && !!props.data.length && (props.itemHeight! * props.data.length > props.height! || !!props.scrollWidth))
+    const inVirtual = computed(() => useVirtual.value && props.data && (props.itemHeight! * props.data.length > props.height! || !!props.scrollWidth))
     const isRTL = computed(() => props.direction === 'rtl')
 
     const mergedData = computed(() => props.data || EMPTY_DATA)
@@ -186,14 +186,14 @@ const List = defineComponent<ListProps<any>>({
       let startIndex: any
       let startOffset: any
       let endIndex: any
-      const { itemHeight = 0, height = 0 } = props
+      const { itemHeight, height } = props
       const dataLen = mergedData.value.length
       for (let i = 0; i < dataLen; i += 1) {
         const item = mergedData.value?.[i]
         const key = getKey(item)
 
         const cacheHeight = heights.get(key)
-        const currentItemBottom = itemTop + (cacheHeight === undefined ? itemHeight : cacheHeight)
+        const currentItemBottom = itemTop + (cacheHeight === undefined ? itemHeight! : cacheHeight)
 
         // Check item top in the range
         if (currentItemBottom >= offsetTop.value && startIndex === undefined) {
@@ -202,7 +202,7 @@ const List = defineComponent<ListProps<any>>({
         }
 
         // Check item bottom in the range. We will render additional one item for motion usage
-        if (currentItemBottom > offsetTop.value + height && endIndex === undefined)
+        if (currentItemBottom > offsetTop.value + height! && endIndex === undefined)
           endIndex = i
 
         itemTop = currentItemBottom
@@ -213,7 +213,7 @@ const List = defineComponent<ListProps<any>>({
         startIndex = 0
         startOffset = 0
 
-        endIndex = Math.ceil(height / itemHeight)
+        endIndex = Math.ceil(height! / itemHeight!)
       }
       if (endIndex === undefined)
         endIndex = mergedData.value.length - 1
@@ -455,7 +455,7 @@ const List = defineComponent<ListProps<any>>({
       if (height) {
         componentStyle = { [fullHeight ? 'height' : 'maxHeight']: `${height}px`, ...ScrollStyle }
 
-        if (inVirtual.value) {
+        if (useVirtual.value) {
           componentStyle.overflowY = 'hidden'
 
           if (scrollWidth)
@@ -500,7 +500,6 @@ const List = defineComponent<ListProps<any>>({
           </Filter>,
         ],
       })
-
       return (
         <div {...attrs} style={divStyle} class={mergedClassName} {...containerProps}>
           <ResizeObserver onResize={onHolderResize}>
