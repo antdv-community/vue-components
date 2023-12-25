@@ -20,7 +20,7 @@ function onScroll(e: any) {
   console.log('scroll:', e.target.scrollTop)
 }
 
-const destrory = shallowRef(false)
+const destroy = shallowRef(false)
 const type = shallowRef('dom')
 function showScrollBar() {
   listRef.value?.scrollTo(null)
@@ -36,25 +36,77 @@ function scrollToIndex() {
     align: 'top',
   })
 }
+
+function handleDestroy() {
+  listRef.value?.scrollTo({
+    index: 50,
+    align: 'top',
+  })
+  destroy.value = true
+}
+function handleChange(_type: string) {
+  type.value = _type
+}
 </script>
 
 <template>
   <div>
-    <button @click="showScrollBar">
-      Show Scroll Bar
-    </button>
-    <button @click="scrollToTop">
-      Scroll To 100px
-    </button>
-    <button @click="scrollToIndex">
-      Scroll To Index 99999999 (top)
-    </button>
+    <div style="display: flex;flex-wrap: wrap;gap: 5px;margin-bottom: 10px">
+      <label>
+        <input type="radio" name="type" :checked="type === 'dom'" @change="handleChange('dom')">
+        dom
+      </label>
+      <label>
+        <input type="radio" name="type" :checked="type === 'ref'" @change="handleChange('ref')">
+        ref
+      </label>
+      <button class="btn" @click="showScrollBar">
+        Show Scroll Bar
+      </button>
+      <button class="btn" @click="scrollToTop">
+        Scroll To 100px
+      </button>
+      <button class="btn" @click="scrollToIndex">
+        Scroll To Index 99999999 (top)
+      </button>
+      <button class="btn" @click="listRef?.scrollTo({ index: 50, align: 'top' })">
+        Scroll To 50 (top)
+      </button>
+      <button class="btn" @click="listRef?.scrollTo({ index: 50, align: 'bottom' })">
+        Scroll To 50 (bottom)
+      </button>
+      <button class="btn" @click="listRef?.scrollTo({ index: 50, align: 'auto' })">
+        Scroll To 50 (auto)
+      </button>
+      <button class="btn" @click="listRef?.scrollTo({ index: 50, align: 'top', offset: 15 })">
+        Scroll To 50 (top) + offset 15
+      </button>
+      <button class="btn" @click="listRef?.scrollTo({ index: 50, align: 'bottom', offset: 15 })">
+        Scroll To 50 (bottom)
+      </button>
+      <button class="btn" @click="listRef?.scrollTo({ key: 50, align: 'auto' })">
+        Scroll To key 50 (auto)
+      </button>
+      <button class="btn" @click="visible = !visible">
+        visible
+      </button>
+      <button class="btn" @click="listRef?.scrollTo({ index: data.length - 2, align: 'top' })">
+        Scroll To Last (top)
+      </button>
+      <button class="btn" @click="listRef?.scrollTo({ index: 0, align: 'bottom' })">
+        Scroll To Last (bottom)
+      </button>
+      <button class="btn" @click="handleDestroy">
+        Scroll To remove
+      </button>
+    </div>
     <List
-      v-if="!destrory"
+      v-if="!destroy"
+      v-show="visible"
       ref="listRef"
-      :data="data"
-      :height="200" :item-height="20" item-key="id"
-      style="border: 1px solid red;box-sizing: border-box;" :style="{ display: visible ? null : 'none' }"
+      :data="data" :height="200" :item-height="20"
+      item-key="id"
+      style="border: 1px solid red;box-sizing: border-box;"
       @scroll="onScroll"
     >
       <template #default="{ item, props }">
