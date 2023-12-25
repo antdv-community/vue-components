@@ -43,7 +43,7 @@ export interface ScrollInfo {
 
 export type ScrollConfig = ScrollTarget | ScrollPos
 
-export type ScrollTo = (arg: number | ScrollConfig) => void
+export type ScrollTo = (arg: number | ScrollConfig | null) => void
 
 export interface ListRef {
   scrollTo: ScrollTo
@@ -137,7 +137,6 @@ const List = defineComponent<ListProps<any>>({
 
       else
         value = newTop
-
       const alignedTop = keepInRange(value)
       if (componentRef.value)
         componentRef.value.scrollTop = alignedTop

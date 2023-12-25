@@ -1,5 +1,5 @@
 import type { ComputedRef, Ref } from 'vue'
-import { shallowRef, watchSyncEffect } from 'vue'
+import { shallowRef, watch } from 'vue'
 import { warning } from '@vue-components/util'
 import raf from '@vue-components/util/raf'
 import type CacheMap from '../utils/CacheMap.ts'
@@ -141,9 +141,12 @@ export default function useScrollTo<T>(
       )
     }
   }
-  watchSyncEffect(() => {
-    if (containerRef.value || syncState.value)
+
+  watch([syncState, containerRef], () => {
+    if (containerRef.value && syncState.value)
       effectLayout()
+  }, {
+    flush: 'post',
   })
   // =========================== Scroll To ===========================
   return (arg: any) => {
@@ -152,7 +155,6 @@ export default function useScrollTo<T>(
       triggerFlash()
       return
     }
-
     // Normal scroll logic
     raf.cancel(scrollRef.value!)
 
