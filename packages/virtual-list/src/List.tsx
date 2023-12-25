@@ -141,7 +141,7 @@ const List = defineComponent<ListProps<any>>({
       const alignedTop = keepInRange(value)
       if (componentRef.value)
         componentRef.value.scrollTop = alignedTop
-      return alignedTop
+      offsetTop.value = alignedTop
     }
 
     // ================================ Legacy ================================
@@ -244,11 +244,9 @@ const List = defineComponent<ListProps<any>>({
     const verticalScrollBarSpinSize = computed(() => getSpinSize(size.value.height, visibleCalculations.value.scrollHeight))
     // =============================== In Range ===============================
     const maxScrollHeight = computed(() => {
-      // return
-      return 0
+      return (visibleCalculations.value.scrollHeight ?? 0) - (props?.height ?? 0)
     })
-    const maxScrollHeightRef = shallowRef(maxScrollHeight.value)
-    maxScrollHeightRef.value = maxScrollHeight.value
+    const maxScrollHeightRef = computed(() => (maxScrollHeight.value))
 
     function keepInRange(newScrollTop: number) {
       let newTop = newScrollTop
@@ -299,8 +297,8 @@ const List = defineComponent<ListProps<any>>({
 
     // When data size reduce. It may trigger native scroll event back to fit scroll position
 
-    function onFallbackScroll(e: HTMLDivElement) {
-      const { scrollTop: newScrollTop } = e
+    function onFallbackScroll(e: any) {
+      const { scrollTop: newScrollTop } = e.target as HTMLDivElement
       if (newScrollTop !== offsetTop.value)
         syncScrollTop(newScrollTop)
 
@@ -426,7 +424,7 @@ const List = defineComponent<ListProps<any>>({
     const getSize = useGetSize(mergedData, getKey, heights, itemHeight)
 
     return () => {
-      const { prefixCls = 'rc-virtual-list', styles, scrollWidth, innerProps, component = 'div', height, fullHeight = true } = props
+      const { prefixCls = 'vc-virtual-list', styles, scrollWidth, innerProps, component = 'div', height, fullHeight = true } = props
       const mergedClassName = classNames(prefixCls, {
         [`${prefixCls}-rtl`]: isRTL.value,
       }, attrs.class as any)

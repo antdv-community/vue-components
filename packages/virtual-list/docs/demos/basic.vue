@@ -16,8 +16,8 @@ for (let i = 0; i < 100; i += 1) {
   })
 }
 
-function onScroll(e: HTMLDivElement) {
-  console.log('scroll:', e.scrollTop)
+function onScroll(e: any) {
+  console.log('scroll:', e.target.scrollTop)
 }
 
 const destrory = shallowRef(false)
@@ -35,7 +35,7 @@ const type = shallowRef('dom')
   >
     <template #default="{ item, props }">
       <template v-if="type === 'dom'">
-        <span v-bind="props" class="fixed-item" :style="{ height: `${30 + (item.id % 2 ? 0 : 10)}px` }" @click="() => console.log('click:', item.id)">
+        <span v-bind="props" class="fixed-item" :style="{ height: `${30 + (item.id % 2 ? 0 : 10)}px`, ...props.style ?? {} }" @click="() => console.log('click:', item.id)">
           {{ item.id }}
         </span>
       </template>

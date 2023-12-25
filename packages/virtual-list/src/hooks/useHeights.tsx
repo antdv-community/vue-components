@@ -39,7 +39,7 @@ export default function useHeights<T>(
       })
 
       // Always trigger update mark to tell parent that should re-calculate heights when resized
-      // updatedMark.value += 1
+      updatedMark.value += 1
     }
 
     if (sync)

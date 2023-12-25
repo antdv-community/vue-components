@@ -65,9 +65,8 @@ export default function useFrameWheel(
   const wheelDirectionCleanRef = shallowRef<number>()
 
   function onWheel(event: WheelEvent) {
-    if (!inVirtual)
+    if (!inVirtual.value)
       return
-
     // Wait for 2 frame to clean direction
     if (wheelDirectionCleanRef.value)
       raf.cancel(wheelDirectionCleanRef.value)
