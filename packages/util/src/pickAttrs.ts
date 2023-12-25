@@ -62,7 +62,7 @@ export default function pickAttrs(
     }
   }
 
-  const attrs = {}
+  const attrs: Record<string, any> = {}
   Object.keys(props).forEach((key) => {
     if (
     // Aria
@@ -72,7 +72,7 @@ export default function pickAttrs(
             // Attr
             || (mergedConfig.attr && propList.includes(key))
     )
-      attrs[key] = props[key]
+      attrs[key] = (props as any)[key]
   })
   return attrs
 }
