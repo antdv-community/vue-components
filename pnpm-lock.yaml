@@ -72,6 +72,18 @@ importers:
         specifier: ^3.0.0
         version: 3.3.11(typescript@5.3.3)
 
+  packages/motion:
+    dependencies:
+      '@vue-components/util':
+        specifier: workspace:*
+        version: link:../util
+      classnames:
+        specifier: ^2.3.2
+        version: 2.3.2
+      vue:
+        specifier: ^3.0.0
+        version: 3.3.11(typescript@5.3.3)
+
   packages/resize-observer:
     dependencies:
       '@vue-components/util':
@@ -80,9 +92,6 @@ importers:
       classnames:
         specifier: ^2.3.2
         version: 2.3.2
-      resize-observer-polyfill:
-        specifier: ^1.5.1
-        version: 1.5.1
       vue:
         specifier: ^3.0.0
         version: 3.3.11(typescript@5.3.3)
@@ -4341,10 +4350,6 @@ packages:
   /requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
     dev: true
-
-  /resize-observer-polyfill@1.5.1:
-    resolution: {integrity: sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==}
-    dev: false
 
   /resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
