@@ -45,13 +45,13 @@ let style = {}
 if (canUseDOM())
   ({ style } = document.createElement('div'))
 
-const prefixedEventNames = {}
+const prefixedEventNames: Record<string, any> = {}
 
 export function getVendorPrefixedEventName(eventName: string) {
   if (prefixedEventNames[eventName])
     return prefixedEventNames[eventName]
 
-  const prefixMap = vendorPrefixes[eventName]
+  const prefixMap = vendorPrefixes[eventName as keyof typeof vendorPrefixes]
 
   if (prefixMap) {
     const stylePropList = Object.keys(prefixMap)
@@ -90,7 +90,7 @@ export function getTransitionName(
   if (typeof transitionName === 'object') {
     const type = transitionType.replace(/-\w/g, match =>
       match[1].toUpperCase())
-    return transitionName[type]
+    return transitionName[type as keyof MotionName]
   }
 
   return `${transitionName}-${transitionType}`

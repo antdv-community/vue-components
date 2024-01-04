@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'vue'
+
 export const STATUS_NONE = 'none' as const
 export const STATUS_APPEAR = 'appear' as const
 export const STATUS_ENTER = 'enter' as const
@@ -40,7 +42,7 @@ export type MotionPrepareEventHandler = (
 export type MotionEventHandler = (
   element: HTMLElement,
   event: MotionEvent,
-) => React.CSSProperties | void
+) => CSSProperties | void
 
 export type MotionEndEventHandler = (
   element: HTMLElement,
