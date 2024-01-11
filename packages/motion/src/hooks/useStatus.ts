@@ -26,7 +26,7 @@ import useDomMotionEvents from './useDomMotionEvents'
 export default function useStatus(
   supportMotion: Ref<boolean>,
   visible: Ref<boolean>,
-  getElement: () => HTMLElement,
+  getElement: () => HTMLElement | null,
   props: CSSMotionProps,
 ): [Ref<MotionStatus>, Ref<StepStatus>, Ref<CSSProperties>, Ref<boolean>] {
   // Used for outer render usage to avoid `visible: false & status: none` to render nothing
@@ -54,7 +54,7 @@ export default function useStatus(
   }
 
   function onInternalMotionEnd(event: MotionEvent) {
-    const element = getDomElement()
+    const element = getDomElement() as HTMLElement
 
     if (event && !event.deadline && event.target !== element) {
       // event exists
@@ -131,7 +131,7 @@ export default function useStatus(
       if (!onPrepare)
         return SkipStep
 
-      return onPrepare(getDomElement())
+      return onPrepare(getDomElement() as HTMLElement)
     }
 
     // Rest step is sync update
@@ -143,7 +143,7 @@ export default function useStatus(
 
     if (step.value === STEP_ACTIVE) {
       // Patch events when motion needed
-      patchMotionEvents(getDomElement())
+      patchMotionEvents(getDomElement() as HTMLElement)
 
       if (props.motionDeadline! > 0) {
         clearTimeout(deadlineRef.value)
