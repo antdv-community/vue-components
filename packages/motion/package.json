@@ -1,5 +1,5 @@
 {
-  "name": "@vue-components/resize-observer",
+  "name": "@vue-components/motion",
   "type": "module",
   "version": "0.0.1",
   "exports": {
