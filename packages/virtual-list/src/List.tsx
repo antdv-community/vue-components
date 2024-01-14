@@ -273,7 +273,7 @@ const List = defineComponent<ListProps<any>>({
         // Trigger when offset changed
         if (
           lastVirtualScrollInfoRef.value.x !== nextInfo.x
-            || lastVirtualScrollInfoRef.value.y !== nextInfo.y
+          || lastVirtualScrollInfoRef.value.y !== nextInfo.y
         ) {
           props.onVirtualScroll(nextInfo)
 

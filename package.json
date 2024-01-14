@@ -29,6 +29,7 @@
     "vite": "^5.0.11",
     "vite-plugin-dts": "^3.7.0",
     "vite-plugin-tsx-auto-props": "^0.0.8",
+    "vite-plugin-tsx-resolve-types": "^0.0.2",
     "vite-plugin-vitepress-demo": "^2.2.1",
     "vitepress": "^1.0.0-rc.36",
     "vitest": "^0.34.6",
