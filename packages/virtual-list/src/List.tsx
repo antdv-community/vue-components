@@ -95,10 +95,14 @@ export interface ListProps<T> {
   extraRender?: (info: ExtraRenderInfo) => VNodeChild
 }
 
+const defaults: any = {
+  virtual: undefined,
+}
 const List = defineComponent<ListProps<any>>({
   name: 'List',
-  setup(props, { attrs, expose, slots }) {
+  setup(props = defaults, { attrs, expose, slots }) {
     // ================================= MISC =================================
+
     const useVirtual = computed(() => !!(props.virtual !== false && props.height && props.itemHeight))
     const inVirtual = computed(() => useVirtual.value && props.data && (props.itemHeight! * props.data.length > props.height! || !!props.scrollWidth))
     const isRTL = computed(() => props.direction === 'rtl')
@@ -134,7 +138,6 @@ const List = defineComponent<ListProps<any>>({
       let value: number
       if (typeof newTop === 'function')
         value = newTop(offsetTop.value)
-
       else
         value = newTop
       const alignedTop = keepInRange(value)

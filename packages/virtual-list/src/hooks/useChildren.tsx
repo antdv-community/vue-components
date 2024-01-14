@@ -2,6 +2,7 @@ import type { RenderFunc, SharedConfig } from '../interface.ts'
 import Item from '../Item.tsx'
 
 export default function useChildren<T>(list: T[], startIndex: number, endIndex: number, scrollWidth: number, setNodeRef: (item: T, element: HTMLElement) => void, renderFunc: RenderFunc<T>, { getKey }: SharedConfig<T>) {
+  console.log(startIndex, endIndex)
   return list.slice(startIndex, endIndex + 1).map((item, index) => {
     const eleIndex = startIndex + index
     const node = renderFunc({

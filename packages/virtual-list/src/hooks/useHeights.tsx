@@ -27,7 +27,6 @@ export default function useHeights<T>(
 
   function collectHeight(sync = false) {
     cancelRaf()
-
     const doCollect = () => {
       instanceRef.forEach((element, key) => {
         if (element && element.offsetParent) {
@@ -37,9 +36,8 @@ export default function useHeights<T>(
             heightsRef.set(key, htmlElement.offsetHeight)
         }
       })
-
       // Always trigger update mark to tell parent that should re-calculate heights when resized
-      updatedMark.value += 1
+      // updatedMark.value += 1
     }
 
     if (sync)
@@ -51,7 +49,6 @@ export default function useHeights<T>(
   function setInstanceRef(item: T, instance: HTMLElement) {
     const key = getKey(item)
     const origin = instanceRef.get(key)
-
     if (instance) {
       instanceRef.set(key, instance)
       collectHeight()

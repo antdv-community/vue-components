@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { vitepressDemo } from 'vite-plugin-vitepress-demo'
-import tsxResolveTypes from 'vite-plugin-tsx-resolve-types'
+import VueJsxAutoProps from 'vite-plugin-tsx-resolve-types'
 
 const base = fileURLToPath(new URL('.', import.meta.url))
 
@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [
     vueJsx(),
     vitepressDemo(),
-    tsxResolveTypes(),
+    VueJsxAutoProps(),
   ],
   resolve: {
     alias: [
