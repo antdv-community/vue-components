@@ -433,9 +433,9 @@ const KeyCode = {
     const { keyCode } = e
     if (
       (e.altKey && !e.ctrlKey)
-            || e.metaKey
-            // Function keys don't generate text
-            || (keyCode >= KeyCode.F1 && keyCode <= KeyCode.F12)
+      || e.metaKey
+      // Function keys don't generate text
+      || (keyCode >= KeyCode.F1 && keyCode <= KeyCode.F12)
     )
       return false
 

@@ -27,6 +27,10 @@ export default defineConfig({
         find: /^@vue-components\/resize-observer/,
         replacement: resolve(base, 'packages', 'resize-observer', 'src'),
       },
+      {
+        find: /^@vue-components\/input/,
+        replacement: resolve(base, 'packages', 'input', 'src'),
+      },
     ],
   },
 })

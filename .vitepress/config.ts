@@ -25,6 +25,10 @@ export default defineConfig({
             text: 'VirtualList',
             link: '/components/virtual-list/',
           },
+          {
+            text: 'Input',
+            link: '/components/input/',
+          },
         ],
       },
     ],

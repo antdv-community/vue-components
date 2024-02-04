@@ -81,7 +81,7 @@ export default function useFrameWheel(
 
     if (
       wheelDirectionRef.value === 'sx'
-            || (!wheelDirectionRef.value && shiftKey && deltaY && !deltaX)
+      || (!wheelDirectionRef.value && shiftKey && deltaY && !deltaX)
     ) {
       mergedDeltaX = deltaY
       mergedDeltaY = 0

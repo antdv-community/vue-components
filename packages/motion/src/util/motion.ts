@@ -60,7 +60,7 @@ export function getVendorPrefixedEventName(eventName: string) {
       const styleProp = stylePropList[i]
       if (
         Object.prototype.hasOwnProperty.call(prefixMap, styleProp)
-                && styleProp in style
+        && styleProp in style
       ) {
         prefixedEventNames[eventName] = prefixMap[styleProp]
         return prefixedEventNames[eventName]

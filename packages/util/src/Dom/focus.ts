@@ -1,14 +1,14 @@
 import isVisible from './isVisible'
 
 type DisabledElement =
-    | HTMLLinkElement
-    | HTMLInputElement
-    | HTMLFieldSetElement
-    | HTMLButtonElement
-    | HTMLOptGroupElement
-    | HTMLOptionElement
-    | HTMLSelectElement
-    | HTMLTextAreaElement
+  | HTMLLinkElement
+  | HTMLInputElement
+  | HTMLFieldSetElement
+  | HTMLButtonElement
+  | HTMLOptGroupElement
+  | HTMLOptionElement
+  | HTMLSelectElement
+  | HTMLTextAreaElement
 
 function focusable(node: HTMLElement, includePositive = false): boolean {
   if (isVisible(node)) {

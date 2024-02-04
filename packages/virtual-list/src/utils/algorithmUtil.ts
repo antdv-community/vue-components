@@ -42,7 +42,7 @@ export function findListDiffIndex<T>(
   originList: T[],
   targetList: T[],
   getKey: (item: T) => Key,
-): { index: number; multiple: boolean } | null {
+): { index: number, multiple: boolean } | null {
   const originLen = originList.length
   const targetLen = targetList.length
 

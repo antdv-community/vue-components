@@ -36,7 +36,7 @@ function getParent(getContainer: GetContainer) {
 
     if (
       typeof getContainer === 'object'
-            && getContainer instanceof window.HTMLElement
+      && getContainer instanceof window.HTMLElement
     )
       return getContainer
   }
@@ -81,8 +81,8 @@ const PortalWrapper = defineComponent<PortalWrapperProps, any, string, DefaultSl
     // Update count
     if (
       visible !== prevVisible
-            && supportDom
-            && getParent(getContainer!) === document.body
+      && supportDom
+      && getParent(getContainer!) === document.body
     ) {
       if (visible && !prevVisible)
         openCount += 1
@@ -119,8 +119,8 @@ const PortalWrapper = defineComponent<PortalWrapperProps, any, string, DefaultSl
     const { wrapperClassName } = props
     if (
       container.value
-            && wrapperClassName
-            && wrapperClassName !== container.value.className
+      && wrapperClassName
+      && wrapperClassName !== container.value.className
     )
       container.value.className = wrapperClassName
   }

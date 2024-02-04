@@ -19,8 +19,8 @@ export function warning(valid: boolean, message: string) {
   // Support uglify
   if (
     process.env.NODE_ENV !== 'production'
-        && !valid
-        && console !== undefined
+    && !valid
+    && console !== undefined
   ) {
     const finalMessage = preWarningFns.reduce(
       (msg, preMessageFn) => (preMessageFn as any)(msg ?? '', 'warning'),
@@ -36,8 +36,8 @@ export function note(valid: boolean, message: string) {
   // Support uglify
   if (
     process.env.NODE_ENV !== 'production'
-        && !valid
-        && console !== undefined
+    && !valid
+    && console !== undefined
   ) {
     const finalMessage = preWarningFns.reduce(
       (msg, preMessageFn) => (preMessageFn as any)(msg ?? '', 'note'),

@@ -16,7 +16,7 @@ export interface SharedConfig<T> {
 
 export type GetKey<T> = (item: T) => Key
 
-export type GetSize = (startKey: Key, endKey?: Key) => { top: number; bottom: number }
+export type GetSize = (startKey: Key, endKey?: Key) => { top: number, bottom: number }
 
 export interface ExtraRenderInfo {
   /** Virtual list start line */

@@ -15,8 +15,8 @@ const SingleObserver = defineComponent<ResizeObserverProps>({
     const sizeRef = shallowRef<SizeInfo>({ width: -1, height: -1, offsetWidth: -1, offsetHeight: -1 })
     const getDom = () => {
       const dom = findDOMNode(elementRef as any)
-          || (elementRef.value && typeof elementRef.value === 'object' ? findDOMNode((elementRef.value as any).nativeElement) : null)
-          || findDOMNode(wrapperRef.value)
+        || (elementRef.value && typeof elementRef.value === 'object' ? findDOMNode((elementRef.value as any).nativeElement) : null)
+        || findDOMNode(wrapperRef.value)
       // 判断当前的dom是不是一个text元素
       if (dom && dom.nodeType === 3 && dom.nextElementSibling)
         return dom.nextElementSibling as HTMLElement
@@ -37,9 +37,9 @@ const SingleObserver = defineComponent<ResizeObserverProps>({
       const fixedHeight = Math.floor(height)
       if (
         sizeRef.value.width !== fixedWidth
-              || sizeRef.value.height !== fixedHeight
-              || sizeRef.value.offsetWidth !== offsetWidth
-              || sizeRef.value.offsetHeight !== offsetHeight
+        || sizeRef.value.height !== fixedHeight
+        || sizeRef.value.offsetWidth !== offsetWidth
+        || sizeRef.value.offsetHeight !== offsetHeight
       ) {
         const size = { width: fixedWidth, height: fixedHeight, offsetWidth, offsetHeight }
         sizeRef.value = size

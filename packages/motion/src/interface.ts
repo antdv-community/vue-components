@@ -6,10 +6,10 @@ export const STATUS_ENTER = 'enter' as const
 export const STATUS_LEAVE = 'leave' as const
 
 export type MotionStatus =
-    | typeof STATUS_NONE
-    | typeof STATUS_APPEAR
-    | typeof STATUS_ENTER
-    | typeof STATUS_LEAVE
+  | typeof STATUS_NONE
+  | typeof STATUS_APPEAR
+  | typeof STATUS_ENTER
+  | typeof STATUS_LEAVE
 
 export const STEP_NONE = 'none' as const
 export const STEP_PREPARE = 'prepare' as const
@@ -23,13 +23,13 @@ export const STEP_ACTIVATED = 'end' as const
 export const STEP_PREPARED = 'prepared' as const
 
 export type StepStatus =
-    | typeof STEP_NONE
-    | typeof STEP_PREPARE
-    | typeof STEP_START
-    | typeof STEP_ACTIVE
-    | typeof STEP_ACTIVATED
+  | typeof STEP_NONE
+  | typeof STEP_PREPARE
+  | typeof STEP_START
+  | typeof STEP_ACTIVE
+  | typeof STEP_ACTIVATED
     // Skip motion only
-    | typeof STEP_PREPARED
+  | typeof STEP_PREPARED
 
 export type MotionEvent = (TransitionEvent | AnimationEvent) & {
   deadline?: boolean

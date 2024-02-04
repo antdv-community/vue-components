@@ -196,10 +196,10 @@ export default function useStatus(
       // Leave
       if (
         (isMounted && !visible && props.motionLeave)
-                || (!isMounted
-                    && props.motionLeaveImmediately
-                    && !visible
-                    && props.motionLeave)
+        || (!isMounted
+        && props.motionLeaveImmediately
+        && !visible
+        && props.motionLeave)
       )
         nextStatus = STATUS_LEAVE
 
@@ -230,10 +230,10 @@ export default function useStatus(
       if (
       // Cancel appear
         (status.value === STATUS_APPEAR && !motionAppear)
-                // Cancel enter
-                || (status.value === STATUS_ENTER && !motionEnter)
-                // Cancel leave
-                || (status.value === STATUS_LEAVE && !motionLeave)
+        // Cancel enter
+        || (status.value === STATUS_ENTER && !motionEnter)
+        // Cancel leave
+        || (status.value === STATUS_LEAVE && !motionLeave)
       )
         setStatus(STATUS_NONE)
     },

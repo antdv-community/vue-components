@@ -74,8 +74,8 @@ export default class ScrollLocker {
 
     if (
       (container === document.body
-                && window.innerWidth - document.documentElement.clientWidth > 0)
-            || container.scrollHeight > container.clientHeight
+      && window.innerWidth - document.documentElement.clientWidth > 0)
+      || container.scrollHeight > container.clientHeight
     ) {
       if (getComputedStyle(container).overflow !== 'hidden')
         scrollBarSize = getScrollBarSize()
@@ -121,9 +121,9 @@ export default class ScrollLocker {
 
     if (
       !findLock
-            || locks.some(
-              ({ options }) => options?.container === findLock.options?.container,
-            )
+      || locks.some(
+        ({ options }) => options?.container === findLock.options?.container,
+      )
     )
       return
 

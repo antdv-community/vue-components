@@ -39,9 +39,9 @@ export default function set<Entity = any, Output = Entity, Value = any>(
   // Do nothing if `removeIfUndefined` and parent object not exist
   if (
     paths.length
-        && removeIfUndefined
-        && value === undefined
-        && !get(entity, paths.slice(0, -1))
+    && removeIfUndefined
+    && value === undefined
+    && !get(entity, paths.slice(0, -1))
   )
     return (entity as unknown) as Output
 
@@ -51,8 +51,8 @@ export default function set<Entity = any, Output = Entity, Value = any>(
 function isObject(obj: any) {
   return (
     typeof obj === 'object'
-        && obj !== null
-        && Object.getPrototypeOf(obj) === Object.prototype
+    && obj !== null
+    && Object.getPrototypeOf(obj) === Object.prototype
   )
 }
 

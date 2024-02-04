@@ -3,10 +3,10 @@ export const STATUS_KEEP = 'keep' as const
 export const STATUS_REMOVE = 'remove' as const
 export const STATUS_REMOVED = 'removed' as const
 export type DiffStatus =
-    | typeof STATUS_ADD
-    | typeof STATUS_KEEP
-    | typeof STATUS_REMOVE
-    | typeof STATUS_REMOVED
+  | typeof STATUS_ADD
+  | typeof STATUS_KEEP
+  | typeof STATUS_REMOVE
+  | typeof STATUS_REMOVED
 
 export interface KeyObject {
   key: React.Key

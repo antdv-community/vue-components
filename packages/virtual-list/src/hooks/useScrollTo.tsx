@@ -15,16 +15,16 @@ export interface ScrollPos {
 }
 
 export type ScrollTarget =
-    | {
-      index: number
-      align?: ScrollAlign
-      offset?: number
-    }
-    | {
-      key: Key
-      align?: ScrollAlign
-      offset?: number
-    }
+  | {
+    index: number
+    align?: ScrollAlign
+    offset?: number
+  }
+  | {
+    key: Key
+    align?: ScrollAlign
+    offset?: number
+  }
 
 export default function useScrollTo<T>(
   containerRef: Ref<HTMLDivElement | undefined>,

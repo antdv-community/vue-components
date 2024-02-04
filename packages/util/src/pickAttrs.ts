@@ -67,10 +67,10 @@ export default function pickAttrs(
     if (
     // Aria
       (mergedConfig.aria && (key === 'role' || match(key, ariaPrefix)))
-            // Data
-            || (mergedConfig.data && match(key, dataPrefix))
-            // Attr
-            || (mergedConfig.attr && propList.includes(key))
+      // Data
+      || (mergedConfig.data && match(key, dataPrefix))
+      // Attr
+      || (mergedConfig.attr && propList.includes(key))
     )
       attrs[key] = (props as any)[key]
   })

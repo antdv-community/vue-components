@@ -10,23 +10,23 @@ import { isActive } from './hooks/useStepQueue.ts'
 import DomWrapper from './DomWrapper.tsx'
 
 export type CSSMotionConfig =
-    | boolean
-    | {
-      transitionSupport?: boolean
-      /** @deprecated, no need this anymore since `rc-motion` only support latest react */
-      forwardRef?: boolean
-    }
+  | boolean
+  | {
+    transitionSupport?: boolean
+    /** @deprecated, no need this anymore since `rc-motion` only support latest react */
+    forwardRef?: boolean
+  }
 
 export type MotionName =
-    | string
-    | {
-      appear?: string
-      enter?: string
-      leave?: string
-      appearActive?: string
-      enterActive?: string
-      leaveActive?: string
-    }
+  | string
+  | {
+    appear?: string
+    enter?: string
+    leave?: string
+    appearActive?: string
+    enterActive?: string
+    leaveActive?: string
+  }
 export interface CSSMotionProps {
   motionName?: MotionName
   visible?: boolean
