@@ -8,7 +8,4 @@ export default defineConfig({
   }), {
 
   } as UserConfig),
-  test: {
-
-  },
 })
