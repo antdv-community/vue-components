@@ -6,7 +6,6 @@
   "author": "aibayanyu20 <aibayanyu@qq.com>",
   "license": "MIT",
   "keywords": [],
-  "main": "index.js",
   "scripts": {
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
@@ -15,24 +14,24 @@
     "lint": "eslint . --fix"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.6.2",
-    "@types/node": "^20.11.0",
-    "@vitejs/plugin-vue": "^5.0.3",
+    "@antfu/eslint-config": "^2.8.3",
+    "@types/node": "^20.11.28",
+    "@vitejs/plugin-vue": "^5.0.4",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
-    "@vue/test-utils": "^2.4.3",
+    "@vue/test-utils": "^2.4.5",
     "classnames": "^2.5.1",
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.0",
     "fast-glob": "^3.3.2",
     "jsdom": "^22.1.0",
-    "tsup": "^8.0.1",
-    "typescript": "^5.3.3",
-    "vite": "^5.0.11",
-    "vite-plugin-dts": "^3.7.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.2",
+    "vite": "^5.1.6",
+    "vite-plugin-dts": "^3.7.3",
     "vite-plugin-tsx-auto-props": "^0.0.8",
     "vite-plugin-tsx-resolve-types": "^0.0.2",
     "vite-plugin-vitepress-demo": "^2.2.1",
-    "vitepress": "^1.0.0-rc.36",
+    "vitepress": "1.0.0-rc.45",
     "vitest": "^0.34.6",
-    "vue": "^3.4.12"
+    "vue": "^3.4.21"
   }
 }

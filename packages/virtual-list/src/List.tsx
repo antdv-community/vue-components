@@ -252,7 +252,7 @@ const List = defineComponent<ListProps<any>>({
 
     function keepInRange(newScrollTop: number) {
       let newTop = newScrollTop
-      if (!Number.isNaN(maxScrollHeightRef.value))
+      if (!Number.isNaN(maxScrollHeightRef.value) && useVirtual.value !== false)
         newTop = Math.min(newTop, maxScrollHeightRef.value)
 
       newTop = Math.max(newTop, 0)
@@ -301,6 +301,7 @@ const List = defineComponent<ListProps<any>>({
 
     function onFallbackScroll(e: any) {
       const { scrollTop: newScrollTop } = e.target as HTMLDivElement
+      console.log(newScrollTop, offsetTop.value)
       if (newScrollTop !== offsetTop.value)
         syncScrollTop(newScrollTop)
 

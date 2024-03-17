@@ -20,6 +20,6 @@
   },
   "dependencies": {
     "@vue-components/util": "workspace:*",
-    "classnames": "^2.3.2"
+    "classnames": "^2.5.1"
   }
 }
