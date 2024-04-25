@@ -30,8 +30,8 @@ export default defineConfig({
             link: '/components/input/',
           },
           {
-            text: 'Motion',
-            link: '/components/motion/',
+            text: 'Portal',
+            link: '/components/portal/',
           },
         ],
       },

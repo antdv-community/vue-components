@@ -28,8 +28,8 @@
       "@vue-components/input/*": [
         "./packages/input/src/*"
       ],
-      "@vue-components/motion": [
-        "./packages/motion/src"
+      "@vue-components/portal": [
+        "./packages/portal/src"
       ]
     },
     "resolveJsonModule": true,

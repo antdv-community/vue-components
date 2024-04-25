@@ -7,6 +7,25 @@ import VueJsxAutoProps from 'vite-plugin-tsx-resolve-types'
 
 const base = fileURLToPath(new URL('.', import.meta.url))
 
+const comps = [
+  'util',
+  'checkbox',
+  'resize-observer',
+  'input',
+  'portal',
+]
+
+function genListAlias() {
+  const alias = []
+  for (const comp of comps) {
+    alias.push({
+      find: new RegExp(`^@vue-components\/${comp}`),
+      replacement: resolve(base, 'packages', comp, 'src'),
+    })
+  }
+  return alias
+}
+
 export default defineConfig({
   plugins: [
     vueJsx(),
@@ -15,26 +34,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: [
-      {
-        find: /^@vue-components\/util/,
-        replacement: resolve(base, 'packages', 'util', 'src'),
-      },
-      {
-        find: /^@vue-components\/checkbox/,
-        replacement: resolve(base, 'packages', 'checkbox', 'src'),
-      },
-      {
-        find: /^@vue-components\/resize-observer/,
-        replacement: resolve(base, 'packages', 'resize-observer', 'src'),
-      },
-      {
-        find: /^@vue-components\/input/,
-        replacement: resolve(base, 'packages', 'input', 'src'),
-      },
-      {
-        find: /^@vue-components\/motion/,
-        replacement: resolve(base, 'packages', 'motion', 'src'),
-      },
+      ...genListAlias(),
     ],
   },
 })

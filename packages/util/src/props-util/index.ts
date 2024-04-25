@@ -1,8 +1,16 @@
 import { Fragment } from 'vue'
 
-export function filterEmpty(children = []) {
-  const res = []
-  children.forEach((child) => {
+export function isEmptyElement(c: any) {
+  return (
+    c
+    && (c.type === Comment
+    || (c.type === Fragment && c.children.length === 0)
+    || (c.type === Text && c.children.trim() === ''))
+  )
+}
+export function filterEmpty(children: any[] = []) {
+  const res: any[] = []
+  children.forEach((child: any) => {
     if (Array.isArray(child))
       res.push(...child)
     else if (child?.type === Fragment)

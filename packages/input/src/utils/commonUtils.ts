@@ -9,8 +9,8 @@ export function isEmptyElement(c: any) {
   )
 }
 export function filterEmpty(children = []) {
-  const res = []
-  children.forEach((child) => {
+  const res: any[] = []
+  children.forEach((child: any) => {
     if (Array.isArray(child))
       res.push(...child)
     else if (child?.type === Fragment)
@@ -24,7 +24,7 @@ function isValid(value: any) {
   return (
     value !== undefined
     && value !== null
-    && (Array.isArray(value) ? filterEmpty(value).length : true)
+    && (Array.isArray(value) ? filterEmpty(value as any).length : true)
   )
 }
 
