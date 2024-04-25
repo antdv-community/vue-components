@@ -31,6 +31,10 @@ export default defineConfig({
         find: /^@vue-components\/input/,
         replacement: resolve(base, 'packages', 'input', 'src'),
       },
+      {
+        find: /^@vue-components\/motion/,
+        replacement: resolve(base, 'packages', 'motion', 'src'),
+      },
     ],
   },
 })

@@ -1,6 +1,6 @@
 import type { CSSProperties, VNodeChild } from 'vue'
 import { computed, defineComponent, shallowRef, watch } from 'vue'
-import findDOMNode from '@vue-components/util/Dom/findDOMNode.ts'
+import findDOMNode from '@vue-components/util/Dom/findDOMNode'
 import type { MotionEndEventHandler, MotionEventHandler, MotionPrepareEventHandler, MotionStatus } from './interface'
 import { getTransitionName, supportTransition } from './util/motion.ts'
 import { useMotionContext } from './context.tsx'
@@ -74,16 +74,6 @@ export interface CSSMotionProps {
   onVisibleChanged?: (visible: boolean) => void
 
   // internalRef?: React.Ref<any>
-
-  // children?: (
-  //   props: {
-  //     visible?: boolean
-  //     className?: string
-  //     style?: React.CSSProperties
-  //     [key: string]: any
-  //   },
-  //   ref: (node: any) => void,
-  // ) => React.ReactElement
 }
 
 export interface CSSMotionState {
@@ -155,7 +145,7 @@ export function genCSSMotion(
       return () => {
         const { removeOnLeave = true, motionName, forceRender, leavedClassName, eventProps } = props
         // ===================== Render =====================
-        let motionChildren: VNodeChild = null
+        let motionChildren: VNodeChild
         const mergedProps = { ...eventProps, visible: visible.value }
         const children = slots.default?.()
         if (!children) {
@@ -164,15 +154,17 @@ export function genCSSMotion(
         else if (status.value === STATUS_NONE) {
           // Stable children
           if (!removeOnLeave && renderedRef.value && leavedClassName) {
-            motionChildren = slots.default?.(
-              { ...mergedProps, class: leavedClassName },
+            motionChildren = slots.default?.({
+              props: { ...mergedProps, class: leavedClassName },
               setNodeRef,
+            },
             )
           }
           else if (forceRender || (!removeOnLeave && !leavedClassName)) {
-            motionChildren = slots.default?.(
-              { ...mergedProps, style: { display: 'none' } },
+            motionChildren = slots.default?.({
+              props: { ...mergedProps, style: { display: 'none' } },
               setNodeRef,
+            },
             )
           }
           else {
@@ -192,7 +184,7 @@ export function genCSSMotion(
             statusSuffix = 'start'
 
           const motionCls = getTransitionName(motionName!, `${status.value}-${statusSuffix!}`)
-          motionChildren = slots.default?.(
+          motionChildren = slots.default?.({ props:
             {
               ...mergedProps,
               class: [getTransitionName(motionName!, status.value), {
@@ -200,8 +192,7 @@ export function genCSSMotion(
                 [motionName as string]: typeof motionName === 'string',
               }],
               style: statusStyle.value,
-            },
-            setNodeRef,
+            }, setNodeRef },
           )
           // Auto inject ref if child node not have `ref` props
         }

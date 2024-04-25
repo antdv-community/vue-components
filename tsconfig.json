@@ -27,6 +27,9 @@
       ],
       "@vue-components/input/*": [
         "./packages/input/src/*"
+      ],
+      "@vue-components/motion": [
+        "./packages/motion/src"
       ]
     },
     "resolveJsonModule": true,

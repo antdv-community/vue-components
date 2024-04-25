@@ -1,4 +1,4 @@
-import type { DefineSetupFnComponent, InjectionKey } from 'vue'
+import type {DefineSetupFnComponent, InjectionKey, PropType} from 'vue'
 import { defineComponent, inject, provide } from 'vue'
 
 const globalContext = new Map<SelectorContext<any>, any>()
@@ -19,7 +19,7 @@ export function createContext<ContextProps>(defaultValue?: ContextProps): Select
   }, {
     props: {
       value: {
-        type: Object,
+        type: Object as PropType<ContextProps>,
         default: () => defaultValue,
       },
     },

@@ -29,6 +29,10 @@ export default defineConfig({
             text: 'Input',
             link: '/components/input/',
           },
+          {
+            text: 'Motion',
+            link: '/components/motion/',
+          },
         ],
       },
     ],
