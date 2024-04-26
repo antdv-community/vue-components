@@ -76,6 +76,7 @@ export default function useDom(
     }
   }, {
     flush: 'post',
+    immediate: true,
   })
   return [ele, mergedQueueCreate as ComputedRef<QueueCreate>]
 }

@@ -77,6 +77,12 @@ const Portal = defineComponent<PortalProps>((props = defaults, { slots }) => {
     innerContainer.value = customizeContainer ?? null
   })
 
+  watch(() => props.getContainer, () => {
+    const customizeContainer = getPortalContainer(props.getContainer!)
+    // Tell component that we check this in effect which is safe to be `null`
+    innerContainer.value = customizeContainer ?? null
+  })
+
   const [defaultContainer, queueCreate] = useDom(
     computed(() => !!(mergedRender.value && !innerContainer.value)),
     props.debug,
