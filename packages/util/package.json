@@ -9,6 +9,12 @@
       "require": "./dist/index.cjs"
     },
     "./dist/*": "./dist/*",
+    "./*": {
+      "types": "./dist/*",
+      "import": "./dist/*",
+      "require": "./dist/*",
+      "default": "./dist/*"
+    },
     "./package.json": "./package.json"
   },
   "main": "dist/index.js",

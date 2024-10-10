@@ -1,17 +1,17 @@
 const PIXEL_PATTERN = /margin|padding|width|height|max|min|offset/
 
-const removePixel = {
+const removePixel: any = {
   left: true,
   top: true,
 }
-const floatMap = {
+const floatMap: any = {
   cssFloat: 1,
   styleFloat: 1,
   float: 1,
 }
 
 function getComputedStyle(node: HTMLElement) {
-  return node.nodeType === 1 ? node.ownerDocument.defaultView.getComputedStyle(node, null) : {}
+  return node.nodeType === 1 ? (node as any).ownerDocument.defaultView.getComputedStyle(node, null) : {}
 }
 
 function getStyleValue(node: HTMLElement, type: string, value: string) {
@@ -45,7 +45,7 @@ export function set(node: HTMLElement, name: any, value: string | number) {
     if (typeof value === 'number' && PIXEL_PATTERN.test(name))
       value = `${value}px`
 
-    node.style[name as string] = value // Number
+    ;(node.style as any)[name] = value // Number
     return value
   }
   for (const x in name) {

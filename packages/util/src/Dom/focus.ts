@@ -26,7 +26,7 @@ function focusable(node: HTMLElement, includePositive = false): boolean {
     const tabIndexNum = Number(tabIndexAttr)
 
     // Parse as number if validate
-    let tabIndex: number = null
+    let tabIndex: number | null = null
     if (tabIndexAttr && !Number.isNaN(tabIndexNum))
       tabIndex = tabIndexNum
     else if (isFocusableElement && tabIndex === null)
@@ -54,7 +54,7 @@ export function getFocusNodeList(node: HTMLElement, includePositive = false) {
   return res
 }
 
-let lastFocusElement = null
+let lastFocusElement: any = null
 
 /** @deprecated Do not use since this may failed when used in async */
 export function saveLastFocusNode() {
@@ -73,7 +73,8 @@ export function backLastFocusNode() {
       // 元素可能已经被移动了
       lastFocusElement.focus()
     }
-    catch (e) {
+    // eslint-disable-next-line unused-imports/no-unused-vars
+    catch (_e: any) {
       // empty
     }
   }

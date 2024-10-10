@@ -14,7 +14,7 @@ function isStyleValueSupport(styleName: string, value: any) {
   if (!isStyleNameSupport(styleName))
     return false
 
-  const ele = document.createElement('div')
+  const ele: any = document.createElement('div')
   const origin = ele.style[styleName]
   ele.style[styleName] = value
   return ele.style[styleName] !== origin

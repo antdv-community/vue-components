@@ -23,9 +23,9 @@ function internalSet<Entity = any, Output = Entity, Value = any>(
 
   // Delete prop if `removeIfUndefined` and value is undefined
   if (removeIfUndefined && value === undefined && restPath.length === 1)
-    delete clone[path][restPath[0]]
+    delete (clone as any)[path][restPath[0]]
   else
-    clone[path] = internalSet(clone[path], restPath, value, removeIfUndefined)
+    (clone as any)[path] = internalSet((clone as any)[path], restPath, value, removeIfUndefined)
 
   return clone
 }
@@ -42,8 +42,9 @@ export default function set<Entity = any, Output = Entity, Value = any>(
     && removeIfUndefined
     && value === undefined
     && !get(entity, paths.slice(0, -1))
-  )
+  ) {
     return (entity as unknown) as Output
+  }
 
   return internalSet(entity, paths, value, removeIfUndefined)
 }

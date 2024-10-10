@@ -12,7 +12,7 @@ const transitionEventNames = {
 }
 
 function supportEnd(names: Record<string, any>) {
-  const el = document.createElement('div')
+  const el: any = document.createElement('div')
   for (const name in names) {
     if (names.hasOwnProperty(name) && el.style[name] !== undefined) {
       return {

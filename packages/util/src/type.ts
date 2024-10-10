@@ -1,4 +1,3 @@
-// @ts-expect-error
 import type { App, Plugin, PropType, Ref, SlotsType, VNode } from 'vue'
 
 // https://stackoverflow.com/questions/46176165/ways-to-get-string-literal-type-of-array-values-without-enum-overhead
@@ -27,7 +26,7 @@ export interface PropOptions<T = any, D = T> {
   type?: PropType<T> | true | null
   required?: boolean
   default?: D | DefaultFactory<D> | null | undefined | object
-  validator?(value: unknown): boolean
+  validator?: (value: unknown) => boolean
 }
 
 declare type VNodeChildAtom = VNode | string | number | boolean | null | undefined | void
@@ -37,7 +36,7 @@ export type VueNode = VNodeChildAtom | VNodeChildAtom[] | VNode
 export function withInstall<T>(comp: T) {
   const c = comp as any
   c.install = function (app: App) {
-    app.component(c.displayName || c.name, comp)
+    app.component(c.displayName || c.name, comp as any)
   }
 
   return comp as T & Plugin
@@ -49,7 +48,7 @@ export function eventType<T>() {
   return { type: [Function, Array] as PropType<T | T[]> }
 }
 
-export function objectType<T = {}>(defaultVal?: T) {
+export function objectType<T = object>(defaultVal?: T) {
   return { type: Object as PropType<T>, default: defaultVal as T }
 }
 
@@ -57,7 +56,7 @@ export function booleanType(defaultVal?: boolean) {
   return { type: Boolean, default: defaultVal as boolean }
 }
 
-export function functionType<T = () => {}>(defaultVal?: T) {
+export function functionType<T = () => object>(defaultVal?: T) {
   return { type: Function as PropType<T>, default: defaultVal as T }
 }
 
@@ -90,6 +89,6 @@ export function someType<T>(types?: any[], defaultVal?: T) {
   return types ? { type: types as PropType<T>, default: defaultVal as T } : anyType<T>(defaultVal)
 }
 
-export type CustomSlotsType<T> = SlotsType<T>
+export type CustomSlotsType<T extends Record<string, any>> = SlotsType<T>
 
 export type AnyObject = Record<PropertyKey, any>

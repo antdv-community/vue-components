@@ -1,6 +1,8 @@
 const NO_EXIST = { __NOT_EXIST: true }
 
+// eslint-disable-next-line ts/no-unsafe-function-type
 export type ElementClass = Function
+// eslint-disable-next-line ts/no-unsafe-function-type
 export type Property = PropertyDescriptor | Function
 
 export function spyElementPrototypes<T extends ElementClass>(
@@ -8,17 +10,17 @@ export function spyElementPrototypes<T extends ElementClass>(
   properties: Record<string, Property>,
 ) {
   const propNames = Object.keys(properties)
-  const originDescriptors = {}
+  const originDescriptors: any = {}
 
   propNames.forEach((propName) => {
-    const originDescriptor = Object.getOwnPropertyDescriptor(elementClass.prototype, propName)
+    const originDescriptor: any = Object.getOwnPropertyDescriptor(elementClass.prototype, propName)
     originDescriptors[propName] = originDescriptor || NO_EXIST
 
-    const spyProp = properties[propName]
+    const spyProp: any = properties[propName]
 
     if (typeof spyProp === 'function') {
       // If is a function
-      elementClass.prototype[propName] = function spyFunc(...args) {
+      elementClass.prototype[propName] = function spyFunc(...args: any[]) {
         return spyProp.call(this, originDescriptor, ...args)
       }
     }
@@ -28,7 +30,7 @@ export function spyElementPrototypes<T extends ElementClass>(
         ...spyProp,
         set(value) {
           if (spyProp.set)
-            return spyProp.set.call(this, originDescriptor, value)
+            return (spyProp as any).set.call(this, originDescriptor, value)
 
           return originDescriptor.set(value)
         },

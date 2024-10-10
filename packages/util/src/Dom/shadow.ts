@@ -12,6 +12,6 @@ export function inShadow(ele: Node) {
 /**
  * Return shadowRoot if possible
  */
-export function getShadowRoot(ele: Node): ShadowRoot {
+export function getShadowRoot(ele: Node): ShadowRoot | null {
   return inShadow(ele) ? (getRoot(ele) as ShadowRoot) : null
 }

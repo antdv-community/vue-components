@@ -11,15 +11,15 @@ function isBodyOverflowing() {
 
 let cacheStyle = {}
 
-export default (close) => {
+export default (close: any) => {
   if (!isBodyOverflowing() && !close)
     return
 
   // https://github.com/ant-design/ant-design/issues/19729
   const scrollingEffectClassName = 'ant-scrolling-effect'
   const scrollingEffectClassNameReg = new RegExp(
-        `${scrollingEffectClassName}`,
-        'g',
+    `${scrollingEffectClassName}`,
+    'g',
   )
   const bodyClassName = document.body.className
 

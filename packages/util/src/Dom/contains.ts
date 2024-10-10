@@ -4,10 +4,10 @@ export default function contains(root: Node | null | undefined, n?: Node) {
 
   // Use native if support
   if (root.contains)
-    return root.contains(n)
+    return root.contains(n as any)
 
   // `document.contains` not support with IE11
-  let node = n
+  let node: any = n
   while (node) {
     if (node === root)
       return true

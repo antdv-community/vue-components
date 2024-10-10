@@ -1,5 +1,6 @@
 import type { Ref } from 'vue'
 
+// eslint-disable-next-line ts/no-unsafe-function-type
 export interface RefObject extends Function {
   current?: any
 }
@@ -13,7 +14,7 @@ function createRef(): any {
 
 export function fillRef<T>(ref: Ref, node: T) {
   if (typeof ref === 'function')
-    ref(node)
+    (ref as any)(node)
   else if (typeof ref === 'object' && ref && 'current' in ref)
     (ref as any).current = node
 }

@@ -79,7 +79,7 @@ export function injectCSS(css: string, option: Options = {}) {
   if (prepend) {
     // If is queue `prepend`, it will prepend first style and then append rest style
     if (isPrependQueue) {
-      const existStyle = findStyles(container).filter((node) => {
+      const existStyle = findStyles(container).filter((node: any) => {
         // Ignore style which not injected by rc-util with prepend
         if (
           !['prepend', 'prependQueue'].includes(node.getAttribute(APPEND_ORDER))
@@ -135,7 +135,7 @@ function syncRealContainer(container: ContainerType, option: Options) {
 
   // Find real container when not cached or cached container removed
   if (!cachedRealContainer || !contains(document, cachedRealContainer)) {
-    const placeholderStyle = injectCSS('', option)
+    const placeholderStyle: any = injectCSS('', option)
     const { parentNode } = placeholderStyle
     containerCache.set(container, parentNode)
     container.removeChild(placeholderStyle)
@@ -167,7 +167,7 @@ export function updateCSS(css: string, key: string, option: Options = {}) {
     return existNode
   }
 
-  const newNode = injectCSS(css, option)
+  const newNode: any = injectCSS(css, option)
   newNode.setAttribute(getMark(option), key)
   return newNode
 }

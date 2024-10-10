@@ -12,7 +12,7 @@ export function cloneElement<T, U>(
   nodeProps: NodeProps = {},
   override = true,
   mergeRef = false,
-): VNode<T, U> {
+): VNode<T, U> | null {
   let ele = vnode
   if (Array.isArray(vnode))
     ele = filterEmpty(vnode)[0]
@@ -20,7 +20,7 @@ export function cloneElement<T, U>(
   if (!ele)
     return null
 
-  const node = cloneVNode(ele as VNode<T, U>, nodeProps as any, mergeRef)
+  const node: any = cloneVNode(ele as VNode<T, U>, nodeProps as any, mergeRef)
 
   // cloneVNode内部是合并属性，这里改成覆盖属性
   node.props = (override ? { ...node.props, ...nodeProps } : node.props) as any
@@ -28,8 +28,8 @@ export function cloneElement<T, U>(
   return node
 }
 
-export function cloneVNodes(vnodes, nodeProps = {}, override = true) {
-  return vnodes.map(vnode => cloneElement(vnode, nodeProps, override))
+export function cloneVNodes(vnodes: any, nodeProps = {}, override = true) {
+  return vnodes.map((vnode: any) => cloneElement(vnode, nodeProps, override))
 }
 
 export function deepCloneElement<T, U>(
@@ -37,16 +37,16 @@ export function deepCloneElement<T, U>(
   nodeProps: NodeProps = {},
   override = true,
   mergeRef = false,
-) {
+): any {
   if (Array.isArray(vnode)) {
-    return vnode.map(item => deepCloneElement(item, nodeProps, override, mergeRef))
+    return vnode.map((item: any) => deepCloneElement(item, nodeProps, override, mergeRef))
   }
   else {
     // 需要判断是否为vnode方可进行clone操作
     if (!isVNode(vnode))
       return vnode
 
-    const cloned = cloneElement(vnode, nodeProps, override, mergeRef)
+    const cloned: any = cloneElement(vnode, nodeProps, override, mergeRef)
     if (Array.isArray(cloned.children))
       cloned.children = deepCloneElement(cloned.children as VNode<T, U>[])
 
@@ -79,7 +79,7 @@ export function customRenderSlot(
   fallback?: () => VNodeArrayChildren,
 ) {
   const slot = slots[name]?.(props)
-  if (ensureValidVNode(slot))
+  if (ensureValidVNode(slot as any))
     return slot
 
   return fallback?.()
