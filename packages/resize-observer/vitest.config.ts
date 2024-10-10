@@ -4,7 +4,7 @@ import { buildCommon } from '../../scripts/build.common'
 
 export default defineConfig({
   ...mergeConfig(buildCommon({
-    external: ['vue', 'classnames', /^@vue-components\/util/, 'resize-observer-polyfill'],
+    external: ['vue', 'classnames', /^@v-c\/util/, 'resize-observer-polyfill'],
   }), {
 
   } as UserConfig),

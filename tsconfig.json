@@ -13,22 +13,22 @@
     /* Bundler mode */
     "moduleResolution": "bundler",
     "paths": {
-      "@vue-components/util": [
+      "@v-c/util": [
         "./packages/util/src"
       ],
-      "@vue-components/checkbox": [
+      "@v-c/checkbox": [
         "./packages/checkbox/src"
       ],
-      "@vue-components/resize-observer": [
+      "@v-c/resize-observer": [
         "./packages/resize-observer/src"
       ],
-      "@vue-components/util/*": [
+      "@v-c/util/*": [
         "./packages/util/src/*"
       ],
-      "@vue-components/input/*": [
+      "@v-c/input/*": [
         "./packages/input/src/*"
       ],
-      "@vue-components/portal": [
+      "@v-c/portal": [
         "./packages/portal/src"
       ]
     },

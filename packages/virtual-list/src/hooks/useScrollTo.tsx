@@ -1,7 +1,7 @@
 import type { ComputedRef, Ref } from 'vue'
 import { shallowRef, watch } from 'vue'
-import { warning } from '@vue-components/util'
-import raf from '@vue-components/util/raf'
+import { warning } from '@v-c/util'
+import raf from '@v-c/util/raf'
 import type CacheMap from '../utils/CacheMap.ts'
 import type { GetKey, Key } from '../interface.ts'
 

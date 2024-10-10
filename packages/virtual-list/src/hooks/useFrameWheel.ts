@@ -1,4 +1,4 @@
-import raf from '@vue-components/util/raf'
+import raf from '@v-c/util/raf'
 import type { ComputedRef, Ref } from 'vue'
 import { shallowRef } from 'vue'
 import isFF from '../utils/isFirefox'

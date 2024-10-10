@@ -1,8 +1,8 @@
 import type { CSSProperties, VNodeChild } from 'vue'
 import { defineComponent, shallowRef } from 'vue'
 import classNames from 'classnames'
-import ResizeObserver from '@vue-components/resize-observer'
-import { checkSlotProp } from '@vue-components/util/utils/checkSlotProp'
+import ResizeObserver from '@v-c/resize-observer'
+import { checkSlotProp } from '@v-c/util/utils/checkSlotProp'
 
 export interface InnerProps {
   role?: string

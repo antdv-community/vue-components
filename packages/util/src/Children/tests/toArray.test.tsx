@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Fragment, defineComponent } from 'vue'
 import { mount } from '@vue/test-utils'
-import { toArray } from '@vue-components/util/Children/toArray.ts'
+import { toArray } from '@v-c/util/Children/toArray.ts'
 
 describe('toArray', () => {
   let children: any

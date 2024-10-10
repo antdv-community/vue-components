@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue'
-import { toArray } from '@vue-components/util/Children/toArray'
-import { warning } from '@vue-components/util'
+import { toArray } from '@v-c/util/Children/toArray'
+import { warning } from '@v-c/util'
 import { _rs } from './utils/observerUtil'
 import SingleObserver from './SingleObserver'
 import { Collection } from './Collection.tsx'

@@ -1,5 +1,5 @@
 import { cloneVNode, defineComponent } from 'vue'
-import { toArray } from '@vue-components/util/Children/toArray'
+import { toArray } from '@v-c/util/Children/toArray'
 
 export interface ItemProps {
   setRef: (el: HTMLElement) => void

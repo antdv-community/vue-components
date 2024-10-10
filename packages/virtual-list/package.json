@@ -1,5 +1,5 @@
 {
-  "name": "@vue-components/resize-observer",
+  "name": "@v-c/resize-observer",
   "type": "module",
   "version": "0.0.1",
   "exports": {
@@ -19,8 +19,8 @@
     "vue": "^3.0.0"
   },
   "dependencies": {
-    "@vue-components/resize-observer": "workspace:*",
-    "@vue-components/util": "workspace:*",
+    "@v-c/resize-observer": "workspace:*",
+    "@v-c/util": "workspace:*",
     "classnames": "^2.5.1"
   }
 }

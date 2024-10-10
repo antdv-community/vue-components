@@ -11,8 +11,8 @@ import {
   watchPostEffect,
 } from 'vue'
 import classNames from 'classnames'
-import type { ResizeObserverProps } from '@vue-components/resize-observer'
-import ResizeObserver from '@vue-components/resize-observer'
+import type { ResizeObserverProps } from '@v-c/resize-observer'
+import ResizeObserver from '@v-c/resize-observer'
 import type { ScrollPos, ScrollTarget } from './hooks/useScrollTo'
 import type { ExtraRenderInfo, Key, SharedConfig } from './interface.ts'
 import type { ScrollBarDirectionType, ScrollBarRef } from './ScrollBar.tsx'

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import useMergedState from '@vue-components/util/hooks/useMergedState'
+import useMergedState from '@v-c/util/hooks/useMergedState'
 import type { Ref } from 'vue'
 import { computed, defineComponent, shallowRef } from 'vue'
 

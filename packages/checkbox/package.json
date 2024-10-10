@@ -1,5 +1,5 @@
 {
-  "name": "@vue-components/checkbox",
+  "name": "@v-c/checkbox",
   "type": "module",
   "version": "0.0.1",
   "exports": {

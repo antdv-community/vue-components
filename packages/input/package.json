@@ -1,5 +1,5 @@
 {
-  "name": "@vue-components/input",
+  "name": "@v-c/input",
   "type": "module",
   "version": "1.0.0",
   "description": "",
@@ -20,7 +20,7 @@
     "vue": "^3.0.0"
   },
   "dependencies": {
-    "@vue-components/util": "workspace:*",
+    "@v-c/util": "workspace:*",
     "classnames": "^2.5.1"
   }
 }

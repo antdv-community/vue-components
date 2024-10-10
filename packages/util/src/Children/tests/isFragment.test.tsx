@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { createVNode } from 'vue'
-import { isFragment } from '@vue-components/util/Children/isFragment.ts'
+import { isFragment } from '@v-c/util/Children/isFragment.ts'
 
 describe('isFragment', () => {
   it('should ', () => {

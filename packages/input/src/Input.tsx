@@ -2,8 +2,8 @@
 import type { ComponentPublicInstance, Directive, SlotsType, VNode } from 'vue'
 import { defineComponent, nextTick, onMounted, shallowRef, watch, withDirectives } from 'vue'
 import classnames from 'classnames'
-import type { ChangeEvent, FocusEventHandler } from '@vue-components/util/EventInterface'
-import omit from '@vue-components/util/omit'
+import type { ChangeEvent, FocusEventHandler } from '@v-c/util/EventInterface'
+import omit from '@v-c/util/omit'
 import type { InputProps } from './interface'
 import { inputProps } from './interface'
 import type { InputFocusOptions } from './utils/commonUtils'
@@ -15,7 +15,7 @@ import {
   triggerFocus,
 } from './utils/commonUtils'
 
-// import antInputDirective from '@vue-components/util/antInputDirective';
+// import antInputDirective from '@v-c/util/antInputDirective';
 import BaseInput from './BaseInput'
 
 function onCompositionStart(e: any) {

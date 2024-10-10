@@ -1,5 +1,5 @@
 {
-  "name": "@vue-components/context",
+  "name": "@v-c/context",
   "type": "module",
   "version": "0.0.1",
   "exports": {
@@ -15,10 +15,10 @@
   "scripts": {
     "build": "vite build"
   },
-  "dependencies": {
-    "@vue-components/util": "workspace:*"
-  },
   "peerDependencies": {
     "vue": "^3.0.0"
+  },
+  "dependencies": {
+    "@v-c/util": "workspace:*"
   }
 }

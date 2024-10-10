@@ -19,7 +19,7 @@ function genListAlias() {
   const alias = []
   for (const comp of comps) {
     alias.push({
-      find: new RegExp(`^@vue-components\/${comp}`),
+      find: new RegExp(`^@v-c\/${comp}`),
       replacement: resolve(base, 'packages', comp, 'src'),
     })
   }

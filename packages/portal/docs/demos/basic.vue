@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref } from 'vue'
-import Portal from '@vue-components/portal'
+import Portal from '@v-c/portal'
 
 const show = ref(true)
 const customizeContainer = ref(false)
