@@ -2,6 +2,15 @@
   "name": "@vue-components/util",
   "type": "module",
   "version": "0.0.1",
+  "description": "Vue3 components utils",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "aibayanyu20",
+    "email": "aibayanyu@qq.com",
+    "url": "https://yanyu.me"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -19,7 +28,8 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "prepublish": "pnpm build"
   },
   "peerDependencies": {
     "vue": "^3.0.0"
