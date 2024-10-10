@@ -1,5 +1,5 @@
 {
-  "name": "@vue-components/util",
+  "name": "@v-c/util",
   "type": "module",
   "version": "0.0.1",
   "description": "Vue3 components utils",
