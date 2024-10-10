@@ -77,7 +77,7 @@ importers:
 
   packages/context:
     dependencies:
-      '@vue-components/util':
+      '@v-c/util':
         specifier: workspace:*
         version: link:../util
       vue:
@@ -86,7 +86,7 @@ importers:
 
   packages/input:
     dependencies:
-      '@vue-components/util':
+      '@v-c/util':
         specifier: workspace:*
         version: link:../util
       classnames:
@@ -98,7 +98,7 @@ importers:
 
   packages/portal:
     dependencies:
-      '@vue-components/util':
+      '@v-c/util':
         specifier: workspace:*
         version: link:../util
       classnames:
@@ -110,7 +110,7 @@ importers:
 
   packages/resize-observer:
     dependencies:
-      '@vue-components/util':
+      '@v-c/util':
         specifier: workspace:*
         version: link:../util
       classnames:
@@ -131,10 +131,10 @@ importers:
 
   packages/virtual-list:
     dependencies:
-      '@vue-components/resize-observer':
+      '@v-c/resize-observer':
         specifier: workspace:*
         version: 'link:'
-      '@vue-components/util':
+      '@v-c/util':
         specifier: workspace:*
         version: link:../util
       classnames:
