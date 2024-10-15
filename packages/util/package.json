@@ -11,22 +11,8 @@
     "email": "aibayanyu@qq.com",
     "url": "https://yanyu.me"
   },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./dist/*": "./dist/*",
-    "./*": {
-      "types": "./dist/*",
-      "import": "./dist/*",
-      "require": "./dist/*",
-      "default": "./dist/*"
-    },
-    "./package.json": "./package.json"
-  },
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "vite build",
     "prepublish": "pnpm build"
