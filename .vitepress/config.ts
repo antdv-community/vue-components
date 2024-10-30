@@ -33,6 +33,10 @@ export default defineConfig({
             text: 'Portal',
             link: '/components/portal/',
           },
+          {
+            text: 'mutate-observer',
+            link: '/components/mutate-observer/',
+          },
         ],
       },
     ],
