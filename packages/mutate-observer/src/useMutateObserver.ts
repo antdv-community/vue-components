@@ -12,11 +12,10 @@ export default function useMutateObserver(
   callback: MutationCallback,
   options: Ref<MutationObserverInit | undefined>,
 ) {
-  watchEffect(() => {
+  watchEffect((onCleanup) => {
     if (!nodeOrList.value) {
       return
     }
-
     let ins: MutationObserver
 
     const nodeList = Array.isArray(nodeOrList.value) ? nodeOrList.value : [nodeOrList.value]
@@ -26,9 +25,9 @@ export default function useMutateObserver(
       nodeList.forEach(node => ins.observe(node, options.value || defaultOptions.value))
     }
 
-    return () => {
+    onCleanup(() => {
       ins?.takeRecords()
       ins?.disconnect()
-    }
+    })
   })
 }
