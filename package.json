@@ -22,6 +22,7 @@
     "@vitejs/plugin-vue-jsx": "^4.0.1",
     "@vue/test-utils": "^2.4.6",
     "classnames": "^2.5.1",
+    "cross-env": "^7.0.3",
     "eslint": "^9.13.0",
     "fast-glob": "^3.3.2",
     "flexsearch": "^0.7.43",

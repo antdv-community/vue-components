@@ -52,29 +52,12 @@ function handleChange(_type: string) {
   type.value = _type
 }
 
-let index = 0
-function handleChangeData() {
-  if (index === 0) {
-    renderData(0)
-    index = 1
-  }
-  else if (index === 1) {
-    renderData(10)
-    index = 2
-  }
-  else if (index === 2) {
-    renderData(100)
-    index = 0
-  }
-}
+renderData(1000)
 </script>
 
 <template>
   <div>
     <div style="display: flex;flex-wrap: wrap;gap: 5px;margin-bottom: 10px">
-      <button @click="handleChangeData">
-        修改数据
-      </button>
       <label>
         <input type="radio" name="type" :checked="type === 'dom'" @change="handleChange('dom')">
         dom
