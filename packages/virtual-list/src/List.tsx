@@ -301,7 +301,6 @@ const List = defineComponent<ListProps<any>>({
 
     function onFallbackScroll(e: any) {
       const { scrollTop: newScrollTop } = e.target as HTMLDivElement
-      console.log(newScrollTop, offsetTop.value)
       if (newScrollTop !== offsetTop.value)
         syncScrollTop(newScrollTop)
 
@@ -525,22 +524,22 @@ const List = defineComponent<ListProps<any>>({
             )
           }
           {
-              inVirtual.value && scrollWidth && (
-                <ScrollBar
-                  ref={horizontalScrollBarRef}
-                  prefixCls={prefixCls}
-                  scrollOffset={offsetLeft.value}
-                  scrollRange={scrollWidth!}
-                  rtl={isRTL.value}
-                  onScroll={onScrollBar}
-                  onStartMove={onScrollbarStartMove}
-                  onStopMove={onScrollbarStopMove}
-                  spinSize={horizontalScrollBarSpinSize.value}
-                  containerSize={size.value.width}
-                  style={styles?.horizontalScrollBar}
-                  thumbStyle={styles?.horizontalScrollBarThumb}
-                />
-              )
+            inVirtual.value && scrollWidth && (
+              <ScrollBar
+                ref={horizontalScrollBarRef}
+                prefixCls={prefixCls}
+                scrollOffset={offsetLeft.value}
+                scrollRange={scrollWidth!}
+                rtl={isRTL.value}
+                onScroll={onScrollBar}
+                onStartMove={onScrollbarStartMove}
+                onStopMove={onScrollbarStopMove}
+                spinSize={horizontalScrollBarSpinSize.value}
+                containerSize={size.value.width}
+                style={styles?.horizontalScrollBar}
+                thumbStyle={styles?.horizontalScrollBarThumb}
+              />
+            )
           }
         </div>
       )

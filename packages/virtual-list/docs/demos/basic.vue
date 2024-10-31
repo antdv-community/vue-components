@@ -10,10 +10,14 @@ interface Item {
 }
 
 const data = shallowRef<Item[]>([])
-for (let i = 0; i < 1000; i += 1) {
-  data.value.push({
-    id: i,
-  })
+function renderData(num: number) {
+  const dataList = []
+  for (let i = 0; i < num; i += 1) {
+    dataList.push({
+      id: i,
+    })
+  }
+  data.value = dataList
 }
 
 function onScroll(e: any) {
@@ -47,11 +51,30 @@ function handleDestroy() {
 function handleChange(_type: string) {
   type.value = _type
 }
+
+let index = 0
+function handleChangeData() {
+  if (index === 0) {
+    renderData(0)
+    index = 1
+  }
+  else if (index === 1) {
+    renderData(10)
+    index = 2
+  }
+  else if (index === 2) {
+    renderData(100)
+    index = 0
+  }
+}
 </script>
 
 <template>
   <div>
     <div style="display: flex;flex-wrap: wrap;gap: 5px;margin-bottom: 10px">
+      <button @click="handleChangeData">
+        修改数据
+      </button>
       <label>
         <input type="radio" name="type" :checked="type === 'dom'" @change="handleChange('dom')">
         dom

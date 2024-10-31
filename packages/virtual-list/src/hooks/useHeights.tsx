@@ -1,5 +1,5 @@
-import findDOMNode from '@v-c/util/Dom/findDOMNode'
-import raf from '@v-c/util/raf'
+import findDOMNode from '@v-c/util/dist/Dom/findDOMNode'
+import raf from '@v-c/util/dist/raf'
 import type { ShallowRef } from 'vue'
 import { onBeforeUnmount, shallowRef } from 'vue'
 import type { GetKey, Key } from '../interface'

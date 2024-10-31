@@ -1,5 +1,5 @@
 {
-  "name": "@v-c/resize-observer",
+  "name": "@v-c/virtual-list",
   "type": "module",
   "version": "0.0.1",
   "exports": {

@@ -1,5 +1,5 @@
 import { defineComponent, inject, onBeforeUnmount, onMounted, shallowRef } from 'vue'
-import findDOMNode from '@v-c/util/Dom/findDOMNode'
+import findDOMNode from '@v-c/util/dist/Dom/findDOMNode'
 import type { ResizeObserverProps, SizeInfo } from '../index.tsx'
 import { CollectionContext } from '../Collection'
 import { observe, unobserve } from '../utils/observerUtil.ts'

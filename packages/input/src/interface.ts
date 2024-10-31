@@ -1,6 +1,6 @@
 import type { ExtractPropTypes, PropType, VueElement } from 'vue'
-import type { ChangeEventHandler, CompositionEventHandler, FocusEventHandler, KeyboardEventHandler, MouseEventHandler } from '@v-c/util/EventInterface'
-import type { VueNode } from '@v-c/util/type'
+import type { ChangeEventHandler, CompositionEventHandler, FocusEventHandler, KeyboardEventHandler, MouseEventHandler } from '@v-c/util/dist/EventInterface'
+import type { VueNode } from '@v-c/util/dist/type'
 import type { InputFocusOptions } from './utils/commonUtils'
 
 export type SizeType = 'small' | 'middle' | 'large' | undefined

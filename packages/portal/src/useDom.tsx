@@ -1,6 +1,6 @@
 import type { ComputedRef } from 'vue'
 import { computed, onBeforeUnmount, shallowRef, watch } from 'vue'
-import canUseDom from '@v-c/util/Dom/canUseDom'
+import canUseDom from '@v-c/util/dist/Dom/canUseDom'
 import type { QueueCreate } from './Context.tsx'
 import { useContextState } from './Context.tsx'
 

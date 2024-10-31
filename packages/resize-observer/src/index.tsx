@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { toArray } from '@v-c/util/Children/toArray'
+import { toArray } from '@v-c/util/dist/Children/toArray'
 import { warning } from '@v-c/util'
 import { _rs } from './utils/observerUtil'
 import SingleObserver from './SingleObserver'

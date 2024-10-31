@@ -1,7 +1,7 @@
 import type { ComputedRef, Ref, ShallowRef } from 'vue'
 import { computed, nextTick, shallowRef, unref, watch } from 'vue'
-import { removeCSS, updateCSS } from '@v-c/util/Dom/dynamicCSS'
-import { getTargetScrollBarSize } from '@v-c/util/getScrollBarSize'
+import { removeCSS, updateCSS } from '@v-c/util/dist/Dom/dynamicCSS'
+import { getTargetScrollBarSize } from '@v-c/util/dist/getScrollBarSize'
 import { isBodyOverflowing } from './util'
 
 const UNIQUE_ID = `vc-util-locker-${Date.now()}`
@@ -18,12 +18,12 @@ export default function useScrollLocker(lock?: ShallowRef<boolean> | ComputedRef
       const isOverflow = isBodyOverflowing()
 
       updateCSS(
-              `
+        `
 html body {
   overflow-y: hidden;
   ${isOverflow ? `width: calc(100% - ${scrollbarSize}px);` : ''}
 }`,
-              id.value,
+        id.value,
       )
     }
     else {

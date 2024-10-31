@@ -22,7 +22,7 @@
       "@v-c/resize-observer": [
         "./packages/resize-observer/src"
       ],
-      "@v-c/util/*": [
+      "@v-c/util/dist/*": [
         "./packages/util/src/*"
       ],
       "@v-c/input/*": [

@@ -1,7 +1,7 @@
-import canUseDom from '@v-c/util/Dom/canUseDom'
+import canUseDom from '@v-c/util/dist/Dom/canUseDom'
 import { Teleport, computed, defineComponent, onMounted, shallowRef, watch } from 'vue'
 import { warning } from '@v-c/util'
-import { filterEmpty } from '@v-c/util/props-util'
+import { filterEmpty } from '@v-c/util/dist/props-util'
 import useDom from './useDom.tsx'
 import useScrollLocker from './useScrollLocker.tsx'
 import { useContextProvider } from './Context.tsx'
@@ -57,7 +57,7 @@ const Portal = defineComponent<PortalProps>((props = defaults, { slots }) => {
   if (process.env.NODE_ENV !== 'production') {
     warning(
       canUseDom() || !open,
-            `Portal only work in client side. Please call 'useEffect' to show Portal instead default render in SSR.`,
+      `Portal only work in client side. Please call 'useEffect' to show Portal instead default render in SSR.`,
     )
   }
   // ====================== Should Render ======================
@@ -94,10 +94,10 @@ const Portal = defineComponent<PortalProps>((props = defaults, { slots }) => {
   // ========================= Locker ==========================
   useScrollLocker(
     computed(() => !!(props.autoLock
-    && props.open
-    && canUseDom()
-    && (mergedContainer.value === defaultContainer.value
-    || mergedContainer.value === document.body))),
+      && props.open
+      && canUseDom()
+      && (mergedContainer.value === defaultContainer.value
+        || mergedContainer.value === document.body))),
   )
   return () => {
     // ========================= Render ==========================

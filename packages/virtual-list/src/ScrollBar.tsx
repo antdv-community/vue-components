@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'vue'
 import { computed, defineComponent, onBeforeUnmount, onMounted, shallowRef, watch } from 'vue'
-import raf from '@v-c/util/raf'
+import raf from '@v-c/util/dist/raf'
 import classNames from 'classnames'
 
 export type ScrollBarDirectionType = 'ltr' | 'rtl'
