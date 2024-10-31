@@ -436,8 +436,9 @@ const KeyCode = {
       || e.metaKey
       // Function keys don't generate text
       || (keyCode >= KeyCode.F1 && keyCode <= KeyCode.F12)
-    )
+    ) {
       return false
+    }
 
     // The following keys are quite harmless, even in combination with
     // CTRL, ALT or SHIFT.

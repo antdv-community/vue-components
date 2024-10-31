@@ -1,10 +1,10 @@
-import canUseDom from '@v-c/util/dist/Dom/canUseDom'
-import { Teleport, computed, defineComponent, onMounted, shallowRef, watch } from 'vue'
 import { warning } from '@v-c/util'
+import canUseDom from '@v-c/util/dist/Dom/canUseDom'
 import { filterEmpty } from '@v-c/util/dist/props-util'
+import { computed, defineComponent, onMounted, shallowRef, Teleport, watch } from 'vue'
+import { useContextProvider } from './Context.tsx'
 import useDom from './useDom.tsx'
 import useScrollLocker from './useScrollLocker.tsx'
-import { useContextProvider } from './Context.tsx'
 
 export type ContainerType = Element | DocumentFragment
 

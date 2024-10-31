@@ -1,7 +1,7 @@
 import type { ComputedRef, Ref, ShallowRef } from 'vue'
-import { computed, nextTick, shallowRef, unref, watch } from 'vue'
 import { removeCSS, updateCSS } from '@v-c/util/dist/Dom/dynamicCSS'
 import { getTargetScrollBarSize } from '@v-c/util/dist/getScrollBarSize'
+import { computed, nextTick, shallowRef, unref, watch } from 'vue'
 import { isBodyOverflowing } from './util'
 
 const UNIQUE_ID = `vc-util-locker-${Date.now()}`

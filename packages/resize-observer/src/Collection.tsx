@@ -1,6 +1,6 @@
 import type { InjectionKey } from 'vue'
-import { defineComponent, inject, provide, shallowRef } from 'vue'
 import type { SizeInfo } from '.'
+import { defineComponent, inject, provide, shallowRef } from 'vue'
 
 type onCollectionResize = (size: SizeInfo, element: HTMLElement, data: any) => void
 

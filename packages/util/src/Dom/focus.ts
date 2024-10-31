@@ -73,7 +73,7 @@ export function backLastFocusNode() {
       // 元素可能已经被移动了
       lastFocusElement.focus()
     }
-    // eslint-disable-next-line unused-imports/no-unused-vars
+
     catch (_e: any) {
       // empty
     }

@@ -1,4 +1,4 @@
-import { Teleport, defineComponent, onBeforeUnmount, onMounted, onUnmounted, shallowRef } from 'vue'
+import { defineComponent, onBeforeUnmount, onMounted, onUnmounted, shallowRef, Teleport } from 'vue'
 import canUseDom from './Dom/canUseDom'
 
 export interface PortalProps {

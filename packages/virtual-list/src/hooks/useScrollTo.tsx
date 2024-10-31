@@ -1,9 +1,9 @@
 import type { ComputedRef, Ref } from 'vue'
-import { shallowRef, watch } from 'vue'
+import type { GetKey, Key } from '../interface.ts'
+import type CacheMap from '../utils/CacheMap.ts'
 import { warning } from '@v-c/util'
 import raf from '@v-c/util/dist/raf'
-import type CacheMap from '../utils/CacheMap.ts'
-import type { GetKey, Key } from '../interface.ts'
+import { shallowRef, watch } from 'vue'
 
 const MAX_TIMES = 10
 

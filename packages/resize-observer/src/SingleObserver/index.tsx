@@ -1,6 +1,6 @@
-import { defineComponent, inject, onBeforeUnmount, onMounted, shallowRef } from 'vue'
-import findDOMNode from '@v-c/util/dist/Dom/findDOMNode'
 import type { ResizeObserverProps, SizeInfo } from '../index.tsx'
+import findDOMNode from '@v-c/util/dist/Dom/findDOMNode'
+import { defineComponent, inject, onBeforeUnmount, onMounted, shallowRef } from 'vue'
 import { CollectionContext } from '../Collection'
 import { observe, unobserve } from '../utils/observerUtil.ts'
 import DomWrapper from './DomWrapper'

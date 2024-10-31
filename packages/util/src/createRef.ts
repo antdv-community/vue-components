@@ -1,6 +1,5 @@
 import type { Ref } from 'vue'
 
-// eslint-disable-next-line ts/no-unsafe-function-type
 export interface RefObject extends Function {
   current?: any
 }

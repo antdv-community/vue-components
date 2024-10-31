@@ -1,6 +1,6 @@
 import type { Plugin, PluginOption, UserConfig } from 'vite'
-import vueJsx from '@vitejs/plugin-vue-jsx'
 import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 import dts from 'vite-plugin-dts'
 import tsxResolveTypes from 'vite-plugin-tsx-resolve-types'
 

@@ -1,4 +1,11 @@
+import type { ResizeObserverProps } from '@v-c/resize-observer'
 import type { CSSProperties, DefineComponent, HTMLAttributes, VNode, VNodeChild } from 'vue'
+import type { InnerProps } from './Filter.tsx'
+import type { ScrollPos, ScrollTarget } from './hooks/useScrollTo'
+import type { ExtraRenderInfo, Key, SharedConfig } from './interface.ts'
+import type { ScrollBarDirectionType, ScrollBarRef } from './ScrollBar.tsx'
+import ResizeObserver from '@v-c/resize-observer'
+import classNames from 'classnames'
 import {
   computed,
   createVNode,
@@ -10,24 +17,17 @@ import {
   watch,
   watchPostEffect,
 } from 'vue'
-import classNames from 'classnames'
-import type { ResizeObserverProps } from '@v-c/resize-observer'
-import ResizeObserver from '@v-c/resize-observer'
-import type { ScrollPos, ScrollTarget } from './hooks/useScrollTo'
-import type { ExtraRenderInfo, Key, SharedConfig } from './interface.ts'
-import type { ScrollBarDirectionType, ScrollBarRef } from './ScrollBar.tsx'
-import type { InnerProps } from './Filter.tsx'
-import useDiffItem from './hooks/useDiffItem.ts'
-import useHeights from './hooks/useHeights.tsx'
-import useOriginScroll from './hooks/useOriginScroll.ts'
-import useFrameWheel from './hooks/useFrameWheel.ts'
-import useMobileTouchMove from './hooks/useMobileTouchMove.ts'
-import { getSpinSize } from './utils/scrollbarUtil.ts'
-import useScrollTo from './hooks/useScrollTo'
-import { useGetSize } from './hooks/useGetSize.ts'
-import useChildren from './hooks/useChildren.tsx'
 import Filter from './Filter.tsx'
+import useChildren from './hooks/useChildren.tsx'
+import useDiffItem from './hooks/useDiffItem.ts'
+import useFrameWheel from './hooks/useFrameWheel.ts'
+import { useGetSize } from './hooks/useGetSize.ts'
+import useHeights from './hooks/useHeights.tsx'
+import useMobileTouchMove from './hooks/useMobileTouchMove.ts'
+import useOriginScroll from './hooks/useOriginScroll.ts'
+import useScrollTo from './hooks/useScrollTo'
 import ScrollBar from './ScrollBar.tsx'
+import { getSpinSize } from './utils/scrollbarUtil.ts'
 
 const EMPTY_DATA = [] as any[]
 

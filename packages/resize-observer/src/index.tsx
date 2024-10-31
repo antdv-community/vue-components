@@ -1,9 +1,9 @@
-import { defineComponent } from 'vue'
-import { toArray } from '@v-c/util/dist/Children/toArray'
 import { warning } from '@v-c/util'
-import { _rs } from './utils/observerUtil'
-import SingleObserver from './SingleObserver'
+import { toArray } from '@v-c/util/dist/Children/toArray'
+import { defineComponent } from 'vue'
 import { Collection } from './Collection.tsx'
+import SingleObserver from './SingleObserver'
+import { _rs } from './utils/observerUtil'
 
 const INTERNAL_PREFIX_KEY = 'vc-observer-key'
 export {

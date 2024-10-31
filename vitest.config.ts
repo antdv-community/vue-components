@@ -1,12 +1,9 @@
-import { fileURLToPath } from 'node:url'
-import { resolve } from 'node:path'
-import { defineConfig } from 'vitest/config'
+import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import VueJsxAutoProps from 'vite-plugin-tsx-resolve-types'
 
-import vue from '@vitejs/plugin-vue'
-
-const base = fileURLToPath(new URL('.', import.meta.url))
+import { defineConfig } from 'vitest/config'
+import { genListAlias } from './vite.config.ts'
 
 export default defineConfig({
   plugins: [
@@ -20,10 +17,7 @@ export default defineConfig({
   },
   resolve: {
     alias: [
-      {
-        find: /^@v-c\/util/,
-        replacement: resolve(base, 'packages', 'util', 'src'),
-      },
+      ...genListAlias(),
     ],
   },
 })

@@ -1,9 +1,9 @@
-import { fileURLToPath } from 'node:url'
 import { resolve } from 'node:path'
-import { defineConfig } from 'vite'
+import { fileURLToPath } from 'node:url'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import { vitepressDemo } from 'vite-plugin-vitepress-demo'
+import { defineConfig } from 'vite'
 import VueJsxAutoProps from 'vite-plugin-tsx-resolve-types'
+import { vitepressDemo } from 'vite-plugin-vitepress-demo'
 
 const base = fileURLToPath(new URL('.', import.meta.url))
 
@@ -15,7 +15,7 @@ const comps = [
   'portal',
 ]
 
-function genListAlias() {
+export function genListAlias() {
   const alias = []
   for (const comp of comps) {
     if (Array.isArray(comp)) {

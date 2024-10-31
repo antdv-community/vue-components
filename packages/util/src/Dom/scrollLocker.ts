@@ -16,8 +16,8 @@ interface Ilocks {
 let locks: Ilocks[] = []
 const scrollingEffectClassName = 'ant-scrolling-effect'
 const scrollingEffectClassNameReg = new RegExp(
-    `${scrollingEffectClassName}`,
-    'g',
+  `${scrollingEffectClassName}`,
+  'g',
 )
 
 // https://github.com/ant-design/ant-design/issues/19340
@@ -74,7 +74,7 @@ export default class ScrollLocker {
 
     if (
       (container === document.body
-      && window.innerWidth - document.documentElement.clientWidth > 0)
+        && window.innerWidth - document.documentElement.clientWidth > 0)
       || container.scrollHeight > container.clientHeight
     ) {
       if (getComputedStyle(container).overflow !== 'hidden')
@@ -124,8 +124,9 @@ export default class ScrollLocker {
       || locks.some(
         ({ options }) => options?.container === findLock.options?.container,
       )
-    )
+    ) {
       return
+    }
 
     // Remove Effect
     const container = this.options?.container || document.body

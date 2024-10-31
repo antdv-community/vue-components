@@ -1,7 +1,7 @@
+import { AntdTheme } from 'vite-plugin-vitepress-demo/theme'
+import Theme from 'vitepress/theme'
 // https://vitepress.dev/guide/custom-theme
 import { h } from 'vue'
-import Theme from 'vitepress/theme'
-import { AntdTheme } from 'vite-plugin-vitepress-demo/theme'
 import './style.css'
 
 export default {

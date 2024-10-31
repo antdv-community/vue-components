@@ -1,12 +1,12 @@
+import type { ChangeEvent, FocusEventHandler } from '@v-c/util/dist/EventInterface'
 // base 0.0.1-alpha.7
 import type { ComponentPublicInstance, Directive, SlotsType, VNode } from 'vue'
-import { defineComponent, nextTick, onMounted, shallowRef, watch, withDirectives } from 'vue'
-import classnames from 'classnames'
-import type { ChangeEvent, FocusEventHandler } from '@v-c/util/dist/EventInterface'
-import omit from '@v-c/util/dist/omit'
 import type { InputProps } from './interface'
-import { inputProps } from './interface'
 import type { InputFocusOptions } from './utils/commonUtils'
+import omit from '@v-c/util/dist/omit'
+import classnames from 'classnames'
+import { defineComponent, nextTick, onMounted, shallowRef, watch, withDirectives } from 'vue'
+import { inputProps } from './interface'
 import {
   fixControlledValue,
   hasAddon,
@@ -30,7 +30,7 @@ function onCompositionEnd(e: any) {
   trigger(e.target, 'input')
 }
 
-function trigger(el, type) {
+function trigger(el: any, type: any) {
   const e = document.createEvent('HTMLEvents')
   e.initEvent(type, true, true)
   el.dispatchEvent(e)
@@ -128,7 +128,7 @@ export default defineComponent({
       }
       else {
         nextTick(() => {
-          if (inputRef.value.value !== stateValue.value)
+          if (inputRef.value?.value !== stateValue.value)
             rootRef.value?.$forceUpdate()
         })
       }
@@ -142,8 +142,8 @@ export default defineComponent({
       if ((((e as any).isComposing || composing) && props.lazy) || stateValue.value === value)
         return
       const newVal = e.target.value
-      resolveOnChange(inputRef.value, e, triggerChange)
-      setValue(newVal)
+      resolveOnChange(inputRef.value!, e, triggerChange)
+      setValue(newVal!)
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -164,7 +164,7 @@ export default defineComponent({
     }
 
     const handleReset = (e: MouseEvent) => {
-      resolveOnChange(inputRef.value, e, triggerChange)
+      resolveOnChange(inputRef.value!, e, triggerChange)
       setValue('', () => {
         focus()
       })
@@ -233,12 +233,12 @@ export default defineComponent({
         type,
       }
       if (valueModifiers.lazy)
-        delete inputProps.onInput
+        delete (inputProps as any).onInput
 
       if (!inputProps.autofocus)
         delete inputProps.autofocus
 
-      const inputNode = <input {...omit(inputProps, ['size'])} />
+      const inputNode = <input {...omit(inputProps, ['size']) as any} />
       return withDirectives(inputNode as VNode, [[antInput]])
     }
     const getSuffix = () => {
@@ -285,7 +285,7 @@ export default defineComponent({
           prefixCls={prefixCls}
           inputElement={getInputElement()}
           handleReset={handleReset}
-          value={fixControlledValue(stateValue.value)}
+          value={fixControlledValue(stateValue.value as any)}
           focused={focused.value}
           triggerFocus={focus}
           suffix={getSuffix()}

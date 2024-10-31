@@ -1,5 +1,5 @@
-import raf from '@v-c/util/dist/raf'
 import type { ComputedRef, Ref } from 'vue'
+import raf from '@v-c/util/dist/raf'
 import { shallowRef } from 'vue'
 import isFF from '../utils/isFirefox'
 import useOriginScroll from './useOriginScroll'

@@ -1,11 +1,11 @@
 import type { SlotsType } from 'vue'
+import type { PortalRef } from './Portal'
 import { defineComponent, onBeforeUnmount, onMounted, onUpdated, shallowRef } from 'vue'
-import raf from './raf'
 import canUseDom from './Dom/canUseDom'
 import ScrollLocker from './Dom/scrollLocker'
-import setStyle from './setStyle'
-import type { PortalRef } from './Portal'
 import Portal from './Portal'
+import raf from './raf'
+import setStyle from './setStyle'
 
 // import raf from './raf';
 
@@ -37,8 +37,9 @@ function getParent(getContainer: GetContainer) {
     if (
       typeof getContainer === 'object'
       && getContainer instanceof window.HTMLElement
-    )
+    ) {
       return getContainer
+    }
   }
   return document.body
 }
@@ -98,8 +99,9 @@ const PortalWrapper = defineComponent<PortalWrapperProps, any, string, DefaultSl
       getContainerIsFunc
         ? getContainer.toString() !== prevGetContainer.toString()
         : getContainer !== prevGetContainer
-    )
+    ) {
       removeCurrentContainer()
+    }
   }
 
   const attachToParent = (force = false) => {
@@ -121,8 +123,9 @@ const PortalWrapper = defineComponent<PortalWrapperProps, any, string, DefaultSl
       container.value
       && wrapperClassName
       && wrapperClassName !== container.value.className
-    )
+    ) {
       container.value.className = wrapperClassName
+    }
   }
 
   const getContainer = () => {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref } from 'vue'
 import Portal from '@v-c/portal'
+import { computed, onUnmounted, ref } from 'vue'
 
 const show = ref(true)
 const customizeContainer = ref(false)
@@ -10,7 +10,6 @@ const divRef = ref<HTMLDivElement>()
 const getContainer = computed(() => customizeContainer.value ? divRef.value : undefined)
 
 onUnmounted(() => {
-  // eslint-disable-next-line no-console
   console.log('Demo unmount!!')
 })
 </script>

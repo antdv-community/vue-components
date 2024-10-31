@@ -1,4 +1,4 @@
-import type {DefineSetupFnComponent, InjectionKey, PropType} from 'vue'
+import type { DefineSetupFnComponent, InjectionKey, PropType } from 'vue'
 import { defineComponent, inject, provide } from 'vue'
 
 const globalContext = new Map<SelectorContext<any>, any>()

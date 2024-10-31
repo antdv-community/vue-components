@@ -1,8 +1,8 @@
+import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { defineComponent, onMounted, ref } from 'vue'
-import { mount } from '@vue/test-utils'
-import PortalWrapper, { getOpenCount } from '../src/PortalWrapper'
 import Portal from '../src/Portal'
+import PortalWrapper, { getOpenCount } from '../src/PortalWrapper'
 
 describe('portal', () => {
   let domContainer: HTMLDivElement

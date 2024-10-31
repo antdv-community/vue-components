@@ -19,7 +19,7 @@ const eventsName = `onCopy onCut onPaste onCompositionEnd onCompositionStart onC
     onDurationChange onEmptied onEncrypted onEnded onError onLoadedData onLoadedMetadata
     onLoadStart onPause onPlay onPlaying onProgress onRateChange onSeeked onSeeking onStalled onSuspend onTimeUpdate onVolumeChange onWaiting onLoad onError`
 
-const propList = `${attributes} ${eventsName}`.split(/[\s\n]+/)
+const propList = `${attributes} ${eventsName}`.split(/\s+/)
 
 const ariaPrefix = 'aria-'
 const dataPrefix = 'data-'
@@ -71,8 +71,9 @@ export default function pickAttrs(
       || (mergedConfig.data && match(key, dataPrefix))
       // Attr
       || (mergedConfig.attr && propList.includes(key))
-    )
+    ) {
       attrs[key] = (props as any)[key]
+    }
   })
   return attrs
 }

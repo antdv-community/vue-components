@@ -1,8 +1,8 @@
 import type { Slots, VNode, VNodeArrayChildren, VNodeProps } from 'vue'
-import { Comment, Fragment, render as VueRender, cloneVNode, isVNode } from 'vue'
+import type { RefObject } from './createRef'
+import { cloneVNode, Comment, Fragment, isVNode, render as VueRender } from 'vue'
 import { filterEmpty } from './props-util'
 import warning from './warning'
-import type { RefObject } from './createRef'
 
 type NodeProps = Record<string, any> &
   Omit<VNodeProps, 'ref'> & { ref?: VNodeProps['ref'] | RefObject }

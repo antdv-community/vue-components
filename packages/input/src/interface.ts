@@ -1,9 +1,10 @@
-import type { ExtractPropTypes, PropType, VueElement } from 'vue'
 import type { ChangeEventHandler, CompositionEventHandler, FocusEventHandler, KeyboardEventHandler, MouseEventHandler } from '@v-c/util/dist/EventInterface'
 import type { VueNode } from '@v-c/util/dist/type'
+import type { ExtractPropTypes, PropType, VueElement } from 'vue'
 import type { InputFocusOptions } from './utils/commonUtils'
 
 export type SizeType = 'small' | 'middle' | 'large' | undefined
+
 const InputStatuses = ['warning', 'error', ''] as const
 
 export type InputStatus = (typeof InputStatuses)[number]
@@ -67,34 +68,34 @@ export interface CountConfig {
 export function inputProps() {
   return {
     ...baseInputProps(),
-    id: String,
-    placeholder: {
+    'id': String,
+    'placeholder': {
       type: [String, Number] as PropType<string | number>,
     },
-    autocomplete: String,
-    type: String,
-    name: String,
-    size: { type: String as PropType<SizeType> },
-    autofocus: { type: Boolean, default: undefined },
-    lazy: { type: Boolean, default: true },
-    maxlength: Number,
-    loading: { type: Boolean, default: undefined },
-    bordered: { type: Boolean, default: undefined },
-    showCount: { type: [Boolean, Object] as PropType<boolean | ShowCountProps> },
-    htmlSize: Number,
-    onPressEnter: Function as PropType<KeyboardEventHandler>,
-    onKeydown: Function as PropType<KeyboardEventHandler>,
-    onKeyup: Function as PropType<KeyboardEventHandler>,
-    onFocus: Function as PropType<FocusEventHandler>,
-    onBlur: Function as PropType<FocusEventHandler>,
-    onChange: Function as PropType<ChangeEventHandler>,
-    onInput: Function as PropType<ChangeEventHandler>,
+    'autocomplete': String,
+    'type': String,
+    'name': String,
+    'size': { type: String as PropType<SizeType> },
+    'autofocus': { type: Boolean, default: undefined },
+    'lazy': { type: Boolean, default: true },
+    'maxlength': Number,
+    'loading': { type: Boolean, default: undefined },
+    'bordered': { type: Boolean, default: undefined },
+    'showCount': { type: [Boolean, Object] as PropType<boolean | ShowCountProps> },
+    'htmlSize': Number,
+    'onPressEnter': Function as PropType<KeyboardEventHandler>,
+    'onKeydown': Function as PropType<KeyboardEventHandler>,
+    'onKeyup': Function as PropType<KeyboardEventHandler>,
+    'onFocus': Function as PropType<FocusEventHandler>,
+    'onBlur': Function as PropType<FocusEventHandler>,
+    'onChange': Function as PropType<ChangeEventHandler>,
+    'onInput': Function as PropType<ChangeEventHandler>,
     'onUpdate:value': Function as PropType<(val: string) => void>,
-    onCompositionstart: Function as PropType<CompositionEventHandler>,
-    onCompositionend: Function as PropType<CompositionEventHandler>,
-    valueModifiers: Object,
-    hidden: { type: Boolean, default: undefined },
-    status: String as PropType<InputStatus>,
+    'onCompositionstart': Function as PropType<CompositionEventHandler>,
+    'onCompositionend': Function as PropType<CompositionEventHandler>,
+    'valueModifiers': Object,
+    'hidden': { type: Boolean, default: undefined },
+    'status': String as PropType<InputStatus>,
   }
 }
 export type InputProps = Partial<ExtractPropTypes<ReturnType<typeof inputProps>>>

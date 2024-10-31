@@ -1,8 +1,8 @@
+import type { ShallowRef } from 'vue'
+import type { GetKey, Key } from '../interface'
 import findDOMNode from '@v-c/util/dist/Dom/findDOMNode'
 import raf from '@v-c/util/dist/raf'
-import type { ShallowRef } from 'vue'
 import { onBeforeUnmount, shallowRef } from 'vue'
-import type { GetKey, Key } from '../interface'
 import CacheMap from '../utils/CacheMap'
 
 export default function useHeights<T>(

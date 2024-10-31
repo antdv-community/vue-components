@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
-import { shallowRef, watch } from 'vue'
-import type CacheMap from '../utils/CacheMap'
 import type { GetKey, GetSize, Key } from '../interface'
+import type CacheMap from '../utils/CacheMap'
+import { shallowRef, watch } from 'vue'
 
 /**
  * Size info need loop query for the `heights` which will has the perf issue.

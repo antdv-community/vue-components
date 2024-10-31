@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { ListRef } from '../../src'
 import { shallowRef } from 'vue'
 import List from '../../src/List'
-import type { ListRef } from '../../src'
 
 const listRef = shallowRef<ListRef>()
 const visible = shallowRef(true)

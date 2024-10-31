@@ -1,6 +1,6 @@
+import type { Key } from '../interface.ts'
 // Firefox has low performance of map.
 import { shallowRef } from 'vue'
-import type { Key } from '../interface.ts'
 
 class CacheMap {
   maps: Record<string, number>

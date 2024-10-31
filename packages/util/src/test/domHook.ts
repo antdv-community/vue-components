@@ -1,8 +1,7 @@
 const NO_EXIST = { __NOT_EXIST: true }
 
-// eslint-disable-next-line ts/no-unsafe-function-type
 export type ElementClass = Function
-// eslint-disable-next-line ts/no-unsafe-function-type
+
 export type Property = PropertyDescriptor | Function
 
 export function spyElementPrototypes<T extends ElementClass>(

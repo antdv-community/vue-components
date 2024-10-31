@@ -1,6 +1,6 @@
-import classNames from 'classnames'
-import useMergedState from '@v-c/util/dist/hooks/useMergedState'
 import type { Ref } from 'vue'
+import useMergedState from '@v-c/util/dist/hooks/useMergedState'
+import classNames from 'classnames'
 import { computed, defineComponent, shallowRef } from 'vue'
 
 export interface InputHTMLAttributesType {
@@ -30,8 +30,8 @@ export interface CheckBoxInstance {
 }
 
 export interface CheckboxProps extends Omit<InputHTMLAttributesType, 'onChange'> {
-  prefixCls?: string
-  onChange?: (e: CheckboxChangeEvent) => void
+  'prefixCls'?: string
+  'onChange'?: (e: CheckboxChangeEvent) => void
   'onUpdate:checked'?: (value: boolean) => void
 }
 

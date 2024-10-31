@@ -1,7 +1,7 @@
 import type { ComputedRef } from 'vue'
-import { computed, onBeforeUnmount, shallowRef, watch } from 'vue'
-import canUseDom from '@v-c/util/dist/Dom/canUseDom'
 import type { QueueCreate } from './Context.tsx'
+import canUseDom from '@v-c/util/dist/Dom/canUseDom'
+import { computed, onBeforeUnmount, shallowRef, watch } from 'vue'
 import { useContextState } from './Context.tsx'
 
 const EMPTY_LIST: VoidFunction[] = []
