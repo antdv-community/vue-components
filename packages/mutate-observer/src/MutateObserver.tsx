@@ -1,9 +1,9 @@
 import type { PropType } from 'vue'
-import { defineComponent, ref, shallowRef, toRef } from 'vue'
 import findDOMNode from '@v-c/util/Dom/findDOMNode'
 import { cloneElement } from '@v-c/util/vnode'
-import DomWrapper from './wrapper'
+import { defineComponent, nextTick, ref, shallowRef, toRef } from 'vue'
 import useMutateObserver from './useMutateObserver'
+import DomWrapper from './wrapper'
 
 type OnMutateFn = (mutations: MutationRecord[], observer: MutationObserver) => void
 
@@ -52,7 +52,9 @@ export default defineComponent({
         return null
       }
 
-      target.value = getDom()
+      nextTick(() => {
+        target.value = getDom()
+      })
 
       return (
         <DomWrapper ref={wrapperRef}>
