@@ -1,9 +1,10 @@
+/// <reference types="histoire" />
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { defineConfig } from 'vite'
 import VueJsxAutoProps from 'vite-plugin-tsx-resolve-types'
-import { vitepressDemo } from 'vite-plugin-vitepress-demo'
 
 const base = fileURLToPath(new URL('.', import.meta.url))
 
@@ -37,8 +38,8 @@ export function genListAlias() {
 
 export default defineConfig({
   plugins: [
+    vue(),
     vueJsx(),
-    vitepressDemo(),
     VueJsxAutoProps(),
   ],
   resolve: {
