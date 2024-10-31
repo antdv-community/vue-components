@@ -1,5 +1,5 @@
-import { ref, watchEffect } from 'vue'
 import type { Ref, ShallowRef } from 'vue'
+import { ref, watchEffect } from 'vue'
 
 const defaultOptions: Ref<MutationObserverInit> = ref({
   subtree: true,
@@ -8,7 +8,7 @@ const defaultOptions: Ref<MutationObserverInit> = ref({
 })
 
 export default function useMutateObserver(
-  nodeOrList: ShallowRef<Element | Text | null | Element[]>,
+  nodeOrList: ShallowRef<Element | Text | Element[] | undefined>,
   callback: MutationCallback,
   options: Ref<MutationObserverInit | undefined>,
 ) {

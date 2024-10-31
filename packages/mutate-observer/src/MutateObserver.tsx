@@ -1,9 +1,9 @@
-import type { PropType } from 'vue'
-import findDOMNode from '@v-c/util/Dom/findDOMNode'
-import { cloneElement } from '@v-c/util/vnode'
+import type { PropType, VNodeRef } from 'vue'
+import findDOMNode from '@v-c/util/dist/Dom/findDOMNode'
+import { cloneElement } from '@v-c/util/dist/vnode'
 import { defineComponent, nextTick, ref, shallowRef, toRef } from 'vue'
 import useMutateObserver from './useMutateObserver'
-import DomWrapper from './wrapper'
+import DomWrapper from './Wrapper'
 
 type OnMutateFn = (mutations: MutationRecord[], observer: MutationObserver) => void
 
@@ -22,13 +22,15 @@ export default defineComponent({
   setup(props, { slots }) {
     const internalOptions = toRef(props, 'options')
 
-    const elementRef = ref(null)
+    const elementRef = ref()
 
-    const wrapperRef = ref(null)
+    const wrapperRef = ref()
 
-    const target = shallowRef<Element | null | Text>(null)
+    const target = shallowRef<Element | Text>()
 
     const callback: OnMutateFn = (...args) => props.onMutate(...args)
+
+    const bindRef = (e: VNodeRef) => elementRef.value = e
 
     const getDom = () => {
       const dom = findDOMNode(elementRef as any)
@@ -58,7 +60,7 @@ export default defineComponent({
 
       return (
         <DomWrapper ref={wrapperRef}>
-          {cloneElement(children, { ref: elementRef }, true, true)}
+          {cloneElement(children as any, { ref: bindRef }, true, true)}
         </DomWrapper>
       )
     }
