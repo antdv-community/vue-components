@@ -10,20 +10,20 @@ describe('mutateObserver', () => {
     const Comp = defineComponent({
       setup() {
         const flag = ref(true)
-        return () => {
+        return () => (
           <MutateObserver onMutate={fn}>
             <button
-              class={flag ? 'aaa' : 'bbb'}
+              class={flag.value ? 'aaa' : 'bbb'}
               onClick={() => flag.value = !flag.value}
             >
               click
             </button>
           </MutateObserver>
-        }
+        )
       },
     })
 
-    const wrapper = mount(Comp)
+    const wrapper = mount(<Comp />)
 
     await wrapper.find('button').trigger('click')
 
