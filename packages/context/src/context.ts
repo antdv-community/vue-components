@@ -1,18 +1,19 @@
-import type { DefineSetupFnComponent, InjectionKey, PropType } from 'vue'
-import { defineComponent, inject, provide } from 'vue'
+import type { ComputedRef, DefineSetupFnComponent, InjectionKey, PropType } from 'vue'
+import { computed, defineComponent, inject, provide } from 'vue'
 
 const globalContext = new Map<SelectorContext<any>, any>()
 
 export interface SelectorContext<ContextProps> {
-  Context: InjectionKey<ContextProps>
+  Context: InjectionKey<ComputedRef<ContextProps>>
   Provider: DefineSetupFnComponent<{ value: any }>
   defaultValue?: ContextProps
 }
 
 export function createContext<ContextProps>(defaultValue?: ContextProps): SelectorContext<ContextProps> {
-  const Context: InjectionKey<ContextProps> = Symbol('Context')
+  const Context: InjectionKey<ComputedRef<ContextProps>> = Symbol('Context')
   const Provider = defineComponent((props, { slots }) => {
-    provide(Context, props.value)
+    provide(Context, computed(() => props.value))
+
     return () => {
       return slots.default?.()
     }
@@ -38,5 +39,5 @@ export function createContext<ContextProps>(defaultValue?: ContextProps): Select
 
 export function useContext<ContextProps>(holder: SelectorContext<ContextProps>) {
   const context = holder.Context
-  return inject(context, (globalContext.get(holder) ?? holder.defaultValue) as ContextProps)
+  return inject(context, (globalContext.get(holder) ?? computed(() => holder.defaultValue)) as ComputedRef<ContextProps>)
 }

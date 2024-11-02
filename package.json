@@ -7,6 +7,7 @@
   "license": "MIT",
   "keywords": [],
   "scripts": {
+    "dev": "histoire dev",
     "story:dev": "histoire dev",
     "story:build": "histoire build",
     "story:preview": "histoire preview",
@@ -17,13 +18,13 @@
   "devDependencies": {
     "@antfu/eslint-config": "^3.8.0",
     "@histoire/plugin-vue": "^0.17.17",
-    "@types/node": "^20.17.3",
+    "@types/node": "^20.17.5",
     "@vitejs/plugin-vue": "^5.1.4",
     "@vitejs/plugin-vue-jsx": "^4.0.1",
     "@vue/test-utils": "^2.4.6",
     "classnames": "^2.5.1",
     "cross-env": "^7.0.3",
-    "eslint": "^9.13.0",
+    "eslint": "^9.14.0",
     "fast-glob": "^3.3.2",
     "flexsearch": "^0.7.43",
     "histoire": "^0.17.17",
