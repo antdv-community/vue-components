@@ -1,7 +1,7 @@
 import type { WatchSource } from 'vue'
 import { nextTick, watch } from 'vue'
 
-export function useLayoutEffect(callback: Function, deps: WatchSource<unknown>[]) {
+export function useLayoutEffect(callback: Function, deps: WatchSource<unknown>[] = []) {
   let close: Function | null = null
 
   watch(deps, async () => {
