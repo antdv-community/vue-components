@@ -3,7 +3,7 @@ import { nextTick, onMounted, onUnmounted, onUpdated, watch } from 'vue'
 
 export function useLayoutEffect(callback: Function, deps: WatchSource<unknown>[] = []) {
   let close: Function | null = null
-  if (deps) {
+  if (deps && deps.length) {
     watch(deps, async () => {
       if (close) {
         close?.()
