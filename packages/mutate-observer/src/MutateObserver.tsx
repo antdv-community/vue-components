@@ -26,7 +26,7 @@ export default defineComponent({
 
     const wrapperRef = ref()
 
-    const target = shallowRef<Element | Text>()
+    const target = shallowRef<Element | Text | null>(null)
 
     const callback: OnMutateFn = (...args) => props.onMutate(...args)
 

@@ -8,7 +8,7 @@ const defaultOptions: Ref<MutationObserverInit> = ref({
 })
 
 export default function useMutateObserver(
-  nodeOrList: ShallowRef<Element | Text | Element[] | undefined>,
+  nodeOrList: ShallowRef<Element | Text | Element[] | null>,
   callback: MutationCallback,
   options: Ref<MutationObserverInit | undefined>,
 ) {
