@@ -1,4 +1,4 @@
-import { Fragment } from 'vue'
+import { Comment, Fragment, Text } from 'vue'
 
 export function isEmptyElement(c: any) {
   return (
