@@ -19,5 +19,8 @@
   },
   "peerDependencies": {
     "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "vue-types": "^5.1.3"
   }
 }
