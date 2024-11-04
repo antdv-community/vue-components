@@ -1,8 +1,9 @@
 import type { FocusEventHandler, KeyboardEventHandler } from '@v-c/util/dist/EventInterface'
-import type { ExtractPropTypes, PropType, VNode } from 'vue'
+import type { CSSProperties, ExtractPropTypes, PropType, VNode } from 'vue'
 import useMergedState from '@v-c/util/dist/hooks/useMergedState'
 import KeyCode from '@v-c/util/dist/KeyCode'
 import pickAttrs from '@v-c/util/dist/pickAttrs'
+import { initDefaultProps } from '@v-c/util/dist/props-util'
 import PropTypes from '@v-c/util/dist/vue-types'
 import classNames from 'classnames'
 import { computed, defineComponent, onMounted, ref } from 'vue'
@@ -16,7 +17,6 @@ export type Direction = 'ltr' | 'rtl'
 export function rateProps() {
   return {
     'prefixCls': String,
-    'className': PropTypes.string,
     'defaultValue': Number,
     'value': Number,
     'count': Number,
@@ -44,42 +44,17 @@ export type RateProps = Partial<ExtractPropTypes<ReturnType<typeof rateProps>>>
 export default defineComponent({
   name: 'ARate',
   inheritAttrs: false,
-  props: rateProps(),
-  setup(props, { expose }) {
-    const {
-      // Base
-      prefixCls = 'vc-rate',
-      className,
-
-      // Value
-      defaultValue,
-      value: propValue,
-      count = 5,
-      allowHalf = false,
-      allowClear = true,
-      keyboard = true,
-
-      // Display
-      character = '★',
-      characterRender,
-
-      // Meta
-      disabled,
-      direction = 'ltr',
-      tabIndex = 0,
-      autoFocus,
-
-      // Events
-      onHoverChange,
-      onChange,
-      onFocus,
-      onBlur,
-      onKeyDown,
-      onMouseLeave,
-
-      ...restProps
-    } = props
-
+  props: initDefaultProps(rateProps(), {
+    prefixCls: 'vc-rate',
+    count: 5,
+    allowHalf: false,
+    allowClear: true,
+    keyboard: true,
+    character: '★',
+    direction: 'ltr',
+    tabIndex: 0,
+  }),
+  setup(props, { attrs, emit, expose }) {
     const [setStarRef, starRefs] = useRefs()
     const rateRef = ref<HTMLUListElement | null>(null)
 
@@ -100,13 +75,14 @@ export default defineComponent({
       blur: triggerBlur,
     })
 
-    const [state, setStateValue] = useMergedState(defaultValue || 0, {
-      value: computed(() => propValue),
+    const [state, setStateValue] = useMergedState(props.defaultValue || 0, {
+      value: computed(() => props.value),
     })
 
     const [cleanedValue, setCleanedValue] = useMergedState<number | null>(null)
 
     const getStarValue = (index: number, x: number) => {
+      const { direction, allowHalf } = props
       const reverse = direction === 'rtl'
       let starValue = index + 1
       if (allowHalf) {
@@ -125,19 +101,19 @@ export default defineComponent({
 
     const changeValue = (nextValue: number) => {
       setStateValue(nextValue)
-      onChange?.(nextValue)
+      emit('change', nextValue)
     }
 
     const focused = ref(false)
 
     const onInternalFocus = () => {
       focused.value = true
-      onFocus?.()
+      emit('focus')
     }
 
     const onInternalBlur = () => {
       focused.value = false
-      onBlur?.()
+      emit('blur')
     }
 
     const hoverValue = ref<number>(null)
@@ -148,21 +124,23 @@ export default defineComponent({
         hoverValue.value = nextHoverValue
         setCleanedValue(null)
       }
-      onHoverChange?.(nextHoverValue)
+      emit('hoverChange', hoverValue)
     }
 
     const onMouseLeaveCallback = (event?: MouseEvent) => {
+      const { disabled } = props
       if (!disabled) {
         hoverValue.value = null
         setCleanedValue(null)
-        onHoverChange?.(undefined)
+        emit('hoverChange', undefined)
       }
       if (event) {
-        onMouseLeave?.(event)
+        emit('mouseLeave', event)
       }
     }
 
     const onClick = (event: MouseEvent | KeyboardEvent, index: number) => {
+      const { allowClear } = props
       const newValue = getStarValue(index, (event as MouseEvent).pageX)
       let isReset = false
       if (allowClear) {
@@ -176,6 +154,7 @@ export default defineComponent({
     const onInternalKeyDown: KeyboardEventHandler = (event) => {
       const { keyCode } = event
       const { value } = state
+      const { keyboard, count, direction, allowHalf } = props
       const reverse = direction === 'rtl'
       const step = allowHalf ? 0.5 : 1
 
@@ -198,54 +177,60 @@ export default defineComponent({
         }
       }
 
-      onKeyDown?.(event)
+      emit('keyDown', event)
     }
 
     onMounted(() => {
+      const { autoFocus, disabled } = props
       if (autoFocus && !disabled) {
         triggerFocus()
       }
     })
 
-    const starNodes = Array.from({ length: count })
-      .fill(0)
-      .map((_, index) => (
-        <Star
-          ref={setStarRef(index) as () => VNode}
-          index={index}
-          count={count}
-          disabled={disabled}
-          prefixCls={`${prefixCls}-star`}
-          allowHalf={allowHalf}
-          value={hoverValue.value === null ? state.value : hoverValue.value}
-          onClick={onClick}
-          onHover={onHover}
-          key={index}
-          character={character}
-          characterRender={characterRender}
-          focused={focused.value}
-        />
-      ))
+    return () => {
+      const { count, allowHalf, disabled, prefixCls, direction, character, characterRender, tabIndex, ...restProps } = props
+      const { class: className, style } = attrs
+      const classString = classNames(prefixCls, className, {
+        [`${prefixCls}-disabled`]: disabled,
+        [`${prefixCls}-rtl`]: direction === 'rtl',
+      })
 
-    const classString = classNames(prefixCls, className, {
-      [`${prefixCls}-disabled`]: disabled,
-      [`${prefixCls}-rtl`]: direction === 'rtl',
-    })
+      const starNodes = Array.from({ length: count })
+        .fill(0)
+        .map((_, index) => (
+          <Star
+            ref={setStarRef(index) as () => VNode}
+            index={index}
+            count={count}
+            disabled={disabled}
+            prefixCls={`${prefixCls}-star`}
+            allowHalf={allowHalf}
+            value={hoverValue.value === null ? state.value : hoverValue.value}
+            onClick={onClick}
+            onHover={onHover}
+            key={index}
+            character={character}
+            characterRender={characterRender}
+            focused={focused.value}
+          />
+        ))
 
-    return () => (
-      <ul
-        class={classString}
-        onMouseleave={onMouseLeaveCallback}
-        tabindex={disabled ? -1 : tabIndex}
-        onFocus={disabled ? null : onInternalFocus}
-        onBlur={disabled ? null : onInternalBlur}
-        onKeydown={disabled ? null : onInternalKeyDown}
-        ref={rateRef}
-        role="radiogroup"
-        {...pickAttrs(restProps, { aria: true, data: true, attr: true })}
-      >
-        {starNodes}
-      </ul>
-    )
+      return (
+        <ul
+          class={classString}
+          style={style as CSSProperties}
+          onMouseleave={onMouseLeaveCallback}
+          tabindex={disabled ? -1 : tabIndex}
+          onFocus={disabled ? null : onInternalFocus}
+          onBlur={disabled ? null : onInternalBlur}
+          onKeydown={disabled ? null : onInternalKeyDown}
+          ref={rateRef}
+          role="radiogroup"
+          {...pickAttrs(restProps, { aria: true, data: true, attr: true })}
+        >
+          {starNodes}
+        </ul>
+      )
+    }
   },
 })
