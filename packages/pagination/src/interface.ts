@@ -1,4 +1,4 @@
-import type { Component, PropType, VNode } from 'vue'
+import type { Component, CSSProperties, PropType, VNode } from 'vue'
 
 export function paginationProps() {
   return {
@@ -32,6 +32,14 @@ export function paginationProps() {
       type: Boolean,
       default: false,
     },
+    align: {
+      type: String as PropType<'start' | 'center' | 'end'>,
+      default: 'start',
+    },
+    style: {
+      type: Object as PropType<CSSProperties>,
+      default: undefined,
+    },
     showSizeChanger: {
       type: Boolean,
       default: undefined,
@@ -42,5 +50,9 @@ export function paginationProps() {
     },
     selectComponentClass: Object as PropType<Component>,
     showTotal: Function as PropType<(total: number, range: [number, number]) => VNode>,
+    simple: {
+      type: [Boolean, Object] as PropType<boolean | { readOnly?: boolean }>,
+      default: undefined,
+    },
   }
 }
