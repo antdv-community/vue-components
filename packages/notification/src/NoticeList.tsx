@@ -1,8 +1,8 @@
-import type { CSSProperties } from 'vue'
+import type { CSSProperties, TransitionGroupProps } from 'vue'
 import type { InnerOpenConfig, Key, NoticeConfig, OpenConfig, Placement, StackConfig } from './interface.ts'
 import { unrefElement } from '@v-c/util/dist/vueuse/unref-element'
 import clsx from 'classnames'
-import { computed, defineComponent, reactive, ref, shallowRef, toRef, TransitionGroup, watch } from 'vue'
+import { computed, defineComponent, reactive, ref, toRef, TransitionGroup, watch } from 'vue'
 import useStack from './hooks/useStack.ts'
 import Notice from './Notice.tsx'
 import { useNotificationContext } from './NotificationProvider.tsx'
@@ -11,7 +11,7 @@ export interface NoticeListProps {
   configList?: OpenConfig[]
   placement?: Placement
   prefixCls?: string
-  motion?: any | ((placement: Placement) => any)
+  motion?: TransitionGroupProps | ((placement: Placement) => TransitionGroupProps)
   stack?: StackConfig
 
   // Events
@@ -22,8 +22,14 @@ export interface NoticeListProps {
 const NoticeList = defineComponent<NoticeListProps>(
   (props, { attrs }) => {
     const ctx = useNotificationContext()
-    const lastestNotice = shallowRef<HTMLDivElement | null>(null)
     const dictRef = reactive<Record<string, HTMLDivElement>>({})
+    const lastestNotice = computed(() => {
+      // 获取最后一个通知
+      const keys = Object.keys(dictRef)
+      if (keys.length === 0)
+        return null
+      return dictRef[keys[keys.length - 1]]
+    })
     const hoverKeys = ref<string[]>([])
     const keys = computed(() => {
       return props.configList?.map(config => ({
@@ -37,7 +43,7 @@ const NoticeList = defineComponent<NoticeListProps>(
     const expanded = computed(
       () => stack.value && (hoverKeys.value.length > 0 || keys.value!.length <= (threshold as any).value),
     )
-    const placementMotion = computed(() => typeof props.motion === 'function' ? props?.motion(props.placement) : props.motion)
+    const placementMotion = computed(() => typeof props.motion === 'function' ? props?.motion(props.placement!) : props.motion)
 
     // Clean hover key
     watch(
@@ -48,16 +54,13 @@ const NoticeList = defineComponent<NoticeListProps>(
         }
       },
     )
-    // Force update latest notice
-    watch(
-      [keys, stack],
-      () => {
-        const dictRefKey = keys.value?.[keys.value?.length - 1]?.key as any
-        if (stack.value && dictRefKey) {
-          lastestNotice.value = dictRefKey
-        }
-      },
-    )
+
+    const checkAllClosed = () => {
+      const len = keys.value?.length ?? 0
+      if (len === 0) {
+        props.onAllNoticeRemoved?.(props.placement!)
+      }
+    }
 
     return () => {
       const { prefixCls, placement, onNoticeClose } = props
@@ -86,6 +89,9 @@ const NoticeList = defineComponent<NoticeListProps>(
                 ? dictRef[strKey]?.offsetHeight
                 : lastestNotice.value?.offsetHeight
 
+              if (!Number.isNaN(stackStyle.height) && typeof stackStyle.height === 'number') {
+                stackStyle.height = `${stackStyle.height}px`
+              }
               // Transform
               let verticalOffset = 0
               for (let i = 0; i < index; i++) {
@@ -99,15 +105,15 @@ const NoticeList = defineComponent<NoticeListProps>(
                 / dictRef[strKey]?.offsetWidth
                 : 1
 
-              stackStyle.transform = `translate3d(${transformX}, ${transformY}px, 0) scaleX(${scaleX})`
+              stackStyle.transform = `translate3d(${transformX}px, ${transformY}px, 0px) scaleX(${scaleX})`
             }
             else {
-              stackStyle.transform = `translate3d(${transformX}, 0, 0)`
+              stackStyle.transform = `translate3d(${transformX}px, 0px, 0px)`
             }
           }
-
           return (
             <div
+              key={strKey}
               class={clsx(
                 `${prefixCls}-notice-wrapper`,
                 configClassNames?.wrapper,
@@ -126,8 +132,9 @@ const NoticeList = defineComponent<NoticeListProps>(
               <Notice
                 {...restConfig as any}
                 ref={(el) => {
+                  const _el = unrefElement<HTMLDivElement>(el as any)
                   if (dataIndex > -1) {
-                    dictRef[strKey] = unrefElement<HTMLDivElement>(el as any)
+                    dictRef[strKey] = _el
                   }
                   else {
                     delete dictRef[strKey]
@@ -139,12 +146,10 @@ const NoticeList = defineComponent<NoticeListProps>(
                 class={clsx(configClassName, ctx.classNames?.notice)}
                 style={configStyle}
                 times={times}
-                key={key}
+                eventKey={key}
                 onNoticeClose={onNoticeClose}
                 hovering={stack.value && hoverKeys.value.length > 0}
-              >
-              </Notice>
-
+              />
             </div>
           )
         })
@@ -153,7 +158,6 @@ const NoticeList = defineComponent<NoticeListProps>(
         <TransitionGroup
           key={placement}
           tag="div"
-          css={false}
           appear
           {
             ...{
@@ -163,12 +167,14 @@ const NoticeList = defineComponent<NoticeListProps>(
                 ctx.classNames?.list,
                 (attrs as any).class,
                 {
-                  [`${prefixCls}-expanded`]: expanded.value,
+                  [`${prefixCls}-stack-expanded`]: expanded.value,
                   [`${prefixCls}-stack`]: stack.value,
                 },
               ),
+              ...placementMotion.value,
             }
           }
+          onAfterLeave={checkAllClosed}
         >
           {renderNotify()}
         </TransitionGroup>

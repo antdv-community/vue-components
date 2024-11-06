@@ -1,12 +1,12 @@
 import type { VueNode } from '@v-c/util/dist/type'
-import type { CSSProperties } from 'vue'
+import type { CSSProperties, TransitionGroupProps } from 'vue'
 import type { InnerOpenConfig, Key, OpenConfig, Placement, Placements, StackConfig } from './interface.ts'
 import { defineComponent, shallowRef, Teleport, watch } from 'vue'
 import NoticeList from './NoticeList.tsx'
 
 export interface NotificationsProps {
   prefixCls?: string
-  motion?: any | ((placement: Placement) => any)
+  motion?: TransitionGroupProps | ((placement: Placement) => TransitionGroupProps)
   container?: HTMLElement | ShadowRoot
   maxCount?: number
   className?: (placement: Placement) => string

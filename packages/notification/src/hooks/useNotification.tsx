@@ -1,6 +1,6 @@
 import type { VueNode } from '@v-c/util/dist/type.ts'
-import type { CSSProperties } from 'vue'
-import type { OpenConfig, Placement, StackConfig } from '../interface'
+import type { CSSProperties, TransitionGroupProps } from 'vue'
+import type { Key, OpenConfig, Placement, StackConfig } from '../interface'
 import type { NotificationsProps, NotificationsRef } from '../Notifications'
 import { onMounted, shallowRef, watch } from 'vue'
 import Notifications from '../Notifications'
@@ -13,7 +13,7 @@ export interface NotificationConfig {
   prefixCls?: string
   /** Customize container. It will repeat call which means you should return same container element. */
   getContainer?: () => HTMLElement | ShadowRoot
-  motion?: any | ((placement: Placement) => any)
+  motion?: TransitionGroupProps | ((placement: Placement) => TransitionGroupProps)
   closeIcon?: VueNode
   closable?: boolean | ({ closeIcon?: VueNode } & Record<string, any>)
   maxCount?: number
@@ -33,7 +33,7 @@ export interface NotificationConfig {
 
 export interface NotificationAPI {
   open: (config: OptionalConfig) => void
-  close: (key: React.Key) => void
+  close: (key: Key) => void
   destroy: () => void
 }
 
@@ -44,7 +44,7 @@ interface OpenTask {
 
 interface CloseTask {
   type: 'close'
-  key: React.Key
+  key: Key
 }
 
 interface DestroyTask {
@@ -56,9 +56,9 @@ type Task = OpenTask | CloseTask | DestroyTask
 let uniqueKey = 0
 
 function mergeConfig<T>(...objList: Partial<T>[]): T {
-  const clone: T = {} as T
+  const clone: any = {}
 
-  objList.forEach((obj) => {
+  objList.forEach((obj: any) => {
     if (obj) {
       Object.keys(obj).forEach((key) => {
         const val = obj[key]
@@ -99,7 +99,7 @@ export default function useNotification(rootConfig: NotificationConfig = {}) {
       maxCount={maxCount}
       className={className}
       style={style}
-      onAllRemove={onAllRemoved}
+      onAllRemoved={onAllRemoved}
       stack={stack}
       renderNotifications={renderNotifications}
     />
@@ -157,5 +157,5 @@ export default function useNotification(rootConfig: NotificationConfig = {}) {
   })
 
   // ======================== Return ========================
-  return [api, contextHolder]
+  return [api, contextHolder] as [NotificationAPI, () => VueNode]
 }

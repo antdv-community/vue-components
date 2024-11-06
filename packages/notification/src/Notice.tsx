@@ -48,12 +48,15 @@ const Notify = defineComponent<NoticeProps & { times?: number }>(
         mergedHovering,
       ],
       () => {
-        if (!mergedHovering && props.duration! > 0) {
+        if (!mergedHovering.value && props.duration! > 0) {
           startTime = Date.now() - spenTime.value
           timeoutId = setTimeout(() => {
             onInternalClose()
           }, props.duration! * 1000 - spenTime.value)
         }
+      },
+      {
+        immediate: true,
       },
     )
     let animationFrame: number
@@ -83,6 +86,7 @@ const Notify = defineComponent<NoticeProps & { times?: number }>(
           calculate()
         }
       },
+      { immediate: true },
     )
 
     onUnmounted(() => {
