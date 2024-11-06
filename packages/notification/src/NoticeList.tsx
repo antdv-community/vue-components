@@ -34,7 +34,9 @@ const NoticeList = defineComponent<NoticeListProps>(
 
     const stackConfig = toRef(props, 'stack')
     const [stack, { offset, threshold, gap }] = useStack(stackConfig)
-    const expanded = computed(() => stack.value && (hoverKeys.value.length > 0 || keys.value?.length <= threshold?.value))
+    const expanded = computed(
+      () => stack.value && (hoverKeys.value.length > 0 || keys.value!.length <= (threshold as any).value),
+    )
     const placementMotion = computed(() => typeof props.motion === 'function' ? props?.motion(props.placement) : props.motion)
 
     // Clean hover key
@@ -50,8 +52,9 @@ const NoticeList = defineComponent<NoticeListProps>(
     watch(
       [keys, stack],
       () => {
-        if (stack.value && dictRef[keys[keys.value?.length - 1]?.key]) {
-          lastestNotice.value = dictRef[keys[keys.value?.length - 1]?.key]
+        const dictRefKey = keys.value?.[keys.value?.length - 1]?.key as any
+        if (stack.value && dictRefKey) {
+          lastestNotice.value = dictRefKey
         }
       },
     )
@@ -71,12 +74,12 @@ const NoticeList = defineComponent<NoticeListProps>(
             styles: configStyles,
             ...restConfig
           } = config as NoticeConfig
-          const dataIndex = keys.value?.findIndex(item => item.key === strKey)
+          const dataIndex = keys.value?.findIndex(item => item.key === strKey) ?? -1
           // If dataIndex is -1, that means this notice has been removed in data, but still in dom
           // Should minus (motionIndex - 1) to get the correct index because keys.length is not the same as dom length
           const stackStyle: CSSProperties = {}
           if (stack.value) {
-            const index = keys.value?.length - 1 - (dataIndex > -1 ? dataIndex : motionIndex - 1)
+            const index = keys.value!.length - 1 - (dataIndex > -1 ? dataIndex : motionIndex - 1)
             const transformX = placement === 'top' || placement === 'bottom' ? '-50%' : '0'
             if (index > 0) {
               stackStyle.height = expanded.value
@@ -86,13 +89,13 @@ const NoticeList = defineComponent<NoticeListProps>(
               // Transform
               let verticalOffset = 0
               for (let i = 0; i < index; i++) {
-                verticalOffset += dictRef[keys.value[keys.value?.length - 1 - i]?.key]?.offsetHeight + gap?.value
+                verticalOffset += (dictRef as any)[(keys as any).value[keys.value!.length - 1 - i]?.key]?.offsetHeight + gap?.value
               }
 
               const transformY
-                  = (expanded.value ? verticalOffset : index * offset?.value) * (placement?.startsWith('top') ? 1 : -1)
-              const scaleX = !expanded.value && lastestNotice.value?.offsetWidth && dictRef[strKey]?.offetWidth
-                ? (lastestNotice.value?.offsetWidth - offset?.value * 2 * (index < 3 ? index : 3))
+                  = (expanded.value ? verticalOffset : index * (offset as any).value) * (placement?.startsWith('top') ? 1 : -1)
+              const scaleX = !expanded.value && lastestNotice.value?.offsetWidth && (dictRef as any)[strKey]?.offetWidth
+                ? (lastestNotice.value?.offsetWidth - (offset as any)?.value * 2 * (index < 3 ? index : 3))
                 / dictRef[strKey]?.offsetWidth
                 : 1
 
@@ -121,16 +124,16 @@ const NoticeList = defineComponent<NoticeListProps>(
               }}
             >
               <Notice
-                {...restConfig}
+                {...restConfig as any}
                 ref={(el) => {
                   if (dataIndex > -1) {
-                    dictRef[strKey] = unrefElement<HTMLDivElement>(el)
+                    dictRef[strKey] = unrefElement<HTMLDivElement>(el as any)
                   }
                   else {
                     delete dictRef[strKey]
                   }
                 }}
-                prefixCls={prefixCls}
+                prefixCls={prefixCls ?? ''}
                 classNames={configClassNames}
                 styles={configStyles}
                 class={clsx(configClassName, ctx.classNames?.notice)}
@@ -152,17 +155,19 @@ const NoticeList = defineComponent<NoticeListProps>(
           tag="div"
           css={false}
           appear
-          class={
-            clsx(
-              prefixCls,
-              `${prefixCls}-${placement}`,
-              ctx.classNames?.list,
-              attrs.class,
-              {
-                [`${prefixCls}-expanded`]: expanded.value,
-                [`${prefixCls}-stack`]: stack.value,
-              },
-            )
+          {
+            ...{
+              class: clsx(
+                prefixCls,
+                `${prefixCls}-${placement}`,
+                ctx.classNames?.list,
+                (attrs as any).class,
+                {
+                  [`${prefixCls}-expanded`]: expanded.value,
+                  [`${prefixCls}-stack`]: stack.value,
+                },
+              ),
+            }
           }
         >
           {renderNotify()}

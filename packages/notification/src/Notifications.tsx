@@ -35,7 +35,7 @@ const Notifications = defineComponent<NotificationsProps>(
     // ======================== Close =========================
     const onNoticeClose = (key: Key) => {
       // Trigger close event
-      const config = configList.find(item => item.key === key)
+      const config = configList.value.find(item => item.key === key)
       config?.onClose?.()
       configList.value = configList.value.filter(item => item.key !== key)
     }
@@ -76,7 +76,7 @@ const Notifications = defineComponent<NotificationsProps>(
     watch(
       configList,
       () => {
-        const nextPlacements: Placement = {}
+        const nextPlacements: Placements = {}
         configList.value.forEach((config) => {
           const { placement = 'topRight' } = config
           if (placement) {
@@ -85,7 +85,8 @@ const Notifications = defineComponent<NotificationsProps>(
           }
         })
         // Fill exist placements to avoid empty list causing remove without motion
-        Object.keys(placements.value).forEach((placement) => {
+        Object.keys(placements.value).forEach((_placement) => {
+          const placement = _placement as Placement
           nextPlacements[placement] = nextPlacements[placement] || []
         })
         placements.value = nextPlacements
@@ -113,14 +114,14 @@ const Notifications = defineComponent<NotificationsProps>(
         }
         else if (emptyRef.value) {
         // Trigger only when from exist to empty
-          onAllRemoved?.()
+          props?.onAllRemoved?.()
           emptyRef.value = false
         }
       },
     )
 
     return () => {
-      const { container } = props
+      const { container, prefixCls = '' } = props
       // ======================== Render ========================
       if (!container) {
         return null
@@ -129,18 +130,18 @@ const Notifications = defineComponent<NotificationsProps>(
       return (
         <Teleport to={container}>
           {Object.keys(placements.value).map((placement) => {
-            const placementConfigList = placements.value[placement]
+            const placementConfigList = placements.value[placement as Placement]
             const list = (
               <NoticeList
                 key={placement}
                 configList={placementConfigList}
-                placement={placement}
+                placement={placement as Placement}
                 prefixCls={props.prefixCls}
-                class={props.className?.(placement)}
-                style={props.style?.(placement)}
+                class={props.className?.(placement as Placement)}
+                style={props.style?.(placement as Placement)}
                 motion={props.motion}
                 stack={props.stack}
-                onAllNoticeRemoved={() => onAllNoticeRemoved(placement)}
+                onAllNoticeRemoved={() => onAllNoticeRemoved(placement as Placement)}
                 onNoticeClose={onNoticeClose}
               />
             )
@@ -154,3 +155,5 @@ const Notifications = defineComponent<NotificationsProps>(
     name: 'Notifications',
   },
 )
+
+export default Notifications

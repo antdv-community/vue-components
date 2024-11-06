@@ -13,18 +13,18 @@ export interface NoticeProps extends Omit<NoticeConfig, 'onClose'> {
   props?: any
 }
 
-const defaults: any = {
+const defaults = {
   duration: 4.5,
-  pauseOnHover = true,
+  pauseOnHover: true,
   closeIcon: 'x',
-}
+} as NoticeProps
 const Notify = defineComponent<NoticeProps & { times?: number }>(
   (props = defaults, { attrs }) => {
     const hovering = shallowRef(false)
     const percent = shallowRef(0)
     const spenTime = shallowRef(0)
     const mergedHovering = computed(() => props.hovering || hovering.value)
-    const mergedShowProgress = computed(() => props.duration > 0 && props.showProgress)
+    const mergedShowProgress = computed(() => props.duration! > 0 && props.showProgress)
 
     // ======================== Close =========================
     const onInternalClose = () => {
@@ -39,8 +39,8 @@ const Notify = defineComponent<NoticeProps & { times?: number }>(
 
     // ======================== Effect ========================
 
-    let timeoutId: number | null = null
-    let startTime
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+    let startTime: number
     watch(
       [
         () => props.duration,
@@ -48,11 +48,11 @@ const Notify = defineComponent<NoticeProps & { times?: number }>(
         mergedHovering,
       ],
       () => {
-        if (!mergedHovering && props.duration > 0) {
+        if (!mergedHovering && props.duration! > 0) {
           startTime = Date.now() - spenTime.value
           timeoutId = setTimeout(() => {
             onInternalClose()
-          }, props.duration * 1000 - spenTime.value)
+          }, props.duration! * 1000 - spenTime.value)
         }
       },
     )
@@ -73,7 +73,7 @@ const Notify = defineComponent<NoticeProps & { times?: number }>(
             cancelAnimationFrame(animationFrame)
             animationFrame = requestAnimationFrame((timestamp) => {
               const runtime = timestamp + spenTime.value - start
-              const progress = Map.min(runtime / (props.duration * 1000), 1)
+              const progress = Math.min(runtime / (props.duration! * 1000), 1)
               percent.value = progress * 100
               if (progress < 1) {
                 calculate()
@@ -87,7 +87,9 @@ const Notify = defineComponent<NoticeProps & { times?: number }>(
 
     onUnmounted(() => {
       if (props.pauseOnHover) {
-        clearTimeout(timeoutId)
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+        }
         cancelAnimationFrame(animationFrame)
       }
       spenTime.value = Date.now() - startTime
@@ -124,15 +126,19 @@ const Notify = defineComponent<NoticeProps & { times?: number }>(
         <div
           {...divProps}
           class={
-            classNames(noticePrefixCls, attrs.class, {
-              [`${noticePrefixCls}-closable`]: closable,
-            })
+            classNames(
+              noticePrefixCls,
+              (attrs as any).class,
+              {
+                [`${noticePrefixCls}-closable`]: closable,
+              },
+            )
           }
-          onMouseEnter={(e) => {
+          onMouseEnter={(e: MouseEvent) => {
             hovering.value = true
             divProps?.onMouseEnter?.(e)
           }}
-          onMouseLeave={(e) => {
+          onMouseLeave={(e: MouseEvent) => {
             hovering.value = false
             divProps?.onMouseLeave?.(e)
           }}
@@ -144,9 +150,13 @@ const Notify = defineComponent<NoticeProps & { times?: number }>(
           {/* Close Icon */}
           {closable && (
             <a
-              tabIndex={0}
+              {
+                ...{
+                  tabIndex: 0,
+                }
+              }
               class={`${noticePrefixCls}-close`}
-              onKeyDown={onCloseKeyDown}
+              onKeydown={onCloseKeyDown}
               aria-label="Close"
               {...ariaProps}
               onClick={(e) => {
@@ -155,13 +165,13 @@ const Notify = defineComponent<NoticeProps & { times?: number }>(
                 onInternalClose()
               }}
             >
-              {closableObj.closeIcon}
+              {closableObj().closeIcon}
             </a>
           )}
 
           {/* Progress Bar */}
           {mergedShowProgress.value && (
-            <progress className={`${noticePrefixCls}-progress`} max="100" value={validPercent}>
+            <progress class={`${noticePrefixCls}-progress`} max="100" value={validPercent}>
               {`${validPercent}%`}
             </progress>
           )}

@@ -8,7 +8,7 @@ const DEFAULT_GAP = 16
 
 type StackParams = Exclude<StackConfig, boolean>
 
-type UseStack = (config?: MaybeRef<StackConfig>) => [ComputedRef<boolean>, ToRefs<StackParams>]
+type UseStack = (config?: MaybeRef<StackConfig | undefined>) => [ComputedRef<boolean>, ToRefs<StackParams>]
 
 const useStack: UseStack = (config) => {
   const result: StackParams = reactive({

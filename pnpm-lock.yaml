@@ -90,15 +90,6 @@ importers:
         specifier: ^3.0.0
         version: 3.5.12(typescript@5.6.3)
 
-  packages/context:
-    dependencies:
-      '@v-c/util':
-        specifier: workspace:*
-        version: link:../util
-      vue:
-        specifier: ^3.0.0
-        version: 3.5.12(typescript@5.6.3)
-
   packages/input:
     dependencies:
       '@v-c/util':
@@ -119,6 +110,18 @@ importers:
       '@v-c/util':
         specifier: workspace:*
         version: link:../util
+      vue:
+        specifier: ^3.0.0
+        version: 3.5.12(typescript@5.6.3)
+
+  packages/notification:
+    dependencies:
+      '@v-c/util':
+        specifier: workspace:*
+        version: link:../util
+      classnames:
+        specifier: ^2.5.1
+        version: 2.5.1
       vue:
         specifier: ^3.0.0
         version: 3.5.12(typescript@5.6.3)
@@ -161,21 +164,6 @@ importers:
 
   packages/util:
     dependencies:
-      vue:
-        specifier: ^3.0.0
-        version: 3.5.12(typescript@5.6.3)
-
-  packages/virtual-list:
-    dependencies:
-      '@v-c/resize-observer':
-        specifier: workspace:*
-        version: link:../resize-observer
-      '@v-c/util':
-        specifier: workspace:*
-        version: link:../util
-      classnames:
-        specifier: ^2.5.1
-        version: 2.5.1
       vue:
         specifier: ^3.0.0
         version: 3.5.12(typescript@5.6.3)

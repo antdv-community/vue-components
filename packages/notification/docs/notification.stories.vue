@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <Story title="Checkbox">
+  <Story title="Notification">
     <Variant title="Basic">
       <!--      -->
     </Variant>
