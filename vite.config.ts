@@ -14,6 +14,7 @@ const comps = [
   'resize-observer',
   'input',
   'portal',
+  'notification',
 ]
 
 export function genListAlias() {
