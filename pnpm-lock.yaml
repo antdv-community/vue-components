@@ -90,6 +90,15 @@ importers:
         specifier: ^3.0.0
         version: 3.5.12(typescript@5.6.3)
 
+  packages/dialog:
+    dependencies:
+      classnames:
+        specifier: ^2.5.1
+        version: 2.5.1
+      vue:
+        specifier: ^3.0.0
+        version: 3.5.12(typescript@5.6.3)
+
   packages/input:
     dependencies:
       '@v-c/util':

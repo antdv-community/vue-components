@@ -15,6 +15,7 @@ const comps = [
   'input',
   'portal',
   'notification',
+  'dialog',
 ]
 
 export function genListAlias() {
