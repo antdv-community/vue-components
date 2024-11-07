@@ -84,12 +84,32 @@ export function paginationProps() {
       type: Object as PropType<VNode | Component>,
       default: undefined,
     },
+    nextIcon: {
+      type: Object as PropType<VNode | Component>,
+      default: undefined,
+    },
+    jumpPrevIcon: {
+      type: Object as PropType<VNode | Component>,
+      default: undefined,
+    },
+    jumpNextIcon: {
+      type: Object as PropType<VNode | Component>,
+      default: undefined,
+    },
+    showPrevNextJumpers: {
+      type: Boolean,
+      default: true,
+    },
     onChange: {
       type: Function as PropType<(page: number, pageSize: number) => void>,
       default: undefined,
     },
     locale: {
       type: Object as PropType<PaginationLocale>,
+      default: undefined,
+    },
+    showQuickJumper: {
+      type: [Boolean, Object] as PropType<boolean | { goButton?: VNode }>,
       default: undefined,
     },
 

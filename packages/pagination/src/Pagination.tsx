@@ -1,3 +1,4 @@
+import type { ChangeEvent } from '@v-c/util/dist/EventInterface'
 import type { Component, Ref, VNode } from 'vue'
 import type { ItemRender } from './interface'
 import useMergedState from '@v-c/util/dist/hooks/useMergedState'
@@ -8,14 +9,15 @@ import classNames from 'classnames'
 import { computed, defineComponent, h, ref, toRef, watchEffect } from 'vue'
 import { paginationProps } from './interface'
 import zh_CN from './locale/zh_CN'
+import Pager from './Pager'
 
 function isInteger(value: unknown) {
   return typeof value === 'number' && isFinite(value) && Math.floor(value) === value
 }
 
 const defaultItemRender: ItemRender = (
-  page,
-  type,
+  _page,
+  _type,
   element,
 ) => element
 
@@ -62,6 +64,25 @@ const Pagination = defineComponent({
       })
     })
 
+    function getValidValue(e: any): number {
+      const inputValue = e.target.value
+      const allPages = calculatePage(undefined, pageSize.value, props.total)
+      let value: number
+      if (inputValue === '') {
+        value = inputValue
+      }
+      else if (Number.isNaN(Number(inputValue))) {
+        value = internalInputVal.value
+      }
+      else if (inputValue >= allPages) {
+        value = allPages
+      }
+      else {
+        value = Number(inputValue)
+      }
+      return value
+    }
+
     function isValid(page: number) {
       return isInteger(page) && page !== current.value && isInteger(props.total) && props.total > 0
     }
@@ -84,6 +105,8 @@ const Pagination = defineComponent({
     }
 
     const prevPage = computed(() => current.value - 1 > 0 ? current.value - 1 : 0)
+    const nextPage = computed(() => current.value + 1 < allPages.value ? current.value + 1 : allPages.value)
+
     const jumpPrevPage = computed(() => Math.max(1, current.value - (props.showLessItems ? 3 : 5)))
     const jumpNextPage = computed(() => Math.min(
       calculatePage(undefined, pageSize.value, props.total),
@@ -91,6 +114,7 @@ const Pagination = defineComponent({
     ))
     const hasPrev = computed(() => current.value > 1)
     const hasNext = computed(() => current.value < calculatePage(undefined, pageSize.value, props.total))
+    const goButton = computed(() => props.showQuickJumper && (props.showQuickJumper as any).goButton)
 
     function handleChange(page: number) {
       if (isValid(page) && !props.disabled) {
@@ -174,14 +198,75 @@ const Pagination = defineComponent({
       return 'setup' in prevButton ? cloneElement(prevButton, { disabled: !hasPrev.value }) : prevButton
     }
 
+    function renderNext(nextPage: number) {
+      const itemRender = props.itemRender || defaultItemRender
+      const nextButton = itemRender(
+        nextPage,
+        'next',
+        getItemIcon(props.nextIcon, 'next page'),
+      )
+      return 'setup' in nextButton ? cloneElement(nextButton, { disabled: !hasNext.value }) : nextButton
+    }
+
+    function handleGoTO(event: Event) {
+      if (event.type === 'click' || (event as KeyboardEvent).keyCode === KeyCode.ENTER) {
+        handleChange(internalInputVal.value)
+      }
+    }
+
+    /**
+     * prevent "up arrow" key reseting cursor position within textbox
+     * @see https://stackoverflow.com/a/1081114
+     */
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.keyCode === KeyCode.UP || event.keyCode === KeyCode.DOWN) {
+        event.preventDefault()
+      }
+    }
+
+    function handleKeyUp(
+      event: Event,
+    ) {
+      const value = getValidValue(event)
+      if (value !== internalInputVal.value) {
+        internalInputVal.value = value
+      }
+
+      switch ((event as KeyboardEvent).keyCode) {
+        case KeyCode.ENTER:
+          handleChange(value)
+          break
+        case KeyCode.UP:
+          handleChange(value - 1)
+          break
+        case KeyCode.DOWN:
+          handleChange(value + 1)
+          break
+        default:
+          break
+      }
+    }
+
+    function handleBlur(event: FocusEvent) {
+      handleChange(getValidValue(event))
+    }
+
     return () => {
       const {
         style,
         prefixCls = defaultPrefixCls,
-        selectPrefixCls = 'vc-select',
+        // selectPrefixCls = 'vc-select',
         showTotal,
         total = 0,
         locale = zh_CN,
+        simple,
+        showTitle,
+        showLessItems,
+        jumpPrevIcon,
+        jumpNextIcon,
+        disabled,
+        showPrevNextJumpers,
+        itemRender = defaultItemRender,
       } = props
 
       const dataOrAriaAttributeProps = pickAttrs(props, {
@@ -208,6 +293,35 @@ const Pagination = defineComponent({
         )
       }
 
+      let next = renderNext(nextPage.value)
+      if (next) {
+        let nextDisabled: boolean, nextTabIndex: number | null
+
+        if (simple) {
+          nextDisabled = !hasNext
+          nextTabIndex = hasPrev ? 0 : null
+        }
+        else {
+          nextDisabled = !hasNext || !allPages
+          nextTabIndex = nextDisabled ? null : 0
+        }
+
+        next = (
+          <li
+            title={showTitle ? locale.next_page : undefined}
+            onClick={nextHandle}
+            tabindex={nextTabIndex ?? undefined}
+            onKeydown={runIfEnterNext}
+            class={classNames(`${prefixCls}-next`, {
+              [`${prefixCls}-disabled`]: nextDisabled,
+            })}
+            aria-disabled={nextDisabled}
+          >
+            {next}
+          </li>
+        )
+      }
+
       const totalText = showTotal && (
         <li class={`${prefixCls}-total-text`}>
           {showTotal(total, [
@@ -216,6 +330,198 @@ const Pagination = defineComponent({
           ])}
         </li>
       )
+
+      // ========================== Simple ============================
+      const isReadOnly = typeof simple === 'object' ? simple.readOnly : !simple
+      let gotoButton: any = goButton.value
+
+      let simplePager: VNode | null = null
+      if (simple) {
+        if (goButton.value) {
+          if (typeof goButton.value === 'boolean') {
+            gotoButton = (
+              <button type="button" onClick={handleGoTO} onKeyup={handleGoTO}>
+                {locale.jump_to_confirm}
+              </button>
+            )
+          }
+        }
+        else {
+          gotoButton = (
+            <span onClick={handleGoTO} onKeyup={handleGoTO}>
+              {goButton}
+            </span>
+          )
+        }
+
+        gotoButton = (
+          <li
+            title={showTitle ? `${locale.jump_to}${current.value}/${allPages.value}` : undefined}
+            class={`${prefixCls}-simple-pager`}
+          >
+            {gotoButton}
+          </li>
+        )
+
+        simplePager = (
+          <li
+            title={showTitle ? `${current.value}/${allPages.value}` : undefined}
+            class={`${prefixCls}-simple-pager`}
+          >
+            {isReadOnly
+              ? (
+                  internalInputVal.value
+                )
+              : (
+                  <input
+                    type="text"
+                    value={internalInputVal}
+                    disabled={disabled}
+                    onKeydown={handleKeyDown}
+                    onKeyup={handleKeyUp}
+                    onChange={handleKeyUp}
+                    onBlur={handleBlur}
+                    size={3}
+                  />
+                )}
+            <span class={`${prefixCls}-slash`}>/</span>
+            {allPages}
+          </li>
+        )
+      }
+
+      // ====================== Normal ======================
+      const pagerProps = {
+        rootPrefixCls: prefixCls,
+        onClick: handleChange,
+        onKeypress: runIfEnter,
+        showTitle,
+        itemRender,
+        page: -1,
+      }
+
+      const pagerList: (VNode | null)[] = []
+      const pageBufferSize = showLessItems ? 1 : 2
+      if (allPages.value <= 3 + pageBufferSize * 2) {
+        if (!allPages.value) {
+          pagerList.push(
+            <Pager
+              {...pagerProps}
+              key="noPager"
+              page={1}
+              class={`${prefixCls}-item-disabled`}
+            />,
+          )
+
+          for (let i = 1; i <= allPages.value; i += 1) {
+            pagerList.push(
+              <Pager {...pagerProps} key={i} page={i} active={current.value === i} />,
+            )
+          }
+        }
+        else {
+          const prevItemTitle = showLessItems ? locale.prev_3 : locale.prev_5
+          const nextItemTitle = showLessItems ? locale.next_3 : locale.next_5
+
+          const jumpPrevContent = itemRender(
+            jumpPrevPage.value,
+            'jump-prev',
+            getItemIcon(jumpPrevIcon, 'prev page'),
+          )
+          const jumpNextContent = itemRender(
+            jumpNextPage.value,
+            'jump-next',
+            getItemIcon(jumpNextIcon, 'next page'),
+          )
+          let jumpPrev = null
+          let jumpNext = null
+
+          if (showPrevNextJumpers) {
+            jumpPrev = jumpPrevContent
+              ? (
+                  <li
+                    title={showTitle ? prevItemTitle : undefined}
+                    key="prev"
+                    onClick={jumpPrevHandle}
+                    tabindex={0}
+                    onKeydown={runIfEnterJumpPrev}
+                    class={classNames(`${prefixCls}-jump-prev`, {
+                      [`${prefixCls}-jump-prev-custom-icon`]: !!jumpPrevIcon,
+                    })}
+                  >
+                    {jumpPrevContent}
+                  </li>
+                )
+              : null
+
+            jumpNext = jumpNextContent
+              ? (
+                  <li
+                    title={showTitle ? nextItemTitle : undefined}
+                    key="next"
+                    onClick={jumpNextHandle}
+                    tabindex={0}
+                    onKeydown={runIfEnterJumpNext}
+                    class={classNames(`${prefixCls}-jump-next`, {
+                      [`${prefixCls}-jump-next-custom-icon`]: !!jumpNextIcon,
+                    })}
+                  >
+                    {jumpNextContent}
+                  </li>
+                )
+              : null
+          }
+
+          let left = Math.max(1, current.value - pageBufferSize)
+          let right = Math.min(current.value + pageBufferSize, allPages.value)
+
+          if (current.value - 1 <= pageBufferSize) {
+            right = 1 + pageBufferSize * 2
+          }
+          if (allPages.value - current.value <= pageBufferSize) {
+            left = allPages.value - pageBufferSize * 2
+          }
+
+          for (let i = left; i <= right; i += 1) {
+            pagerList.push(
+              <Pager {...pagerProps} key={i} page={i} active={current.value === i} />,
+            )
+          }
+
+          if (current.value - 1 >= pageBufferSize * 2 && current.value !== 1 + 2) {
+            if (pagerList[0]) {
+              pagerList[0] = cloneElement(pagerList[0], {
+                class: classNames(
+                  `${prefixCls}-item-after-jump-prev`,
+                  pagerList[0].props?.className,
+                ),
+              })
+            }
+            pagerList.unshift(jumpPrev)
+          }
+
+          if (allPages.value - current.value >= pageBufferSize * 2 && current.value !== allPages.value - 2) {
+            const lastOne = pagerList[pagerList.length - 1]
+            if (lastOne) {
+              pagerList[pagerList.length - 1] = cloneElement(lastOne, {
+                className: classNames(
+                  `${prefixCls}-item-before-jump-next`,
+                  lastOne.props?.className,
+                ),
+              })
+            }
+
+            pagerList.push(jumpNext)
+          }
+
+          if (left !== 1) {
+            pagerList.unshift(<Pager {...pagerProps} key={1} page={1} />)
+          }
+          if (right !== allPages.value) {
+            pagerList.push(<Pager {...pagerProps} key={allPages.value} page={allPages.value} />)
+          }
+        }
+      }
 
       return (
         <ul
@@ -226,6 +532,8 @@ const Pagination = defineComponent({
         >
           {totalText}
           {prev}
+          {simple ? simplePager : pagerList}
+          {next}
         </ul>
       )
     }
