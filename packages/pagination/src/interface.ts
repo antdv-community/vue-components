@@ -32,6 +32,14 @@ export function paginationProps() {
       type: String,
       default: 'vc-select',
     },
+    pageSizeOptions: {
+      type: Array as PropType<number[] | string[]>,
+      default: undefined,
+    },
+    totalBoundaryShowSizeChanger: {
+      type: Number,
+      default: 50,
+    },
     current: Number,
     pageSize: Number,
     defaultCurrent: {
@@ -56,6 +64,10 @@ export function paginationProps() {
     },
     style: {
       type: Object as PropType<CSSProperties>,
+      default: undefined,
+    },
+    className: {
+      type: String,
       default: undefined,
     },
     showSizeChanger: {
@@ -112,6 +124,10 @@ export function paginationProps() {
       type: [Boolean, Object] as PropType<boolean | { goButton?: VNode }>,
       default: undefined,
     },
-
+    onShowSizeChange: {
+      type: Function as PropType<(current: number, pageSize: number) => void>,
+      default: undefined,
+    },
+    // WAI_ARIA
   }
 }

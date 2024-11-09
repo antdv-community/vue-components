@@ -1,10 +1,12 @@
 import type { PropType } from 'vue'
 import type { ItemRender } from './interface'
+import classNames from 'classnames'
 import { defineComponent } from 'vue'
 
 type OnClick = (page: number) => void
 
 const Pager = defineComponent({
+  inheritAttrs: false,
   props: {
     itemRender: {
       type: Function as PropType<ItemRender>,
@@ -18,6 +20,9 @@ const Pager = defineComponent({
     active: {
       type: Boolean,
     },
+    className: {
+      type: [String, Array],
+    },
     showTitle: {
       type: Boolean,
     },
@@ -28,8 +33,52 @@ const Pager = defineComponent({
       type: Function as PropType<(e: KeyboardEvent, onClick: OnClick, page: number) => void>,
     },
   },
-  setup() {
-    return <div>TODO</div>
+  setup(props) {
+    const handleClick = () => {
+      props.onClick?.(props.page!)
+    }
+
+    const handleKeyPress = (e: KeyboardEvent) => {
+      props.onKeyPress?.(e, props.onClick!, props.page!)
+    }
+
+    return () => {
+      const {
+        rootPrefixCls,
+        page,
+        active,
+        className,
+        showTitle,
+        itemRender,
+      } = props
+      const prefixCls = `${rootPrefixCls}-item`
+
+      const cls = classNames(
+        prefixCls,
+        `${prefixCls}-${page}`,
+        {
+          [`${prefixCls}-active`]: active,
+          [`${prefixCls}-disabled`]: !page,
+        },
+        className,
+      )
+
+      const pager = itemRender?.(page!, 'page', <a rel="nofollow">{page}</a>)
+
+      return pager
+        ? (
+            <li
+              title={showTitle ? String(page) : undefined}
+              class={cls}
+              onClick={handleClick}
+              onKeydown={handleKeyPress}
+              tabindex={0}
+            >
+              {pager}
+            </li>
+          )
+        : null
+    }
   },
 })
 

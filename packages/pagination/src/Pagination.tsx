@@ -1,4 +1,3 @@
-import type { ChangeEvent } from '@v-c/util/dist/EventInterface'
 import type { Component, Ref, VNode } from 'vue'
 import type { ItemRender } from './interface'
 import useMergedState from '@v-c/util/dist/hooks/useMergedState'
@@ -55,7 +54,7 @@ const Pagination = defineComponent({
 
     const calcPaginationCls = computed(() => {
       const { prefixCls = defaultPrefixCls, align, simple, disabled } = props
-      classNames(props.prefixCls, {
+      return classNames(props.prefixCls, {
         [`${prefixCls}-start`]: align === 'start',
         [`${prefixCls}-center`]: align === 'center',
         [`${prefixCls}-end`]: align === 'end',
@@ -412,121 +411,119 @@ const Pagination = defineComponent({
               class={`${prefixCls}-item-disabled`}
             />,
           )
-
-          for (let i = 1; i <= allPages.value; i += 1) {
-            pagerList.push(
-              <Pager {...pagerProps} key={i} page={i} active={current.value === i} />,
-            )
-          }
         }
-        else {
-          const prevItemTitle = showLessItems ? locale.prev_3 : locale.prev_5
-          const nextItemTitle = showLessItems ? locale.next_3 : locale.next_5
 
-          const jumpPrevContent = itemRender(
-            jumpPrevPage.value,
-            'jump-prev',
-            getItemIcon(jumpPrevIcon, 'prev page'),
+        for (let i = 1; i <= allPages.value; i += 1) {
+          pagerList.push(
+            <Pager {...pagerProps} key={i} page={i} active={current.value === i} />,
           )
-          const jumpNextContent = itemRender(
-            jumpNextPage.value,
-            'jump-next',
-            getItemIcon(jumpNextIcon, 'next page'),
+        }
+      }
+      else {
+        const prevItemTitle = showLessItems ? locale.prev_3 : locale.prev_5
+        const nextItemTitle = showLessItems ? locale.next_3 : locale.next_5
+
+        const jumpPrevContent = itemRender(
+          jumpPrevPage.value,
+          'jump-prev',
+          getItemIcon(jumpPrevIcon, 'prev page'),
+        )
+        const jumpNextContent = itemRender(
+          jumpNextPage.value,
+          'jump-next',
+          getItemIcon(jumpNextIcon, 'next page'),
+        )
+        let jumpPrev = null
+        let jumpNext = null
+
+        if (showPrevNextJumpers) {
+          jumpPrev = jumpPrevContent
+            ? (
+                <li
+                  title={showTitle ? prevItemTitle : undefined}
+                  key="prev"
+                  onClick={jumpPrevHandle}
+                  tabindex={0}
+                  onKeydown={runIfEnterJumpPrev}
+                  class={classNames(`${prefixCls}-jump-prev`, {
+                    [`${prefixCls}-jump-prev-custom-icon`]: !!jumpPrevIcon,
+                  })}
+                >
+                  {jumpPrevContent}
+                </li>
+              )
+            : null
+
+          jumpNext = jumpNextContent
+            ? (
+                <li
+                  title={showTitle ? nextItemTitle : undefined}
+                  key="next"
+                  onClick={jumpNextHandle}
+                  tabindex={0}
+                  onKeydown={runIfEnterJumpNext}
+                  class={classNames(`${prefixCls}-jump-next`, {
+                    [`${prefixCls}-jump-next-custom-icon`]: !!jumpNextIcon,
+                  })}
+                >
+                  {jumpNextContent}
+                </li>
+              )
+            : null
+        }
+        let left = Math.max(1, current.value - pageBufferSize)
+        let right = Math.min(current.value + pageBufferSize, allPages.value)
+
+        if (current.value - 1 <= pageBufferSize) {
+          right = 1 + pageBufferSize * 2
+        }
+        if (allPages.value - current.value <= pageBufferSize) {
+          left = allPages.value - pageBufferSize * 2
+        }
+
+        for (let i = left; i <= right; i += 1) {
+          pagerList.push(
+            <Pager {...pagerProps} key={i} page={i} active={current.value === i} />,
           )
-          let jumpPrev = null
-          let jumpNext = null
+        }
 
-          if (showPrevNextJumpers) {
-            jumpPrev = jumpPrevContent
-              ? (
-                  <li
-                    title={showTitle ? prevItemTitle : undefined}
-                    key="prev"
-                    onClick={jumpPrevHandle}
-                    tabindex={0}
-                    onKeydown={runIfEnterJumpPrev}
-                    class={classNames(`${prefixCls}-jump-prev`, {
-                      [`${prefixCls}-jump-prev-custom-icon`]: !!jumpPrevIcon,
-                    })}
-                  >
-                    {jumpPrevContent}
-                  </li>
-                )
-              : null
-
-            jumpNext = jumpNextContent
-              ? (
-                  <li
-                    title={showTitle ? nextItemTitle : undefined}
-                    key="next"
-                    onClick={jumpNextHandle}
-                    tabindex={0}
-                    onKeydown={runIfEnterJumpNext}
-                    class={classNames(`${prefixCls}-jump-next`, {
-                      [`${prefixCls}-jump-next-custom-icon`]: !!jumpNextIcon,
-                    })}
-                  >
-                    {jumpNextContent}
-                  </li>
-                )
-              : null
+        if (current.value - 1 >= pageBufferSize * 2 && current.value !== 1 + 2) {
+          if (pagerList[0]) {
+            pagerList[0] = cloneElement(pagerList[0], {
+              className: classNames(
+                `${prefixCls}-item-after-jump-prev`,
+                pagerList[0].props?.className,
+              ),
+            })
           }
+          pagerList.unshift(jumpPrev)
+        }
 
-          let left = Math.max(1, current.value - pageBufferSize)
-          let right = Math.min(current.value + pageBufferSize, allPages.value)
+        if (allPages.value - current.value >= pageBufferSize * 2 && current.value !== allPages.value - 2) {
+          const lastOne = pagerList[pagerList.length - 1]
+          if (lastOne) {
+            pagerList[pagerList.length - 1] = cloneElement(lastOne, {
+              className: classNames(
+                `${prefixCls}-item-before-jump-next`,
+                lastOne.props?.className,
+              ),
+            })
+          }
+          pagerList.push(jumpNext)
+        }
 
-          if (current.value - 1 <= pageBufferSize) {
-            right = 1 + pageBufferSize * 2
-          }
-          if (allPages.value - current.value <= pageBufferSize) {
-            left = allPages.value - pageBufferSize * 2
-          }
-
-          for (let i = left; i <= right; i += 1) {
-            pagerList.push(
-              <Pager {...pagerProps} key={i} page={i} active={current.value === i} />,
-            )
-          }
-
-          if (current.value - 1 >= pageBufferSize * 2 && current.value !== 1 + 2) {
-            if (pagerList[0]) {
-              pagerList[0] = cloneElement(pagerList[0], {
-                class: classNames(
-                  `${prefixCls}-item-after-jump-prev`,
-                  pagerList[0].props?.className,
-                ),
-              })
-            }
-            pagerList.unshift(jumpPrev)
-          }
-
-          if (allPages.value - current.value >= pageBufferSize * 2 && current.value !== allPages.value - 2) {
-            const lastOne = pagerList[pagerList.length - 1]
-            if (lastOne) {
-              pagerList[pagerList.length - 1] = cloneElement(lastOne, {
-                className: classNames(
-                  `${prefixCls}-item-before-jump-next`,
-                  lastOne.props?.className,
-                ),
-              })
-            }
-
-            pagerList.push(jumpNext)
-          }
-
-          if (left !== 1) {
-            pagerList.unshift(<Pager {...pagerProps} key={1} page={1} />)
-          }
-          if (right !== allPages.value) {
-            pagerList.push(<Pager {...pagerProps} key={allPages.value} page={allPages.value} />)
-          }
+        if (left !== 1) {
+          pagerList.unshift(<Pager {...pagerProps} key={1} page={1} />)
+        }
+        if (right !== allPages.value) {
+          pagerList.push(<Pager {...pagerProps} key={allPages.value} page={allPages.value} />)
         }
       }
 
       return (
         <ul
           ref={paginationRef}
-          class={calcPaginationCls}
+          class={calcPaginationCls.value}
           style={style}
           {...dataOrAriaAttributeProps}
         >
