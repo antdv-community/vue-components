@@ -1,4 +1,5 @@
 import { Comment, Fragment, Text } from 'vue'
+import initDefaultProps from './initDefaultProps'
 
 export function isEmptyElement(c: any) {
   return (
@@ -19,4 +20,8 @@ export function filterEmpty(children: any[] = []) {
       res.push(child)
   })
   return res.filter(c => !isEmptyElement(c))
+}
+
+export {
+  initDefaultProps,
 }
