@@ -1,5 +1,5 @@
 import type { MouseEventHandler } from '@v-c/util/dist/EventInterface.ts'
-import type { CSSProperties, ShallowRef } from 'vue'
+import type { CSSProperties } from 'vue'
 import type { IDialogPropTypes } from '../../IDialogPropTypes.ts'
 import pickAttrs from '@v-c/util/dist/pickAttrs.ts'
 import classNames from 'classnames'
@@ -14,7 +14,7 @@ export interface PanelProps extends Omit<IDialogPropTypes, 'getOpenCount'> {
   ariaId?: string
   onMouseDown?: (e: MouseEvent) => void
   onMouseUp?: MouseEventHandler
-  holderRef?: ShallowRef<HTMLDivElement>
+  holderRef?: (el: HTMLDivElement) => void
 }
 
 export interface ContentRef {
@@ -25,8 +25,13 @@ export interface ContentRef {
 const Panel = defineComponent<PanelProps>(
   (props, { expose, slots }) => {
     // ================================= Refs =================================
-    const panelCtx = useGetRefContext()
+    const { setPanel } = useGetRefContext()
     const mergedRef = shallowRef<HTMLDivElement>()
+    const mergeRefFun = (el: HTMLDivElement) => {
+      mergedRef.value = el
+      setPanel(el)
+      props?.holderRef?.(el)
+    }
     const sentinelStartRef = shallowRef<HTMLDivElement>()
     const sentinelEndRef = shallowRef<HTMLDivElement>()
     expose({
@@ -56,7 +61,15 @@ const Panel = defineComponent<PanelProps>(
         closeIcon,
         bodyProps,
         bodyStyle,
+        ariaId,
+        style,
+        className,
+        visible,
+        forceRender,
         onClose,
+        onMouseDown,
+        onMouseUp,
+        modalRender,
       } = props
       // ================================ Style =================================
       const contentStyle: CSSProperties = {}
@@ -136,10 +149,40 @@ const Panel = defineComponent<PanelProps>(
         </div>
       )
 
-      return null
+      const renderContent = () => {
+        if (visible || forceRender) {
+          return null
+        }
+        return modalRender ? modalRender(content) : content
+      }
+
+      return (
+        <div
+          key="dialog-element"
+          role="dialog"
+          {
+            ...{
+              'aria-labelledby': title ? ariaId : null,
+            } as any
+          }
+          aria-modal="true"
+          ref={mergeRefFun}
+          style={{ ...style, ...contentStyle }}
+          class={[prefixCls, className]}
+          onMousedown={onMouseDown}
+          onMouseup={onMouseUp}
+        >
+          <div ref={sentinelStartRef} tabindex={0} style={entityStyle}>
+            {renderContent()}
+          </div>
+          <div tabindex={0} ref={sentinelEndRef} style={sentinelStyle} />
+        </div>
+      )
     }
   },
   {
     name: 'Panel',
   },
 )
+
+export default Panel
