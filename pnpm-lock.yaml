@@ -90,15 +90,6 @@ importers:
         specifier: ^3.0.0
         version: 3.5.12(typescript@5.6.3)
 
-  packages/context:
-    dependencies:
-      '@v-c/util':
-        specifier: workspace:*
-        version: link:../util
-      vue:
-        specifier: ^3.0.0
-        version: 3.5.12(typescript@5.6.3)
-
   packages/input:
     dependencies:
       '@v-c/util':
@@ -179,6 +170,24 @@ importers:
       resize-observer-polyfill:
         specifier: ^1.5.1
         version: 1.5.1
+      vue:
+        specifier: ^3.0.0
+        version: 3.5.12(typescript@5.6.3)
+
+  packages/trigger:
+    dependencies:
+      '@v-c/portal':
+        specifier: workspace:*
+        version: link:../portal
+      '@v-c/resize-observer':
+        specifier: workspace:*
+        version: link:../resize-observer
+      '@v-c/util':
+        specifier: workspace:*
+        version: link:../util
+      classnames:
+        specifier: ^2.5.1
+        version: 2.5.1
       vue:
         specifier: ^3.0.0
         version: 3.5.12(typescript@5.6.3)
