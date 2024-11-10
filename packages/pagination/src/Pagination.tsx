@@ -5,7 +5,7 @@ import KeyCode from '@v-c/util/dist/KeyCode'
 import pickAttrs from '@v-c/util/dist/pickAttrs'
 import { cloneElement } from '@v-c/util/dist/vnode'
 import classNames from 'classnames'
-import { computed, defineComponent, h, ref, toRef, watchEffect } from 'vue'
+import { computed, defineComponent, h, isVNode, ref, toRef, watchEffect } from 'vue'
 import { paginationProps } from './interface'
 import zh_CN from './locale/zh_CN'
 import Pager from './Pager'
@@ -194,7 +194,7 @@ const Pagination = defineComponent({
         'prev',
         getItemIcon(props.prevIcon, 'prev page'),
       )
-      return 'setup' in prevButton ? cloneElement(prevButton, { disabled: !hasPrev.value }) : prevButton
+      return isVNode(prevButton) ? cloneElement(prevButton, { disabled: !hasPrev.value }) : prevButton
     }
 
     function renderNext(nextPage: number) {
@@ -204,7 +204,7 @@ const Pagination = defineComponent({
         'next',
         getItemIcon(props.nextIcon, 'next page'),
       )
-      return 'setup' in nextButton ? cloneElement(nextButton, { disabled: !hasNext.value }) : nextButton
+      return isVNode(nextButton) ? cloneElement(nextButton, { disabled: !hasNext.value }) : nextButton
     }
 
     function handleGoTO(event: Event) {

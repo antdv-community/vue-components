@@ -1,4 +1,4 @@
-import type { Component, CSSProperties, PropType, VNode } from 'vue'
+import type { Component, CSSProperties, PropType, VNode, VNodeChild } from 'vue'
 
 export interface PaginationLocale {
   // Options
@@ -17,7 +17,7 @@ export interface PaginationLocale {
   page_size?: string
 }
 
-export type ItemRender = (page: number, type: 'page' | 'prev' | 'next' | 'jump-prev' | 'jump-next', element: VNode) => VNode
+export type ItemRender = (page: number, type: 'page' | 'prev' | 'next' | 'jump-prev' | 'jump-next', element: VNode) => VNodeChild
 export function paginationProps() {
   return {
     disabled: {
@@ -79,7 +79,7 @@ export function paginationProps() {
       default: false,
     },
     selectComponentClass: Object as PropType<Component>,
-    showTotal: Function as PropType<(total: number, range: [number, number]) => VNode>,
+    showTotal: Function as PropType<(total: number, range: [number, number]) => VNodeChild>,
     showTitle: {
       type: Boolean,
       default: true,
