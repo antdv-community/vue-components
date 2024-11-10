@@ -1,0 +1,32 @@
+{
+  "name": "@v-c/trigger",
+  "type": "module",
+  "version": "0.0.1",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
+  "description": "",
+  "author": "",
+  "license": "MIT",
+  "keywords": ["trigger"],
+  "main": "index.js",
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "dependencies": {
+    "@v-c/util": "workspace:*",
+    "@v-c/resize-observer": "workspace:*",
+    "@v-c/portal": "workspace:*",
+    "classnames": "^2.5.1"
+  }
+}
