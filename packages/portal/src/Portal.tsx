@@ -47,6 +47,7 @@ function getPortalContainer(getContainer: GetContainer) {
 
 const defaults = {
   autoDestroy: true,
+  getContainer: undefined,
 }
 
 const Portal = defineComponent<PortalProps>((props = defaults, { slots }) => {
@@ -87,6 +88,7 @@ const Portal = defineComponent<PortalProps>((props = defaults, { slots }) => {
     computed(() => !!(mergedRender.value && !innerContainer.value)),
     props.debug,
   )
+
   useContextProvider(queueCreate)
 
   const mergedContainer = computed(() => innerContainer.value ?? defaultContainer.value)

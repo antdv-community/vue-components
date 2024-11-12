@@ -18,7 +18,10 @@ function getTransitionDirection(placement: SelectCommonPlacement | undefined) {
   return `slide-up`
 }
 
-export function getTransitionProps(transitionName: string, opt: TransitionProps = {}) {
+export function getTransitionProps(transitionName?: string, opt: TransitionProps = {}) {
+  if (!transitionName) {
+    return {}
+  }
   const transitionProps: TransitionProps = transitionName
     ? {
         name: transitionName,

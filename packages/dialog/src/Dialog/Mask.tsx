@@ -1,4 +1,5 @@
 import type { CSSProperties, HTMLAttributes } from 'vue'
+import { getTransitionProps } from '@v-c/util/dist/utils/transition.ts'
 import classNames from 'classnames'
 import { defineComponent, Transition } from 'vue'
 
@@ -14,9 +15,17 @@ export interface MaskProps {
 const Mask = defineComponent<MaskProps>(
   (props) => {
     return () => {
-      const { maskProps, prefixCls, className, style, visible } = props
+      const {
+        maskProps,
+        prefixCls,
+        className,
+        style,
+        visible,
+        motionName,
+      } = props
       return (
         <Transition
+          {...getTransitionProps(motionName!)}
           key="mask"
           leaveToClass={`${prefixCls}-mask-hidden`}
         >
@@ -26,9 +35,7 @@ const Mask = defineComponent<MaskProps>(
                 style={[style]}
                 class={classNames(`${prefixCls}-mask`, className)}
                 {...maskProps}
-              >
-                aa
-              </div>
+              />
             )
           }
 

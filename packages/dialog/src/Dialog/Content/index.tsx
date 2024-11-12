@@ -7,13 +7,13 @@ import { offset } from '../../util.ts'
 import Panel from './Panel'
 
 export type ContentProps = {
-  motionName: string
+  motionName?: string
   ariaId: string
   onVisibleChanged: (visible: boolean) => void
 } & PanelProps
 
 const Content = defineComponent<ContentProps>(
-  (props) => {
+  (props, { slots }) => {
     const dialogRef = shallowRef<HTMLDivElement>()
     return () => {
       const {
@@ -42,7 +42,6 @@ const Content = defineComponent<ContentProps>(
         }
       }
       // ============================= Render =============================
-
       const transitionProps = getTransitionProps(motionName)
       return (
         <Transition
@@ -56,6 +55,7 @@ const Content = defineComponent<ContentProps>(
           && (
             <Panel
               {...props}
+              v-slots={slots}
               title={title}
               ariaId={ariaId}
               prefixCls={prefixCls}

@@ -1,7 +1,7 @@
 import type { ComputedRef } from 'vue'
 import type { QueueCreate } from './Context.tsx'
 import canUseDom from '@v-c/util/dist/Dom/canUseDom'
-import { computed, onBeforeUnmount, shallowRef, watch } from 'vue'
+import { computed, nextTick, onUnmounted, shallowRef, watch } from 'vue'
 import { useContextState } from './Context.tsx'
 
 const EMPTY_LIST: VoidFunction[] = []
@@ -23,14 +23,13 @@ export default function useDom(
 
     if (process.env.NODE_ENV !== 'production' && debug)
       defaultEle.setAttribute('data-debug', debug)
-
     return defaultEle
   })
 
   // ========================== Order ==========================
   const appendedRef = shallowRef(false)
   const queueCreate = useContextState()
-  const queue = shallowRef<VoidFunction[]>(EMPTY_LIST)
+  const queue = shallowRef<VoidFunction[]>([])
 
   const mergedQueueCreate = computed(() => queueCreate?.value || (appendedRef.value
     ? undefined
@@ -47,7 +46,14 @@ export default function useDom(
   }
 
   function cleanup() {
-    ele.value?.parentElement?.removeChild(ele.value)
+    if (ele.value?.parentElement) {
+      ele.value?.parentElement?.removeChild(ele.value)
+    }
+    else {
+      if (ele.value && appendedRef.value) {
+        // document.body?.removeChild?.(ele.value!)
+      }
+    }
 
     appendedRef.value = false
   }
@@ -60,19 +66,20 @@ export default function useDom(
         append()
     }
     else {
-      cleanup()
+      nextTick(() => {
+        cleanup()
+      })
     }
   }, {
-    flush: 'post',
     immediate: true,
   })
 
-  onBeforeUnmount(cleanup)
+  onUnmounted(cleanup)
 
   watch(queue, () => {
     if (queue.value.length) {
       queue.value.forEach(fn => fn())
-      queue.value = EMPTY_LIST
+      queue.value = [...EMPTY_LIST]
     }
   }, {
     flush: 'post',

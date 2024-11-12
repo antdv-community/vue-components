@@ -10,6 +10,7 @@ const base = fileURLToPath(new URL('.', import.meta.url))
 
 const comps = [
   ['util', 'util/dist'],
+  'util',
   'checkbox',
   'resize-observer',
   'input',
