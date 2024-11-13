@@ -47,6 +47,7 @@ function getPortalContainer(getContainer: GetContainer) {
 
 const defaults = {
   autoDestroy: true,
+  getContainer: undefined,
 }
 
 const Portal = defineComponent<PortalProps>((props = defaults, { slots }) => {
@@ -87,16 +88,17 @@ const Portal = defineComponent<PortalProps>((props = defaults, { slots }) => {
     computed(() => !!(mergedRender.value && !innerContainer.value)),
     props.debug,
   )
+
   useContextProvider(queueCreate)
 
-  const mergedContainer = computed(() => innerContainer.value ?? defaultContainer.value)
+  const mergedContainer = computed(() => innerContainer.value ?? defaultContainer)
 
   // ========================= Locker ==========================
   useScrollLocker(
     computed(() => !!(props.autoLock
       && props.open
       && canUseDom()
-      && (mergedContainer.value === defaultContainer.value
+      && (mergedContainer.value === defaultContainer
         || mergedContainer.value === document.body))),
   )
   return () => {

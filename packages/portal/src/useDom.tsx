@@ -1,7 +1,7 @@
 import type { ComputedRef } from 'vue'
 import type { QueueCreate } from './Context.tsx'
 import canUseDom from '@v-c/util/dist/Dom/canUseDom'
-import { computed, onBeforeUnmount, shallowRef, watch } from 'vue'
+import { computed, nextTick, onUnmounted, shallowRef, watch } from 'vue'
 import { useContextState } from './Context.tsx'
 
 const EMPTY_LIST: VoidFunction[] = []
@@ -14,8 +14,8 @@ const EMPTY_LIST: VoidFunction[] = []
 export default function useDom(
   render: ComputedRef<boolean>,
   debug?: string,
-): [ComputedRef<HTMLDivElement | null>, ComputedRef<QueueCreate>] {
-  const ele = computed(() => {
+): [HTMLDivElement | null, ComputedRef<QueueCreate>] {
+  const eleFun = () => {
     if (!canUseDom())
       return null
 
@@ -23,14 +23,14 @@ export default function useDom(
 
     if (process.env.NODE_ENV !== 'production' && debug)
       defaultEle.setAttribute('data-debug', debug)
-
     return defaultEle
-  })
+  }
+  const ele = eleFun()
 
   // ========================== Order ==========================
   const appendedRef = shallowRef(false)
   const queueCreate = useContextState()
-  const queue = shallowRef<VoidFunction[]>(EMPTY_LIST)
+  const queue = shallowRef<VoidFunction[]>([])
 
   const mergedQueueCreate = computed(() => queueCreate?.value || (appendedRef.value
     ? undefined
@@ -40,14 +40,20 @@ export default function useDom(
 
   // =========================== DOM ===========================
   function append() {
-    if (!ele?.value?.parentElement)
-      document.body.appendChild(ele.value!)
-
+    if (!ele?.parentElement)
+      document.body.appendChild(ele!)
     appendedRef.value = true
   }
 
   function cleanup() {
-    ele.value?.parentElement?.removeChild(ele.value)
+    if (ele?.parentElement) {
+      ele?.parentElement?.removeChild(ele)
+    }
+    else {
+      if (ele && appendedRef.value) {
+        document.body?.removeChild?.(ele!)
+      }
+    }
 
     appendedRef.value = false
   }
@@ -60,19 +66,20 @@ export default function useDom(
         append()
     }
     else {
-      cleanup()
+      nextTick(() => {
+        cleanup()
+      })
     }
   }, {
-    flush: 'post',
     immediate: true,
   })
 
-  onBeforeUnmount(cleanup)
+  onUnmounted(cleanup)
 
   watch(queue, () => {
     if (queue.value.length) {
       queue.value.forEach(fn => fn())
-      queue.value = EMPTY_LIST
+      queue.value = [...EMPTY_LIST]
     }
   }, {
     flush: 'post',
