@@ -43,6 +43,29 @@ const Content = defineComponent<ContentProps>(
       }
       // ============================= Render =============================
       const transitionProps = getTransitionProps(motionName)
+      const dom = (
+        <Panel
+          {...props}
+          v-slots={slots}
+          title={title}
+          ariaId={ariaId}
+          prefixCls={prefixCls}
+          style={{ ...style, ...contentStyle }}
+          class={[className]}
+        />
+      )
+      // 改造render函数
+      const renderDom = () => {
+        if ((destroyOnClose || forceRender) && visible) {
+          return dom
+        }
+        else if (!destroyOnClose && !forceRender) {
+          return dom
+        }
+        else {
+          return null
+        }
+      }
       return (
         <Transition
           {...transitionProps}
@@ -51,19 +74,7 @@ const Content = defineComponent<ContentProps>(
           onAfterEnter={() => onVisibleChanged?.(true)}
           onAfterLeave={() => onVisibleChanged?.(false)}
         >
-          {(visible || !destroyOnClose || forceRender)
-          && (
-            <Panel
-              {...props}
-              v-slots={slots}
-              title={title}
-              ariaId={ariaId}
-              prefixCls={prefixCls}
-              style={{ ...style, ...contentStyle }}
-              class={[className]}
-            />
-          )}
-
+          {renderDom()}
         </Transition>
       )
     }

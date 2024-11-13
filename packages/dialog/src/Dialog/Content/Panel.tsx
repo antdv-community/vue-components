@@ -182,6 +182,7 @@ const Panel = defineComponent<PanelProps>(
   },
   {
     name: 'Panel',
+    inheritAttrs: false,
   },
 )
 

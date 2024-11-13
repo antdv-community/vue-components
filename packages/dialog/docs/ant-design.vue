@@ -22,6 +22,7 @@ function onClick(e: MouseEvent) {
 
 function onClose() {
   visible1.value = false
+  console.log('Sad')
 }
 function onClose2() {
   visible2.value = false
