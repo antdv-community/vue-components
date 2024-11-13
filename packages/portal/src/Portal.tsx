@@ -91,14 +91,14 @@ const Portal = defineComponent<PortalProps>((props = defaults, { slots }) => {
 
   useContextProvider(queueCreate)
 
-  const mergedContainer = computed(() => innerContainer.value ?? defaultContainer.value)
+  const mergedContainer = computed(() => innerContainer.value ?? defaultContainer)
 
   // ========================= Locker ==========================
   useScrollLocker(
     computed(() => !!(props.autoLock
       && props.open
       && canUseDom()
-      && (mergedContainer.value === defaultContainer.value
+      && (mergedContainer.value === defaultContainer
         || mergedContainer.value === document.body))),
   )
   return () => {

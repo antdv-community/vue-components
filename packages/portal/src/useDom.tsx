@@ -14,8 +14,8 @@ const EMPTY_LIST: VoidFunction[] = []
 export default function useDom(
   render: ComputedRef<boolean>,
   debug?: string,
-): [ComputedRef<HTMLDivElement | null>, ComputedRef<QueueCreate>] {
-  const ele = computed(() => {
+): [HTMLDivElement | null, ComputedRef<QueueCreate>] {
+  const eleFun = () => {
     if (!canUseDom())
       return null
 
@@ -24,7 +24,8 @@ export default function useDom(
     if (process.env.NODE_ENV !== 'production' && debug)
       defaultEle.setAttribute('data-debug', debug)
     return defaultEle
-  })
+  }
+  const ele = eleFun()
 
   // ========================== Order ==========================
   const appendedRef = shallowRef(false)
@@ -39,19 +40,18 @@ export default function useDom(
 
   // =========================== DOM ===========================
   function append() {
-    if (!ele?.value?.parentElement)
-      document.body.appendChild(ele.value!)
-
+    if (!ele?.parentElement)
+      document.body.appendChild(ele!)
     appendedRef.value = true
   }
 
   function cleanup() {
-    if (ele.value?.parentElement) {
-      ele.value?.parentElement?.removeChild(ele.value)
+    if (ele?.parentElement) {
+      ele?.parentElement?.removeChild(ele)
     }
     else {
-      if (ele.value && appendedRef.value) {
-        // document.body?.removeChild?.(ele.value!)
+      if (ele && appendedRef.value) {
+        document.body?.removeChild?.(ele!)
       }
     }
 
