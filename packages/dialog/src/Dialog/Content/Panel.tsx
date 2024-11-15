@@ -150,7 +150,7 @@ const Panel = defineComponent<PanelProps>(
       )
 
       const renderContent = () => {
-        if (visible || forceRender) {
+        if (!visible && forceRender) {
           return null
         }
         return modalRender ? modalRender(content) : content

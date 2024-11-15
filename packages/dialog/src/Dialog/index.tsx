@@ -18,6 +18,7 @@ const defaults = {
   closable: true,
   mask: true,
   maskClosable: true,
+  forceRender: false,
 } as IDialogPropTypes
 
 const Dialog = defineComponent<IDialogPropTypes>(
@@ -169,8 +170,8 @@ const Dialog = defineComponent<IDialogPropTypes>(
         maskStyle,
         maskProps,
         classNames: modalClassNames,
-
       } = props
+      console.log(props)
       const mergedStyle: CSSProperties = {
         zIndex,
         ...wrapStyle,
@@ -215,7 +216,7 @@ const Dialog = defineComponent<IDialogPropTypes>(
               closable={closable}
               ariaId={ariaId}
               prefixCls={prefixCls!}
-              visible={!(visible && animatedVisible)}
+              visible={!!visible}
               motionName={getMotionName(prefixCls!, transitionName, animation)!}
               v-slots={slots}
             />

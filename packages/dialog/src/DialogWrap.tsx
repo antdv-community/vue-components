@@ -15,13 +15,15 @@ import Dialog from './Dialog'
 
 const defaults = {
   getContainer: undefined,
-  prefixCls: undefined,
-  visible: undefined,
-  keyboard: undefined,
-  focusTriggerAfterClose: undefined,
-  closable: undefined,
-  mask: undefined,
-  maskClosable: undefined,
+  closeIcon: undefined,
+  prefixCls: 'vc-dialog',
+  visible: true,
+  keyboard: true,
+  focusTriggerAfterClose: true,
+  closable: true,
+  mask: true,
+  maskClosable: true,
+  forceRender: false,
 } as IDialogPropTypes
 const DialogWrap = defineComponent<IDialogPropTypes>(
   (props = defaults, { slots }) => {
@@ -62,7 +64,6 @@ const DialogWrap = defineComponent<IDialogPropTypes>(
       if (!forceRender && destroyOnClose && !animatedVisible) {
         return null
       }
-
       return (
         <Portal
           open={!!(visible || forceRender || animatedVisible)}

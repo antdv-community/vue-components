@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, shallowRef, watchEffect } from 'vue'
+import { computed, shallowRef, watchEffect } from 'vue'
 import Dialog from '../src'
 import { clearPath, getSvg } from './icon'
 import './assets/index.less'
@@ -22,7 +22,6 @@ function onClick(e: MouseEvent) {
 
 function onClose() {
   visible1.value = false
-  console.log('Sad')
 }
 function onClose2() {
   visible2.value = false
@@ -57,7 +56,8 @@ function toggleCloseIcon() {
   useIcon.value = !useIcon.value
 }
 
-const style = reactive({ width })
+const style = computed(() => ({ width: `${width.value}px` }))
+
 const wrapperClassName = shallowRef('')
 watchEffect(() => {
   if (center.value) {

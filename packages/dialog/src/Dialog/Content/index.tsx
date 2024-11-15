@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'vue'
 import type { PanelProps } from './Panel'
-
 import { getTransitionProps } from '@v-c/util/dist/utils/transition.ts'
-import { defineComponent, shallowRef, Transition } from 'vue'
+import { defineComponent, nextTick, shallowRef, Transition, vShow, withDirectives } from 'vue'
+
 import { offset } from '../../util.ts'
 import Panel from './Panel'
 
@@ -15,6 +15,18 @@ export type ContentProps = {
 const Content = defineComponent<ContentProps>(
   (props, { slots }) => {
     const dialogRef = shallowRef<HTMLDivElement>()
+
+    const transformOrigin = shallowRef('')
+
+    function onPrepare() {
+      const { mousePosition } = props
+      nextTick(() => {
+        if (dialogRef.value) {
+          const elementOffset = offset(dialogRef.value)
+          transformOrigin.value = mousePosition && (mousePosition.x || mousePosition.y) ? `${mousePosition.x - elementOffset.left}px ${mousePosition.y - elementOffset.top}px` : ''
+        }
+      })
+    }
     return () => {
       const {
         prefixCls,
@@ -22,25 +34,17 @@ const Content = defineComponent<ContentProps>(
         style,
         visible,
         destroyOnClose,
-        forceRender,
         onVisibleChanged,
-        mousePosition,
         ariaId,
         title,
         motionName,
       } = props
       // ============================= Style ==============================
-      let transformOrigin = ''
       const contentStyle: CSSProperties = {}
-      if (transformOrigin) {
-        contentStyle.transformOrigin = transformOrigin
+      if (transformOrigin.value) {
+        contentStyle.transformOrigin = transformOrigin.value
       }
-      function onPrepare() {
-        if (dialogRef.value) {
-          const elementOffset = offset(dialogRef.value)
-          transformOrigin = mousePosition && (mousePosition.x || mousePosition.y) ? `${mousePosition.x - elementOffset.left}px ${mousePosition.y - elementOffset.top}px` : ''
-        }
-      }
+
       // ============================= Render =============================
       const transitionProps = getTransitionProps(motionName)
       const dom = (
@@ -52,25 +56,24 @@ const Content = defineComponent<ContentProps>(
           prefixCls={prefixCls}
           style={{ ...style, ...contentStyle }}
           class={[className]}
+          holderRef={(el) => {
+            dialogRef.value = el
+          }}
         />
       )
       // 改造render函数
       const renderDom = () => {
-        if ((destroyOnClose || forceRender) && visible) {
-          return dom
+        if (visible || !destroyOnClose) {
+          return withDirectives(dom, [
+            [vShow, visible],
+          ])
         }
-        else if (!destroyOnClose && !forceRender) {
-          return dom
-        }
-        else {
-          return null
-        }
+        return null
       }
       return (
         <Transition
           {...transitionProps}
           onBeforeEnter={onPrepare}
-          onBeforeAppear={onPrepare}
           onAfterEnter={() => onVisibleChanged?.(true)}
           onAfterLeave={() => onVisibleChanged?.(false)}
         >
