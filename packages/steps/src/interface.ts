@@ -1,6 +1,5 @@
 import type { VueNode } from '@v-c/util/dist/type'
 import type { CSSProperties } from 'vue'
-import internal from 'node:stream'
 
 export type Status = 'error' | 'process' | 'finish' | 'wait'
 
