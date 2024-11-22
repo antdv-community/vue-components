@@ -79,13 +79,14 @@ export function generatorStepsProps() {
       default: 'vc-steps',
     },
     className: String,
-    style: Object as PropType<CSSProperties>,
-    // wrapperStyle: Object as PropType<CSSProperties>,
+    style: {
+      type: Object,
+      default: () => ({}),
+    },
     iconPrefix: {
       type: String,
-      default: 'rc',
+      default: 'vc',
     },
-
     status: {
       type: String as PropType<Status>,
       default: 'process',

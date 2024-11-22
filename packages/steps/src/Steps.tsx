@@ -24,7 +24,7 @@ const Steps = defineComponent((props) => {
   }
 
   const renderStep = (item: StepProps, index: number) => {
-    const { stepIcon, icons, onChange, initial = 0, current = 0, iconPrefix = 'vc', style = {}, itemRender, status = 'process', prefixCls = 'vs-steps' } = props
+    const { stepIcon, icons, onChange, initial, current, iconPrefix, style, itemRender, status, prefixCls } = props
     const mergedItem: StepProps = { ...item }
     const stepNumber = initial + index
 
@@ -73,10 +73,10 @@ const Steps = defineComponent((props) => {
   }
   return () => {
     const {
-      prefixCls = 'vs-steps',
+      prefixCls,
       className,
-      items = [],
-      style = {},
+      items,
+      style,
     } = props
 
     const restProps = omit(props, ['prefixCls', 'className', 'style', 'direction', 'type', 'labelPlacement', 'iconPrefix', 'status', 'size', 'current', 'progressDot', 'stepIcon', 'initial', 'icons', 'onChange', 'itemRender', 'items'])
