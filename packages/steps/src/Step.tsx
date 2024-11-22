@@ -64,7 +64,7 @@ export default defineComponent({
     const renderIconNode = () => {
       const { stepIcon, stepNumber, title, description, progressDot, prefixCls, iconPrefix, status, icons, icon } = props
       let iconNode: VueNode
-      const iconClassName = classNames(`${prefixCls}-icon`, `${prefixCls}icon`, {
+      const iconClassName = classNames(`${prefixCls}-icon`, `${iconPrefix}icon`, {
         [`${iconPrefix}icon-${icon}`]: icon && isString(icon),
         [`${iconPrefix}icon-check`]:
           !icon && status === 'finish' && ((icons && !icons.finish) || !icons),

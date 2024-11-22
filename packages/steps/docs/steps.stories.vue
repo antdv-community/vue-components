@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { h } from 'vue'
+import { h, shallowRef } from 'vue'
 import Steps from '../src'
 import '../assets/index.less'
 import '../assets/iconfont.less'
@@ -69,6 +69,40 @@ const icons = {
 }
 
 const customIconDescription = 'This is a description'
+
+// ========== custom icon ============
+const Icon = ({ type }) => h('i', { class: `vcicon vcicon-${type}` })
+
+// ========== dynamic =============
+const dynamicItems = shallowRef([
+  {
+    title: '已完成',
+    description:
+      '这里是多信息的描述啊描述啊描述啊描述啊哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶',
+  },
+  {
+    title: '进行中',
+    description:
+      '这里是多信息的描述啊描述啊描述啊描述啊哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶',
+  },
+  {
+    title: '待运行',
+    description:
+      '这里是多信息的描述啊描述啊描述啊描述啊哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶',
+  },
+  {
+    title: '待运行',
+    description:
+      '这里是多信息的描述啊描述啊描述啊描述啊哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶哦耶',
+  },
+])
+function addStep() {
+  dynamicItems.value.push({
+    title: '待运行',
+    description: '新的节点',
+  })
+  dynamicItems.value = [...dynamicItems.value]
+}
 </script>
 
 <template>
@@ -143,6 +177,24 @@ const customIconDescription = 'This is a description'
           { title: 'Waiting', description: customIconDescription },
         ]"
       />
+    </Variant>
+
+    <Variant title="customIcon">
+      <Steps
+        :current="1"
+        :items="[
+          { title: '步骤1', icon: Icon({ type: 'cloud' }) },
+          { title: '步骤2', icon: 'apple' },
+          { title: '步骤1', icon: 'github' },
+        ]"
+      />
+    </Variant>
+
+    <Variant title="dynamic">
+      <button type="button" @click="addStep">
+        Add new step
+      </button>
+      <Steps :items="dynamicItems" />
     </Variant>
   </Story>
 </template>
