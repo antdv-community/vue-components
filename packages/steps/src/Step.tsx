@@ -1,6 +1,6 @@
 import type { VueNode } from '@v-c/util/dist/type'
-import type { CSSProperties } from 'vue'
-import type { StepProps } from './interface'
+import type { CSSProperties, PropType } from 'vue'
+import type { Icons, ProgressDotRender, Status, StepIconRender } from './interface'
 import KeyCode from '@v-c/util/dist/KeyCode'
 import classNames from 'classnames'
 import { computed, defineComponent } from 'vue'
@@ -8,12 +8,44 @@ import { computed, defineComponent } from 'vue'
 function isString(str: any): str is string {
   return typeof str === 'string'
 }
+export function generatorStepProps() {
+  return {
+    prefixCls: String,
+    className: String,
+    style: Object as PropType<CSSProperties>,
+    wrapperStyle: Object as PropType<CSSProperties>,
+    iconPrefix: String,
+    active: Boolean,
+    disabled: Boolean,
+    stepIndex: {
+      type: Number,
+      required: true,
+    },
+    stepNumber: {
+      type: Number,
+      required: true,
+    },
+    status: String as PropType<Status>,
+    title: [String, Object, Function] as PropType<VueNode>,
+    subTitle: [String, Object, Function] as PropType<VueNode>,
+    description: [String, Object, Function] as PropType<VueNode>,
+    tailContent: [String, Object, Function] as PropType<VueNode>,
+    icon: [String, Object, Function] as PropType<VueNode>,
+    icons: Object as PropType<Icons>,
+    onClick: Function as PropType<(e: MouseEvent) => void>,
+    onStepClick: Function as PropType<((index: number) => void) | undefined>,
+    progressDot: [Boolean, Function] as PropType<boolean | ProgressDotRender>,
+    stepIcon: Function as PropType<StepIconRender>,
+    render: Function as PropType<(stepItem: VueNode) => VueNode>,
+    refixCls: String,
+  }
+}
 
-export default defineComponent<StepProps>((props, { attrs }) => {
+export default defineComponent((props, { attrs }) => {
   const clickable = computed(() => !!props.onStepClick && !props.disabled)
 
   const accessibilityProps = computed(() => {
-    if (clickable) {
+    if (clickable.value) {
       return {
         role: 'button',
         tabIndex: 0,
@@ -97,7 +129,7 @@ export default defineComponent<StepProps>((props, { attrs }) => {
     const { prefixCls, className, icon, active, disabled, tailContent, onClick, title, subTitle, description, render } = props
     const classString = classNames(
       `${prefixCls}-item`,
-      `${prefixCls}-item-${mergedStatus}`,
+      `${prefixCls}-item-${mergedStatus.value}`,
       className,
       {
         [`${prefixCls}-item-custom`]: icon,
@@ -110,7 +142,7 @@ export default defineComponent<StepProps>((props, { attrs }) => {
     const stepItemStyle: CSSProperties = { ...(style as CSSProperties) }
     let stepNode: VueNode = (
       <div {...restProps} class={classString} style={stepItemStyle}>
-        <div onClick={onClick} {...accessibilityProps} class={`${prefixCls}-item-container`}>
+        <div onClick={onClick} {...accessibilityProps.value} class={`${prefixCls}-item-container`}>
           <div class={`${prefixCls}-item-tail`}>{tailContent}</div>
           <div class={`${prefixCls}-item-icon`}>{renderIconNode()}</div>
           <div class={`${prefixCls}-item-content`}>
@@ -137,5 +169,6 @@ export default defineComponent<StepProps>((props, { attrs }) => {
 
     return stepNode
   }
+}, {
+  props: generatorStepProps(),
 })
-

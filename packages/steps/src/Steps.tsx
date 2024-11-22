@@ -1,10 +1,69 @@
 import type { VueNode } from '@v-c/util/dist/type'
-import type { Status, StepProps } from './interface'
+import type { PropType } from 'vue'
+import type { Icons, ProgressDotRender, Status, StepIconRender } from './interface'
 import omit from '@v-c/util/dist/omit'
 import classNames from 'classnames'
 import { computed, defineComponent } from 'vue'
-import { generatorStepsProps } from './interface'
 import Step from './Step'
+
+type StepProps = InstanceType<typeof Step>['$props']
+
+export function generatorStepsProps() {
+  return {
+    prefixCls: {
+      type: String,
+      default: 'vc-steps',
+    },
+    className: String,
+    style: {
+      type: Object,
+      default: () => ({}),
+    },
+    iconPrefix: {
+      type: String,
+      default: 'vc',
+    },
+    status: {
+      type: String as PropType<Status>,
+      default: 'process',
+    },
+    icons: Object as PropType<Icons>,
+    progressDot: {
+      type: [Boolean, Function] as PropType<boolean | ProgressDotRender>,
+      default: false,
+    },
+    stepIcon: Function as PropType<StepIconRender>,
+    direction: {
+      type: String as PropType<'horizontal' | 'vertical'>,
+      default: 'horizontal',
+    },
+    type: {
+      type: String as PropType<'default' | 'navigation' | 'inline'>,
+      default: 'default',
+    },
+    labelPlacement: {
+      type: String as PropType<'horizontal' | 'vertical'>,
+      default: 'horizontal',
+    },
+    size: {
+      type: String as PropType<'default' | 'small'>,
+    },
+    current: {
+      type: Number,
+      default: 0,
+    },
+    initial: {
+      type: Number,
+      default: 0,
+    },
+    items: {
+      type: Array as PropType<any[]>,
+      default: () => [],
+    },
+    onChange: Function as PropType<((current: number) => void) | undefined>,
+    itemRender: Function as PropType<(item: StepProps, stepItem: VueNode) => VueNode>,
+  }
+}
 
 const Steps = defineComponent((props) => {
   const isNav = computed(() => props.type === 'navigation')
@@ -45,13 +104,13 @@ const Steps = defineComponent((props) => {
       }
     }
 
-    if (isInline) {
+    if (isInline.value) {
       mergedItem.icon = undefined
       mergedItem.subTitle = undefined
     }
 
     if (!mergedItem.render && itemRender) {
-      mergedItem.render = stepItem => itemRender(mergedItem, stepItem)
+      mergedItem.render = (stepItem: VueNode) => itemRender(mergedItem, stepItem)
     }
 
     return (
@@ -82,7 +141,7 @@ const Steps = defineComponent((props) => {
     const restProps = omit(props, ['prefixCls', 'className', 'style', 'direction', 'type', 'labelPlacement', 'iconPrefix', 'status', 'size', 'current', 'progressDot', 'stepIcon', 'initial', 'icons', 'onChange', 'itemRender', 'items'])
 
     const classString = classNames(prefixCls, `${prefixCls}-${mergedDirection.value}`, className, {
-      [`${prefixCls}-${mergedSize}`]: mergedSize.value,
+      [`${prefixCls}-${mergedSize.value}`]: mergedSize.value,
       [`${prefixCls}-label-${adjustedLabelPlacement.value}`]: mergedDirection.value === 'horizontal',
       [`${prefixCls}-dot`]: !!mergedProgressDot.value,
       [`${prefixCls}-navigation`]: isNav.value,
