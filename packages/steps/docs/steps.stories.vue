@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { h, shallowRef } from 'vue'
+import type { VNode } from 'vue'
+import type { Step } from '../src'
+import { cloneVNode, h, ref, shallowRef } from 'vue'
 import Steps from '../src'
 import '../assets/index.less'
 import '../assets/iconfont.less'
@@ -103,6 +105,31 @@ function addStep() {
   })
   dynamicItems.value = [...dynamicItems.value]
 }
+
+// ============= inline ================
+const inlineCurrent = ref(0)
+function setInlineCurrent(value: number) {
+  inlineCurrent.value = value
+}
+function inlineItemRender(
+  item: InstanceType<typeof Step>['$props'],
+  stepItem: VNode,
+) {
+  return cloneVNode(stepItem, { title: item.description })
+}
+
+// ============ nav base ==============
+const containerStyle = {
+  border: '1px solid rgb(235, 237, 240)',
+  marginBottom: 24,
+}
+
+const navCurrent = ref(0)
+function setNavCurrent(newNav: number) {
+  navCurrent.value = newNav
+}
+
+const navDescription = 'This is a description.'
 </script>
 
 <template>
@@ -195,6 +222,119 @@ function addStep() {
         Add new step
       </button>
       <Steps :items="dynamicItems" />
+    </Variant>
+
+    <Variant title="errorStep">
+      <Steps
+        :current="2"
+        status="error"
+        :items="[
+          {
+            title: '已完成',
+            description,
+          },
+          {
+            title: '进行中',
+            description,
+          },
+          {
+            title: '待运行',
+            description,
+          },
+          {
+            title: '待运行',
+            description,
+          },
+        ]"
+      />
+    </Variant>
+
+    <Variant title="inline">
+      <button @click="setInlineCurrent(0)">
+        Current: {{ inlineCurrent }}
+      </button>
+
+      <br>
+
+      <Steps
+        type="inline"
+        :current="inlineCurrent"
+        :items="[
+          {
+            title: '开发',
+            description: '开发阶段：开发中',
+          },
+          {
+            title: '测试',
+            description: '测试阶段：测试中',
+          },
+          {
+            title: '预发',
+            description: '预发阶段：预发中',
+          },
+          {
+            title: '发布',
+            description: '发布阶段：发布中',
+          },
+        ]"
+        :item-render="inlineItemRender"
+        @change="setInlineCurrent"
+      />
+    </Variant>
+
+    <Variant title="nav-base">
+      <div>
+        <Steps
+          :style="containerStyle"
+          type="navigation"
+          :current="navCurrent"
+          :items="[
+            {
+              title: 'Step 1',
+              status: 'finish',
+              subTitle: '剩余 00:00:05 超长隐藏',
+              description: navDescription,
+            },
+            {
+              title: 'Step 2',
+              status: 'process',
+              description: navDescription,
+            },
+            {
+              title: 'Step 3',
+              status: 'wait',
+              description: navDescription,
+              disabled: true,
+            },
+          ]"
+          @change="setNavCurrent"
+        />
+        <Steps
+          :style="containerStyle"
+          type="navigation"
+          :current="navCurrent"
+          :items="[
+            {
+              title: 'Step 1',
+              status: 'finish',
+              subTitle: '剩余 00:00:05 超长隐藏',
+            },
+            {
+              title: 'Step 2',
+              status: 'process',
+            },
+            {
+              title: 'Step 3',
+              status: 'wait',
+            },
+            {
+              title: 'Step 3',
+              status: 'wait',
+            },
+          ]"
+          @change="setNavCurrent"
+        />
+      </div>
     </Variant>
   </Story>
 </template>
