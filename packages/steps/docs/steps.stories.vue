@@ -130,6 +130,35 @@ function setNavCurrent(newNav: number) {
 }
 
 const navDescription = 'This is a description.'
+
+// ============= nextSteps =============
+function generateRandomSteps() {
+  const n = Math.floor(Math.random() * 3) + 3
+  const arr: Array<{ title: string }> = []
+  for (let i = 0; i < n; i++) {
+    arr.push({
+      title: `步骤${i + 1}`,
+    })
+  }
+  return arr
+}
+const steps = generateRandomSteps()
+const nextStepCurrentStep = ref(Math.floor(Math.random() * steps.length))
+function nextStep() {
+  let s = nextStepCurrentStep.value + 1
+  if (s === steps.length) {
+    s = 0
+  }
+  nextStepCurrentStep.value = s
+}
+const stepsRefs = shallowRef<Array<any>>([])
+
+// ========== simple ============
+const simpleCurrent = ref(0)
+function setSimpleCurrent(value: number) {
+  console.log('Change:', value)
+  simpleCurrent.value = value
+}
 </script>
 
 <template>
@@ -333,6 +362,187 @@ const navDescription = 'This is a description.'
             },
           ]"
           @change="setNavCurrent"
+        />
+      </div>
+    </Variant>
+
+    <Variant title="nextStpe">
+      <form className="my-step-form">
+        <div>这个demo随机生成3~6个步骤，初始随机进行到其中一个步骤</div>
+        <div>当前正在执行第{{ nextStepCurrentStep + 1 }}步</div>
+        <div className="my-step-container">
+          <Steps
+            :current="nextStepCurrentStep"
+            :items="
+              steps.map((s, i) => ({
+                ref: (c: VNode) => {
+                  stepsRefs[i] = c;
+                },
+                key: i,
+                title: s.title,
+              }))
+            "
+          />
+        </div>
+
+        <div>
+          <button type="button" @click="nextStep">
+            下一步
+          </button>
+        </div>
+      </form>
+    </Variant>
+
+    <Variant title="progressDot">
+      <Steps
+        progress-dot
+        :current="1"
+        size="small"
+        :items="[
+          {
+            title: '已完成',
+            description,
+          },
+          {
+            title: '进行中',
+            description,
+          },
+          {
+            title: '待运行',
+            description,
+          },
+          {
+            title: '待运行',
+            description,
+          },
+          {
+            title: '待运行',
+            description,
+          },
+        ]"
+      />
+    </Variant>
+
+    <Variant title="simple">
+      <div>
+        <Steps
+          :current="1"
+          :items="[
+            {
+              title: '已完成',
+            },
+            {
+              title: '进行中',
+            },
+            {
+              title: '待运行',
+            },
+            {
+              title: '待运行',
+            },
+          ]"
+        />
+        <Steps
+          :current="1"
+          :style="{ marginTop: 40 }"
+          :items="[
+            {
+              title: '已完成',
+              description,
+            },
+            {
+              title: '进行中',
+              subTitle: '剩余 00:00:07',
+              description,
+            },
+            {
+              title: '待运行',
+              description,
+            },
+            {
+              title: '待运行',
+              description,
+            },
+          ]"
+        />
+        <Steps
+          :current="1"
+          status="error"
+          :style="{ marginTop: 40 }"
+          :items="[
+            {
+              title: '已完成',
+              description,
+            },
+            {
+              title: '进行中',
+              subTitle: '剩余 00:00:07',
+              description,
+            },
+            {
+              title: '待运行',
+              description,
+            },
+            {
+              title: '待运行',
+              description,
+            },
+          ]"
+        />
+        <Steps
+          :current="simpleCurrent"
+          :items="[
+            { title: '已完成' },
+            { title: '进行中' },
+            { title: '待运行', description: 'Hello World!' },
+            { title: '待运行' },
+          ]"
+          @change="setSimpleCurrent"
+        />
+      </div>
+    </Variant>
+
+    <Variant title="smallSize">
+      <div>
+        <Steps
+          size="small"
+          :current="1"
+          :items="[
+            {
+              title: '已完成',
+            },
+            {
+              title: '进行中',
+            },
+            {
+              title: '待运行',
+            },
+            {
+              title: '待运行',
+            },
+          ]"
+        />
+        <Steps
+          size="small"
+          :current="1"
+          :style="{ marginTop: 40 }"
+          :items="[
+            {
+              title: '步骤1',
+            },
+            {
+              title: '步骤2',
+              icon: Icon({ type: 'cloud' }),
+            },
+            {
+              title: '步骤3',
+              icon: 'apple',
+            },
+            {
+              title: '待运行',
+              icon: 'github',
+            },
+          ]"
         />
       </div>
     </Variant>
