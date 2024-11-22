@@ -94,7 +94,7 @@ export default defineComponent<StepProps>((props, { attrs }) => {
 
   const mergedStatus = computed(() => props.status || 'wait')
   return () => {
-    const { prefixCls, className, icon, active, disabled,tailContent, onClick,title,subTitle,description, render } = props
+    const { prefixCls, className, icon, active, disabled, tailContent, onClick, title, subTitle, description, render } = props
     const classString = classNames(
       `${prefixCls}-item`,
       `${prefixCls}-item-${mergedStatus}`,
@@ -132,9 +132,10 @@ export default defineComponent<StepProps>((props, { attrs }) => {
     )
 
     if (render) {
-      stepNode = (render(stepNode) || null);
+      stepNode = (render(stepNode) || null)
     }
 
-    return stepNode;
+    return stepNode
   }
 })
+

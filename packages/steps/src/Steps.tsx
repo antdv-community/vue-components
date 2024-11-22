@@ -1,10 +1,12 @@
 import type { VueNode } from '@v-c/util/dist/type'
-import type { StepProps, StepsProps } from './interface'
+import type { Status, StepProps } from './interface'
+import omit from '@v-c/util/dist/omit'
 import classNames from 'classnames'
 import { computed, defineComponent } from 'vue'
+import { generatorStepsProps } from './interface'
 import Step from './Step'
 
-export default defineComponent<StepsProps>((props) => {
+const Steps = defineComponent((props) => {
   const isNav = computed(() => props.type === 'navigation')
   const isInline = computed(() => props.type === 'inline')
 
@@ -33,7 +35,7 @@ export default defineComponent<StepsProps>((props) => {
 
     if (!mergedItem.status) {
       if (stepNumber === current) {
-        mergedItem.status = status
+        mergedItem.status = status as Status
       }
       else if (stepNumber < current) {
         mergedItem.status = 'finish'
@@ -77,6 +79,8 @@ export default defineComponent<StepsProps>((props) => {
       style = {},
     } = props
 
+    const restProps = omit(props, ['prefixCls', 'className', 'style', 'direction', 'type', 'labelPlacement', 'iconPrefix', 'status', 'size', 'current', 'progressDot', 'stepIcon', 'initial', 'icons', 'onChange', 'itemRender', 'items'])
+
     const classString = classNames(prefixCls, `${prefixCls}-${mergedDirection.value}`, className, {
       [`${prefixCls}-${mergedSize}`]: mergedSize.value,
       [`${prefixCls}-label-${adjustedLabelPlacement.value}`]: mergedDirection.value === 'horizontal',
@@ -86,9 +90,13 @@ export default defineComponent<StepsProps>((props) => {
     })
 
     return (
-      <div class={classString} style={style}>
+      <div class={classString} style={style} {...restProps}>
         {items.filter(Boolean).map<VueNode>(renderStep)}
       </div>
     )
   }
+}, {
+  props: generatorStepsProps(),
 })
+
+export default Steps
