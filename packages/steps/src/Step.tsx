@@ -50,7 +50,7 @@ export default defineComponent({
             props.onStepClick?.(props.stepIndex!)
           },
           onKeydown: (e: KeyboardEvent) => {
-            const { which } = e
+            const which = e.which || e.keyCode || e.code
             if (which === KeyCode.ENTER || which === KeyCode.SPACE) {
               props.onStepClick?.(props.stepIndex!)
             }
