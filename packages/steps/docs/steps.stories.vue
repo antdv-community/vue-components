@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import type { VNode } from 'vue'
 import type { Step } from '../src'
+import type { Status } from '../src/interface'
 import { cloneVNode, h, ref, shallowRef } from 'vue'
 import Steps from '../src'
 import '../assets/index.less'
 import '../assets/iconfont.less'
+
+type VNodeChildAtom =
+  | VNode
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | void
+type VueNode = VNodeChildAtom | VNodeChildAtom[] | VNode
 
 const description: string
   = '这里是多信息的描述啊这里是多信息的描述啊这里是多信息的描述啊这里是多信息的描述啊这里是多信息的描述啊'
@@ -73,7 +84,9 @@ const icons = {
 const customIconDescription = 'This is a description'
 
 // ========== custom icon ============
-const Icon = ({ type }) => h('i', { class: `vcicon vcicon-${type}` })
+function Icon({ type }: { type: string }) {
+  return h('i', { class: `vcicon vcicon-${type}` })
+}
 
 // ========== dynamic =============
 const dynamicItems = shallowRef([
@@ -113,9 +126,9 @@ function setInlineCurrent(value: number) {
 }
 function inlineItemRender(
   item: InstanceType<typeof Step>['$props'],
-  stepItem: VNode,
+  stepItem: VueNode,
 ) {
-  return cloneVNode(stepItem, { title: item.description })
+  return cloneVNode(stepItem as VNode, { title: item.description })
 }
 
 // ============ nav base ==============
@@ -158,6 +171,18 @@ const simpleCurrent = ref(0)
 function setSimpleCurrent(value: number) {
   console.log('Change:', value)
   simpleCurrent.value = value
+}
+
+// ========== step icon ==============
+const stepIconCurrent = ref(0)
+function setStepIconCurrent() {
+  stepIconCurrent.value = (stepIconCurrent.value + 1) % 5
+}
+function stepIcon({ status, node }: { status: Status, node: any }) {
+  const isProcessing = status === 'process'
+  return isProcessing
+    ? h('div', { style: { backgroundColor: 'blue' } }, [node])
+    : node
 }
 </script>
 
@@ -545,6 +570,81 @@ function setSimpleCurrent(value: number) {
           ]"
         />
       </div>
+    </Variant>
+
+    <Variant title="stepIcon">
+      <button type="button" @click="setStepIconCurrent">
+        loop
+      </button>
+      <Steps
+        :step-icon="stepIcon"
+        :current="stepIconCurrent"
+        :items="[
+          {
+            title: '已完成',
+          },
+          {
+            title: '进行中',
+          },
+          {
+            title: '待运行',
+          },
+          {
+            title: '待运行',
+          },
+          {
+            title: '待运行',
+          },
+        ]"
+      />
+    </Variant>
+
+    <Variant title="vertical">
+      <Steps
+        direction="vertical"
+        :items="[
+          {
+            title: '已完成',
+            description,
+          },
+          {
+            title: '进行中',
+            description,
+          },
+          {
+            title: '待运行',
+            description,
+          },
+          {
+            title: '待运行',
+            description,
+          },
+        ]"
+      />
+    </Variant>
+    <Variant title="verticalSmall">
+      <Steps
+        direction="vertical"
+        size="small"
+        :items="[
+          {
+            title: '已完成',
+            description,
+          },
+          {
+            title: '进行中',
+            description,
+          },
+          {
+            title: '待运行',
+            description,
+          },
+          {
+            title: '待运行',
+            description,
+          },
+        ]"
+      />
     </Variant>
   </Story>
 </template>
