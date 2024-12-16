@@ -19,7 +19,7 @@ const CollapsePanel = defineComponent({
     })
 
     return () => {
-      const { prefixCls, isActive, className, headerClass, collapsible, classNemes: customizeClassNames = {}, showArrow, styles = {} } = props
+      const { prefixCls, isActive, className, expandIcon, headerClass, collapsible, classNames: customizeClassNames = {}, showArrow, styles = {} } = props
       const { ...restProps } = attrs
       const collapsePanelClassNames = classnames(
         `${prefixCls}-item`,

@@ -1,5 +1,5 @@
 import type { CSSProperties, PropType, VNode } from 'vue'
-
+import type { VueNode} from '@v-c/util/dist/type'
 export type CollapsibleType = 'header' | 'icon' | 'disabled'
 
 export function generatorCollapsePanelProps() {
@@ -10,7 +10,7 @@ export function generatorCollapsePanelProps() {
     headerClass: String,
     showArrow: Boolean,
     className: String,
-    classNemes: Object as PropType<{ header?: string, body?: string }>,
+    classNames: Object as PropType<{ header?: string, body?: string }>,
     style: Object as PropType<Record<string, string>>,
     styles: Object as PropType<{ header?: CSSProperties, body?: CSSProperties }>,
     isActive: Boolean,
@@ -22,7 +22,7 @@ export function generatorCollapsePanelProps() {
     extra: [String, Object] as PropType<string | VNode>,
     panelKey: [String, Number],
     collapsible: String as PropType<CollapsibleType>,
-
+    expandIcon: Function as PropType<(props: object) => VueNode>,
     role: String,
   }
 }
