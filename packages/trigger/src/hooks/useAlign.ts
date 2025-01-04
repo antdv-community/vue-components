@@ -1,4 +1,5 @@
-import type { TriggerProps } from '..'
+import type { Ref } from 'vue'
+import type { TriggerProps } from '../index.tsx'
 import type {
   AlignPointLeftRight,
   AlignPointTopBottom,
@@ -8,17 +9,28 @@ import type {
 import { isDOM } from '@v-c/util/dist/Dom/findDOMNode'
 import isVisible from '@v-c/util/dist/Dom/isVisible'
 import useEvent from '@v-c/util/dist/hooks/useEvent'
-import { useLayoutEffect } from '@v-c/util/dist/hooks/useLayoutEffect'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { collectScroller, getVisibleArea, getWin, toNum } from '../util'
 
 type Rect = Record<'x' | 'y' | 'width' | 'height', number>
 
 type Points = [topBottom: AlignPointTopBottom, leftRight: AlignPointLeftRight]
+interface Info {
+  ready: boolean
+  offsetX: number
+  offsetY: number
+  offsetR: number
+  offsetB: number
+  arrowX: number
+  arrowY: number
+  scaleX: number
+  scaleY: number
+  align: AlignType
+}
 
 function getUnitOffset(size: number, offset: OffsetType = 0) {
   const offsetStr = `${offset}`
-  const cells = offsetStr.match(/^(.*)\%$/)
+  const cells = offsetStr.match(/^(.*)%$/)
   if (cells) {
     return size * (parseFloat(cells[1]) / 100)
   }
@@ -74,7 +86,7 @@ function getAlignPoint(rect: Rect, points: Points) {
 }
 
 function reversePoints(points: Points, index: number): string {
-  const reverseMap = {
+  const reverseMap: Record<'t' | 'b' | 'l' | 'r', 't' | 'b' | 'l' | 'r'> = {
     t: 'b',
     b: 't',
     l: 'r',
@@ -84,7 +96,7 @@ function reversePoints(points: Points, index: number): string {
   return points
     .map((point, i) => {
       if (i === index) {
-        return reverseMap[point] || 'c'
+        return reverseMap[point as 't' | 'b' | 'l' | 'r'] || 'c'
       }
       return point
     })
@@ -93,37 +105,18 @@ function reversePoints(points: Points, index: number): string {
 
 export default function useAlign(
   open: boolean,
-  popupEle: HTMLElement,
-  target: HTMLElement | [x: number, y: number],
+  popupEle: HTMLElement | null,
+  target: HTMLElement | [x: number, y: number] | null,
   placement: string,
   builtinPlacements: any,
   popupAlign?: AlignType,
   onPopupAlign?: TriggerProps['onPopupAlign'],
 ): [
-    ready: boolean,
-    offsetX: number,
-    offsetY: number,
-    offsetR: number,
-    offsetB: number,
-    arrowX: number,
-    arrowY: number,
-    scaleX: number,
-    scaleY: number,
-    align: AlignType,
+    offsetInfo: Ref<Info>,
     onAlign: VoidFunction,
+    resetReady: VoidFunction,
   ] {
-  const offsetInfo = ref<{
-    ready: boolean
-    offsetX: number
-    offsetY: number
-    offsetR: number
-    offsetB: number
-    arrowX: number
-    arrowY: number
-    scaleX: number
-    scaleY: number
-    align: AlignType
-  }>({
+  const offsetInfo = ref<Info>({
     ready: false,
     offsetX: 0,
     offsetY: 0,
@@ -147,7 +140,7 @@ export default function useAlign(
 
   // ========================= Flip ==========================
   // We will memo flip info.
-  // If size change to make flip, it will memo the flip info and use it in next align.
+  // If size change to make flip, it will `memo` the flip info and use it in next align.
   const prevFlipRef = ref<{
     tb?: boolean
     bt?: boolean
@@ -175,7 +168,7 @@ export default function useAlign(
         width,
         height,
         position: popupPosition,
-      } = win.getComputedStyle(popupElement)
+      } = win!.getComputedStyle(popupElement)
 
       const originLeft = popupElement.style.left
       const originTop = popupElement.style.top
@@ -380,7 +373,7 @@ export default function useAlign(
       const targetAlignPointBR = getAlignPoint(targetRect, ['b', 'r'])
       const popupAlignPointBR = getAlignPoint(popupRect, ['b', 'r'])
 
-      const overflow = placementInfo.overflow || {}
+      const overflow = placementInfo.overflow || { }
       const { adjustX, adjustY, shiftX, shiftY } = overflow
 
       const supportAdjust = (val: boolean | number) => {
@@ -391,10 +384,10 @@ export default function useAlign(
       }
 
       // Prepare position
-      let nextPopupY: number
-      let nextPopupBottom: number
-      let nextPopupX: number
-      let nextPopupRight: number
+      let nextPopupY: number = 0
+      let nextPopupBottom: number = 0
+      let nextPopupX: number = 0
+      let nextPopupRight: number = 0
 
       function syncNextPopupPosition() {
         nextPopupY = popupRect.y + nextOffsetY
@@ -405,7 +398,7 @@ export default function useAlign(
       syncNextPopupPosition()
 
       // >>>>>>>>>> Top & Bottom
-      const needAdjustY = supportAdjust(adjustY)
+      const needAdjustY = supportAdjust(adjustY!)
 
       const sameTB = popupPoints[0] === targetPoints[0]
 
@@ -507,7 +500,7 @@ export default function useAlign(
       }
 
       // >>>>>>>>>> Left & Right
-      const needAdjustX = supportAdjust(adjustX)
+      const needAdjustX = supportAdjust(adjustX!)
 
       // >>>>> Flip
       const sameLR = popupPoints[1] === targetPoints[1]
@@ -701,7 +694,6 @@ export default function useAlign(
         nextOffsetY = Math.round(nextOffsetY)
         offsetY4Bottom = Math.round(offsetY4Bottom)
       }
-
       offsetInfo.value = {
         ready: true,
         offsetX: nextOffsetX / scaleX,
@@ -731,28 +723,30 @@ export default function useAlign(
 
   // Reset ready status when placement & open changed
   const resetReady = () => {
-    offsetInfo.value = { ...offsetInfo.value, ready: false }
+    offsetInfo.value = {
+      ready: false,
+      offsetX: 0,
+      offsetY: 0,
+      offsetR: 0,
+      offsetB: 0,
+      arrowX: 0,
+      arrowY: 0,
+      scaleX: 1,
+      scaleY: 1,
+      align: {},
+    }
   }
 
-  useLayoutEffect(resetReady, [placement])
+  watch(() => placement, () => {
+    resetReady()
+  })
 
-  useLayoutEffect(() => {
-    if (!open) {
-      resetReady()
-    }
-  }, [open])
-
+  if (!open) {
+    resetReady()
+  }
   return [
-    offsetInfo.value.ready,
-    offsetInfo.value.offsetX,
-    offsetInfo.value.offsetY,
-    offsetInfo.value.offsetR,
-    offsetInfo.value.offsetB,
-    offsetInfo.value.arrowX,
-    offsetInfo.value.arrowY,
-    offsetInfo.value.scaleX,
-    offsetInfo.value.scaleY,
-    offsetInfo.value.align,
+    offsetInfo,
     triggerAlign,
+    resetReady,
   ]
 }

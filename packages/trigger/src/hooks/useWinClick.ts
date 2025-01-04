@@ -1,9 +1,6 @@
 import { getShadowRoot } from '@v-c/util/dist/Dom/shadow'
 import { warning } from '@v-c/util/dist/warning'
-import {
-  ref,
-  watchEffect,
-} from 'vue'
+import { ref, watchEffect } from 'vue'
 import { getWin } from '../util'
 
 export default function useWinClick(
@@ -16,25 +13,28 @@ export default function useWinClick(
   inPopupOrChild: (target: EventTarget) => boolean,
   triggerOpen: (open: boolean) => void,
 ) {
-  const openRef = ref(open)
-  openRef.value = open
-
-  // Click to hide is special action since click popup element should not hide
-  watchEffect(() => {
+  const popupPointerDownRef = ref(false)
+  watchEffect((onCleanup) => {
     if (clickToHide && popupEle && (!mask || maskClosable)) {
+      const onPointerDown = () => {
+        popupPointerDownRef.value = false
+      }
       const onTriggerClose = (e: MouseEvent) => {
         if (
-          openRef.value
+          open
           && !inPopupOrChild(e.composedPath?.()?.[0] || e.target)
+          && !popupPointerDownRef.value
         ) {
           triggerOpen(false)
         }
       }
 
       const win = getWin(popupEle)
-
-      win.addEventListener('mousedown', onTriggerClose, true)
-      win.addEventListener('contextmenu', onTriggerClose, true)
+      if (win) {
+        win.addEventListener('pointerdown', onPointerDown, true)
+        win.addEventListener('mousedown', onTriggerClose, true)
+        win.addEventListener('contextmenu', onTriggerClose, true)
+      }
 
       // shadow root
       const targetShadowRoot = getShadowRoot(targetEle)
@@ -53,10 +53,13 @@ export default function useWinClick(
           `trigger element and popup element should in same shadow root.`,
         )
       }
-
-      return () => {
-        win.removeEventListener('mousedown', onTriggerClose, true)
-        win.removeEventListener('contextmenu', onTriggerClose, true)
+      onCleanup(() => {
+        console.log('watchEffect-onCleanup')
+        if (win) {
+          win.removeEventListener('pointerdown', onPointerDown, true)
+          win.removeEventListener('mousedown', onTriggerClose, true)
+          win.removeEventListener('contextmenu', onTriggerClose, true)
+        }
 
         if (targetShadowRoot) {
           targetShadowRoot.removeEventListener(
@@ -70,7 +73,12 @@ export default function useWinClick(
             true,
           )
         }
-      }
+      })
     }
   })
+  function onPopupPointerDown() {
+    popupPointerDownRef.value = true
+  }
+
+  return onPopupPointerDown
 }

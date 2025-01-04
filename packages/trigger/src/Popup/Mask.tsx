@@ -27,7 +27,7 @@ export default function Mask(props: MaskProps) {
 
   return (
     <Transition appear {...motion}>
-      <div v-if={open} style={{ zIndex }} class={`${prefixCls}-mask`} />
+      {open && <div style={{ zIndex }} class={`${prefixCls}-mask`} />}
     </Transition>
   )
 }

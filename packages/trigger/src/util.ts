@@ -52,13 +52,13 @@ export function getMotion(
 
   if (animation) {
     return {
-      motionName: `${prefixCls}-${animation}`,
+      name: `${prefixCls}-${animation}`,
     }
   }
 
   if (transitionName) {
     return {
-      motionName: transitionName,
+      name: transitionName,
     }
   }
 

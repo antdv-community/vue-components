@@ -1,14 +1,14 @@
-import { useLayoutEffect } from '@v-c/util/dist/hooks/useLayoutEffect'
+import { watchEffect } from 'vue'
 import { collectScroller, getWin } from '../util'
 
 export default function useWatch(
   open: boolean,
-  target: HTMLElement,
-  popup: HTMLElement,
+  target: HTMLElement | null,
+  popup: HTMLElement | null,
   onAlign: VoidFunction,
   onScroll: VoidFunction,
 ) {
-  useLayoutEffect(() => {
+  watchEffect((onCleanup) => {
     if (open && target && popup) {
       const targetElement = target
       const popupElement = popup
@@ -29,20 +29,20 @@ export default function useWatch(
       }
 
       mergedList.forEach((scroller) => {
-        scroller.addEventListener('scroll', notifyScroll, { passive: true })
+        scroller && scroller.addEventListener('scroll', notifyScroll, { passive: true })
       })
 
-      win.addEventListener('resize', notifyScroll, { passive: true })
+      win && win.addEventListener('resize', notifyScroll, { passive: true })
 
       // First time always do align
       onAlign()
 
-      return () => {
+      onCleanup(() => {
         mergedList.forEach((scroller) => {
-          scroller.removeEventListener('scroll', notifyScroll)
-          win.removeEventListener('resize', notifyScroll)
+          scroller && scroller.removeEventListener('scroll', notifyScroll)
+          win && win.removeEventListener('resize', notifyScroll)
         })
-      }
+      })
     }
-  }, [open, target, popup])
+  })
 }

@@ -9,8 +9,8 @@ function toArray<T>(val?: T | T[]) {
 export default function useAction(
   mobile: boolean,
   action: ActionTypes,
-  showAction?: ActionTypes,
-  hideAction?: ActionTypes,
+  showAction?: ActionTypes | undefined,
+  hideAction?: ActionTypes | undefined,
 ): [showAction: Set<ActionType>, hideAction: Set<ActionType>] {
   const mergedShowAction = toArray(showAction ?? action)
   const mergedHideAction = toArray(hideAction ?? action)

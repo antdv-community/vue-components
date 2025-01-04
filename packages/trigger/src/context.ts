@@ -7,15 +7,10 @@ export interface TriggerContextProps {
 
 export const TriggerContextKey: InjectionKey<TriggerContextProps> = Symbol('TriggerContextKey')
 
-export function useProviderTriggerContext() {
-  provide(TriggerContextKey, null)
-  return {
-    registerSubPopup: (id: string, node: HTMLElement) => {
-      return null
-    },
-  }
+export function useProviderTriggerContext(context: TriggerContextProps) {
+  return provide(TriggerContextKey, context)
 }
 
 export function useInjectTriggerContext() {
-  return inject(TriggerContextKey, null)
+  return inject(TriggerContextKey)
 }

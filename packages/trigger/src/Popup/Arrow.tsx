@@ -22,7 +22,7 @@ export const Arrow = defineComponent<ArrowProps>({
       const { prefixCls, align, arrow, arrowPos } = props
 
       const { className, content } = arrow || {}
-      const { x = 0, y = 0 } = arrowPos
+      const { x, y } = arrowPos
 
       // Skip if no align
       if (!align || !align.points) {
@@ -44,7 +44,7 @@ export const Arrow = defineComponent<ArrowProps>({
 
         // Top & Bottom
         if (popupTB === targetTB || !['t', 'b'].includes(popupTB)) {
-          alignStyle.top = y
+          alignStyle.top = `${y}px`
         }
         else if (popupTB === 't') {
           alignStyle.top = 0
@@ -55,7 +55,7 @@ export const Arrow = defineComponent<ArrowProps>({
 
         // Left & Right
         if (popupLR === targetLR || !['l', 'r'].includes(popupLR)) {
-          alignStyle.left = x
+          alignStyle.left = `${x}px`
         }
         else if (popupLR === 'l') {
           alignStyle.left = 0

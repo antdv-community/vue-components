@@ -1,15 +1,15 @@
 <script setup>
-// import Trigger from '../src/index.tsx'
-// import Popup from '../src/Popup/index'
-import Arrow from '../src/Popup/Arrow'
-
-console.log(Arrow)
+import BodyOverflow from "./bodyOverflow.vue";
+import Simple from './simple.vue'
 </script>
 
 <template>
   <Story title="Trigger">
-    <Variant title="basic">
-      <span>test</span>
+    <Variant title="body-overflow">
+      <BodyOverflow />
+    </Variant>
+    <Variant title="simple">
+      <Simple />
     </Variant>
   </Story>
 </template>
