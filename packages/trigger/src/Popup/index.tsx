@@ -12,9 +12,6 @@ import Mask from './Mask'
 const popupProps = {
   prefixCls: String,
   className: String,
-  popup: {
-    type: String as PropType<TriggerProps['popup']>,
-  },
   target: { type: Object as PropType<HTMLElement | null> },
   onMouseEnter: Function,
   onMouseLeave: Function,
@@ -195,7 +192,6 @@ export const Popup = defineComponent({
         arrow,
         arrowPos,
         align,
-        popup,
         prefixCls = 'vc-trigger-popup',
         target,
         // onVisibleChanged,
@@ -218,7 +214,7 @@ export const Popup = defineComponent({
         targetWidth,
         targetHeight,
       } = props
-      const childNode = flattenChildren(slots.default ? slots.default() : popup)
+      const childNode = flattenChildren(slots.default?.())
       // We can not remove holder only when motion finished.
       const isNodeVisible = open || keepDom
 
@@ -276,6 +272,7 @@ export const Popup = defineComponent({
       }
 
       const transitionProps = getTransitionProps(motion?.name, motion)
+      console.log(transitionProps)
       return (
         <Portal
           open={forceRender || isNodeVisible}

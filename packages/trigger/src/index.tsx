@@ -692,9 +692,8 @@ export const Trigger = defineComponent({
         : null
 
       const generateSlot = {
-        default: () => slots.popup?.(),
+        default: () => popup ?? slots.popup?.(),
       }
-
       return (
         <>
           <ResizeObserver
@@ -706,7 +705,6 @@ export const Trigger = defineComponent({
           <Popup
             ref={popupNodeRef}
             prefixCls={prefixCls}
-            popup={popup}
             class={classNames(popupClassName, alignedClassName)}
             style={popupStyle}
             target={targetEle.value}
