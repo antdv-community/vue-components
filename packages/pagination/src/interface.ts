@@ -1,4 +1,11 @@
-import type { Component, CSSProperties, PropType, VNode, VNodeChild } from 'vue'
+import type { VueNode } from '@v-c/util/dist/type'
+import type {
+  Component,
+  CSSProperties,
+  PropType,
+  VNode,
+  VNodeChild,
+} from 'vue'
 
 export interface PaginationLocale {
   // Options
@@ -17,7 +24,12 @@ export interface PaginationLocale {
   page_size?: string
 }
 
-export type ItemRender = (page: number, type: 'page' | 'prev' | 'next' | 'jump-prev' | 'jump-next', element: VNode) => VNodeChild
+export type ItemRender = (
+  page: number,
+  type: 'page' | 'prev' | 'next' | 'jump-prev' | 'jump-next',
+  element: VNode,
+) => VNodeChild
+
 export function paginationProps() {
   return {
     disabled: {
@@ -79,7 +91,9 @@ export function paginationProps() {
       default: false,
     },
     selectComponentClass: Object as PropType<Component>,
-    showTotal: Function as PropType<(total: number, range: [number, number]) => VNodeChild>,
+    showTotal: Function as PropType<
+      (total: number, range: [number, number]) => VNodeChild
+    >,
     showTitle: {
       type: Boolean,
       default: true,
@@ -129,5 +143,62 @@ export function paginationProps() {
       default: undefined,
     },
     // WAI_ARIA
+  }
+}
+
+export type SizeChangerRender = (info: {
+  'disabled': boolean
+  'size': number
+  'onSizeChange': (value: string | number) => void
+  'aria-label': string
+  'className': string
+  'options': {
+    label: string
+    value: string | number
+  }[]
+}) => VueNode
+
+export function optionsProps() {
+  return {
+    disabled: {
+      type: Boolean,
+    },
+    locale: {
+      type: Object as PropType<PaginationLocale>,
+      required: true,
+    },
+    rootPrefixCls: {
+      type: String,
+      required: true,
+    },
+    selectPrefixCls: {
+      type: String,
+    },
+    pageSize: {
+      type: Number,
+      required: true,
+    },
+    pageSizeOptions: {
+      type: Array as PropType<Array<number>>,
+    },
+    goButton: {
+      type: [Boolean, String],
+    },
+    changeSize: {
+      type: Function as PropType<(size: number) => void>,
+    },
+    quickGo: {
+      type: Function as PropType<(value: number | undefined) => void>,
+    },
+    buildOptionText: {
+      type: Function as PropType<(value: string | number) => string>,
+    },
+    showSizeChanger: {
+      type: Boolean,
+      require: true,
+    },
+    sizeChangeRender: {
+      type: Function as PropType<SizeChangerRender>,
+    },
   }
 }
