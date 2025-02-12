@@ -1,3 +1,5 @@
+import type { MouseEventHandler } from '@v-c/util/dist/EventInterface'
+
 export interface ProgressProps {
   id?: string
   strokeWidth?: number
@@ -8,11 +10,11 @@ export interface ProgressProps {
   trailColor?: string
   strokeLinecap?: StrokeLinecapType
   prefixCls?: string
-  style?: React.CSSProperties
+  // style?: CSSProperties
   gapDegree?: number
   gapPosition?: GapPositionType
   transition?: string
-  onClick?: React.MouseEventHandler
+  onClick?: MouseEventHandler
   steps?: number | { count: number, gap: number }
 }
 
