@@ -60,7 +60,7 @@ const CollapsePanel = defineComponent({
           <div {...headerProps}>
             {showArrow && iconNode}
             <span
-              class={classNames(`${prefixCls}-title`, customizeClassNames?.title)}
+              class={classnames(`${prefixCls}-title`, customizeClassNames?.title)}
               style={styles?.title}
               {...(collapsible === 'header' ? collapsibleProps : {})}
             >
