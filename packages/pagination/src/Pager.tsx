@@ -30,7 +30,9 @@ const Pager = defineComponent({
       type: Function as PropType<OnClick>,
     },
     onKeyPress: {
-      type: Function as PropType<(e: KeyboardEvent, onClick: OnClick, page: number) => void>,
+      type: Function as PropType<
+        (e: KeyboardEvent, onClick: OnClick, page: number) => void
+      >,
     },
   },
   setup(props) {
@@ -43,14 +45,8 @@ const Pager = defineComponent({
     }
 
     return () => {
-      const {
-        rootPrefixCls,
-        page,
-        active,
-        className,
-        showTitle,
-        itemRender,
-      } = props
+      const { rootPrefixCls, page, active, className, showTitle, itemRender }
+        = props
       const prefixCls = `${rootPrefixCls}-item`
 
       const cls = classNames(

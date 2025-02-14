@@ -1,7 +1,7 @@
 import type { VueNode } from '@v-c/util/dist/type'
 import type {
   Component,
-  CSSProperties,
+  CSSProperties, ExtractPropTypes,
   PropType,
   VNode,
   VNodeChild,
@@ -147,6 +147,8 @@ export function paginationProps() {
     },
   }
 }
+
+export type PaginationProps = ExtractPropTypes<ReturnType<typeof paginationProps>>
 
 export type SizeChangerRender = (info: {
   'disabled': boolean
