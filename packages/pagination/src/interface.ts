@@ -45,7 +45,7 @@ export function paginationProps() {
       default: 'vc-select',
     },
     pageSizeOptions: {
-      type: Array as PropType<number[] | string[]>,
+      type: Array as PropType<number[]>,
       default: undefined,
     },
     totalBoundaryShowSizeChanger: {
@@ -142,7 +142,9 @@ export function paginationProps() {
       type: Function as PropType<(current: number, pageSize: number) => void>,
       default: undefined,
     },
-    // WAI_ARIA
+    sizeChangerRender: {
+      type: Function as PropType<SizeChangerRender>,
+    },
   }
 }
 
@@ -197,7 +199,7 @@ export function optionsProps() {
       type: Boolean,
       require: true,
     },
-    sizeChangeRender: {
+    sizeChangerRender: {
       type: Function as PropType<SizeChangerRender>,
     },
   }

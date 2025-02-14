@@ -1,4 +1,3 @@
-import type { ChangeEvent } from '@v-c/util/dist/EventInterface'
 import type { VueNode } from '@v-c/util/dist/type'
 import KeyCode from '@v-c/util/dist/KeyCode'
 import { computed, defineComponent, ref } from 'vue'
@@ -82,7 +81,7 @@ const Options = defineComponent({
         quickGo,
         goButton,
         buildOptionText,
-        sizeChangeRender,
+        sizeChangerRender,
         changeSize,
       } = props
 
@@ -102,8 +101,8 @@ const Options = defineComponent({
       let gotoButton: VueNode = null
 
       // =========== size Changer ===========
-      if (showSizeChanger && sizeChangeRender) {
-        changeSelect = sizeChangeRender({
+      if (showSizeChanger && sizeChangerRender) {
+        changeSelect = sizeChangerRender({
           disabled,
           'size': pageSize!,
           'onSizeChange': (nextValue) => {

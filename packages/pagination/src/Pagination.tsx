@@ -5,20 +5,27 @@ import KeyCode from '@v-c/util/dist/KeyCode'
 import pickAttrs from '@v-c/util/dist/pickAttrs'
 import { cloneElement } from '@v-c/util/dist/vnode'
 import classNames from 'classnames'
-import { computed, defineComponent, h, isVNode, ref, toRef, watchEffect } from 'vue'
+import {
+  computed,
+  defineComponent,
+  h,
+  isVNode,
+  ref,
+  toRef,
+  watchEffect,
+} from 'vue'
 import { paginationProps } from './interface'
 import zh_CN from './locale/zh_CN'
+import Options from './Options.tsx'
 import Pager from './Pager'
 
 function isInteger(value: unknown) {
-  return typeof value === 'number' && isFinite(value) && Math.floor(value) === value
+  return (
+    typeof value === 'number' && isFinite(value) && Math.floor(value) === value
+  )
 }
 
-const defaultItemRender: ItemRender = (
-  _page,
-  _type,
-  element,
-) => element
+const defaultItemRender: ItemRender = (_page, _type, element) => element
 
 function calculatePage(p: number | undefined, pageSize: number, total: number) {
   const _pageSize = typeof p === 'undefined' ? pageSize : p
@@ -40,11 +47,17 @@ const Pagination = defineComponent({
     })
 
     const currentProp = toRef(props, 'current')
-    const allPages = computed(() => calculatePage(undefined, pageSize.value!, props.total))
+    const allPages = computed(() =>
+      calculatePage(undefined, pageSize.value!, props.total),
+    )
     const [current, setCurrent] = useMergedState(1, {
       value: currentProp as Ref<number>,
       defaultValue: props.defaultCurrent || 1,
-      postState: (c: number | undefined) => Math.max(1, Math.min(c!, calculatePage(undefined, pageSize.value!, props.total))),
+      postState: (c: number | undefined) =>
+        Math.max(
+          1,
+          Math.min(c!, calculatePage(undefined, pageSize.value!, props.total)),
+        ),
     })
 
     const internalInputVal = ref(current.value)
@@ -83,13 +96,15 @@ const Pagination = defineComponent({
     }
 
     function isValid(page: number) {
-      return isInteger(page) && page !== current.value && isInteger(props.total) && props.total > 0
+      return (
+        isInteger(page)
+        && page !== current.value
+        && isInteger(props.total)
+        && props.total > 0
+      )
     }
 
-    function getItemIcon(
-      icon: VNode | Component | undefined,
-      label: string,
-    ) {
+    function getItemIcon(icon: VNode | Component | undefined, label: string) {
       let iconNode = icon || (
         <button
           type="button"
@@ -103,21 +118,38 @@ const Pagination = defineComponent({
       return iconNode as VNode
     }
 
-    const prevPage = computed(() => current.value - 1 > 0 ? current.value - 1 : 0)
-    const nextPage = computed(() => current.value + 1 < allPages.value ? current.value + 1 : allPages.value)
+    const prevPage = computed(() =>
+      current.value - 1 > 0 ? current.value - 1 : 0,
+    )
+    const nextPage = computed(() =>
+      current.value + 1 < allPages.value ? current.value + 1 : allPages.value,
+    )
 
-    const jumpPrevPage = computed(() => Math.max(1, current.value - (props.showLessItems ? 3 : 5)))
-    const jumpNextPage = computed(() => Math.min(
-      calculatePage(undefined, pageSize.value, props.total),
-      current.value + (props.showLessItems ? 3 : 5),
-    ))
+    const jumpPrevPage = computed(() =>
+      Math.max(1, current.value - (props.showLessItems ? 3 : 5)),
+    )
+    const jumpNextPage = computed(() =>
+      Math.min(
+        calculatePage(undefined, pageSize.value, props.total),
+        current.value + (props.showLessItems ? 3 : 5),
+      ),
+    )
     const hasPrev = computed(() => current.value > 1)
-    const hasNext = computed(() => current.value < calculatePage(undefined, pageSize.value, props.total))
-    const goButton = computed(() => props.showQuickJumper && (props.showQuickJumper as any).goButton)
+    const hasNext = computed(
+      () =>
+        current.value < calculatePage(undefined, pageSize.value, props.total),
+    )
+    const goButton = computed(
+      () => props.showQuickJumper && (props.showQuickJumper as any).goButton,
+    )
 
-    function handleChange(page: number) {
-      if (isValid(page) && !props.disabled) {
-        const currentPage = calculatePage(undefined, pageSize.value, props.total)
+    function handleChange(page: number | undefined) {
+      if (typeof page !== 'undefined' && isValid(page) && !props.disabled) {
+        const currentPage = calculatePage(
+          undefined,
+          pageSize.value,
+          props.total,
+        )
         let newPage = page
         if (page > currentPage) {
           newPage = currentPage
@@ -136,7 +168,7 @@ const Pagination = defineComponent({
         return newPage
       }
 
-      return current
+      return current.value
     }
 
     function prevHandle() {
@@ -194,7 +226,9 @@ const Pagination = defineComponent({
         'prev',
         getItemIcon(props.prevIcon, 'prev page'),
       )
-      return isVNode(prevButton) ? cloneElement(prevButton, { disabled: !hasPrev.value }) : prevButton
+      return isVNode(prevButton)
+        ? cloneElement(prevButton, { disabled: !hasPrev.value })
+        : prevButton
     }
 
     function renderNext(nextPage: number) {
@@ -204,11 +238,16 @@ const Pagination = defineComponent({
         'next',
         getItemIcon(props.nextIcon, 'next page'),
       )
-      return isVNode(nextButton) ? cloneElement(nextButton, { disabled: !hasNext.value }) : nextButton
+      return isVNode(nextButton)
+        ? cloneElement(nextButton, { disabled: !hasNext.value })
+        : nextButton
     }
 
     function handleGoTO(event: Event) {
-      if (event.type === 'click' || (event as KeyboardEvent).keyCode === KeyCode.ENTER) {
+      if (
+        event.type === 'click'
+        || (event as KeyboardEvent).keyCode === KeyCode.ENTER
+      ) {
         handleChange(internalInputVal.value)
       }
     }
@@ -223,9 +262,7 @@ const Pagination = defineComponent({
       }
     }
 
-    function handleKeyUp(
-      event: Event,
-    ) {
+    function handleKeyUp(event: Event) {
       const value = getValidValue(event)
       if (value !== internalInputVal.value) {
         internalInputVal.value = value
@@ -250,11 +287,29 @@ const Pagination = defineComponent({
       handleChange(getValidValue(event))
     }
 
+    function changePageSize(size: number) {
+      const newCurrent = calculatePage(size, pageSize.value, props.total)
+      const nextCurrent
+        = current.value > newCurrent && newCurrent !== 0
+          ? newCurrent
+          : current.value
+
+      setPageSize(size)
+      internalInputVal.value = nextCurrent
+      props.onShowSizeChange?.(current.value, size)
+      setCurrent(nextCurrent)
+      props.onChange?.(nextCurrent, size)
+    }
+
+    const shouldDisplayQuickJumper = computed(() =>
+      props.total > pageSize.value ? props.showQuickJumper : false,
+    )
+
     return () => {
       const {
         style,
         prefixCls = defaultPrefixCls,
-        // selectPrefixCls = 'vc-select',
+        selectPrefixCls = 'vc-select',
         showTotal,
         total = 0,
         locale = zh_CN,
@@ -263,9 +318,13 @@ const Pagination = defineComponent({
         showLessItems,
         jumpPrevIcon,
         jumpNextIcon,
+        pageSizeOptions,
         disabled,
         showPrevNextJumpers,
         itemRender = defaultItemRender,
+        totalBoundaryShowSizeChanger = 50,
+        showSizeChanger = total > totalBoundaryShowSizeChanger,
+        sizeChangerRender,
       } = props
 
       const dataOrAriaAttributeProps = pickAttrs(props, {
@@ -325,7 +384,9 @@ const Pagination = defineComponent({
         <li class={`${prefixCls}-total-text`}>
           {showTotal(total, [
             total === 0 ? 0 : (current.value - 1) * pageSize.value + 1,
-            current.value * pageSize.value > total ? total : current.value * pageSize.value,
+            current.value * pageSize.value > total
+              ? total
+              : current.value * pageSize.value,
           ])}
         </li>
       )
@@ -355,7 +416,11 @@ const Pagination = defineComponent({
 
         gotoButton = (
           <li
-            title={showTitle ? `${locale.jump_to}${current.value}/${allPages.value}` : undefined}
+            title={
+              showTitle
+                ? `${locale.jump_to}${current.value}/${allPages.value}`
+                : undefined
+            }
             class={`${prefixCls}-simple-pager`}
           >
             {gotoButton}
@@ -415,7 +480,12 @@ const Pagination = defineComponent({
 
         for (let i = 1; i <= allPages.value; i += 1) {
           pagerList.push(
-            <Pager {...pagerProps} key={i} page={i} active={current.value === i} />,
+            <Pager
+              {...pagerProps}
+              key={i}
+              page={i}
+              active={current.value === i}
+            />,
           )
         }
       }
@@ -483,11 +553,19 @@ const Pagination = defineComponent({
 
         for (let i = left; i <= right; i += 1) {
           pagerList.push(
-            <Pager {...pagerProps} key={i} page={i} active={current.value === i} />,
+            <Pager
+              {...pagerProps}
+              key={i}
+              page={i}
+              active={current.value === i}
+            />,
           )
         }
 
-        if (current.value - 1 >= pageBufferSize * 2 && current.value !== 1 + 2) {
+        if (
+          current.value - 1 >= pageBufferSize * 2
+          && current.value !== 1 + 2
+        ) {
           if (pagerList[0]) {
             pagerList[0] = cloneElement(pagerList[0], {
               className: classNames(
@@ -499,7 +577,10 @@ const Pagination = defineComponent({
           pagerList.unshift(jumpPrev)
         }
 
-        if (allPages.value - current.value >= pageBufferSize * 2 && current.value !== allPages.value - 2) {
+        if (
+          allPages.value - current.value >= pageBufferSize * 2
+          && current.value !== allPages.value - 2
+        ) {
           const lastOne = pagerList[pagerList.length - 1]
           if (lastOne) {
             pagerList[pagerList.length - 1] = cloneElement(lastOne, {
@@ -516,7 +597,13 @@ const Pagination = defineComponent({
           pagerList.unshift(<Pager {...pagerProps} key={1} page={1} />)
         }
         if (right !== allPages.value) {
-          pagerList.push(<Pager {...pagerProps} key={allPages.value} page={allPages.value} />)
+          pagerList.push(
+            <Pager
+              {...pagerProps}
+              key={allPages.value}
+              page={allPages.value}
+            />,
+          )
         }
       }
 
@@ -531,6 +618,19 @@ const Pagination = defineComponent({
           {prev}
           {simple ? simplePager : pagerList}
           {next}
+          <Options
+            locale={locale}
+            rootPrefixCls={prefixCls}
+            disabled={disabled}
+            selectPrefixCls={selectPrefixCls}
+            changeSize={changePageSize}
+            pageSizeOptions={pageSizeOptions}
+            pageSize={pageSize.value}
+            quickGo={shouldDisplayQuickJumper.value ? handleChange : undefined}
+            goButton={gotoButton}
+            showSizeChanger={showSizeChanger}
+            sizeChangerRender={sizeChangerRender}
+          />
         </ul>
       )
     }
