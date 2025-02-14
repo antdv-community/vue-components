@@ -49,7 +49,7 @@ export default function set<Entity = any, Output = Entity, Value = any>(
   return internalSet(entity, paths, value, removeIfUndefined)
 }
 
-function isObject(obj: any) {
+export function isObject(obj: any) {
   return (
     typeof obj === 'object'
     && obj !== null
