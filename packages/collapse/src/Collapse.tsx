@@ -48,7 +48,8 @@ const Collapse = defineComponent({
       return [...activeKey.value, key]
     }
     const onItemClick = (key: Key) => {
-      setActiveKey(getActiveKey(key))
+      activeKey.value = getActiveKey(key)
+      setActiveKey(activeKey.value)
     }
 
     return () => {

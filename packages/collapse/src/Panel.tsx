@@ -67,6 +67,9 @@ const CollapsePanel = defineComponent({
       const headerProps: HTMLAttributes = {
         class: headerClassName,
         style: styles.header,
+        ...(['header', 'icon'].includes(collapsible!)
+          ? {}
+          : collapsibleProps.value),
       }
 
       // ======================== Icon ========================
@@ -82,7 +85,7 @@ const CollapsePanel = defineComponent({
         <div
           class={`${prefixCls}-expand-icon`}
           {...(['header', 'icon'].includes(collapsible!)
-            ? collapsibleProps
+            ? collapsibleProps.value
             : {})}
         >
           {iconNodeInner}
@@ -91,24 +94,24 @@ const CollapsePanel = defineComponent({
 
       const panelContent = (
         <PanelContent
+          v-show={isActive}
           prefixCls={prefixCls}
           classNames={customizeClassNames}
           styles={styles}
           isActive={isActive}
           forceRender={forceRender}
           role={accordion ? 'tabpanel' : undefined}
-          v-slots={{ default: slots.default }}
+          v-slots={{ default: () => <div>123</div> }}
         />
       )
 
       const transitionProps = {
         'appear': false,
         'css': false,
-        'leaved-to-class': `${prefixCls}-panel-hidden`,
+        'leave-to-class': `${prefixCls}-panel-hidden`,
         ...openMotion,
       }
 
-      console.log(showArrow)
       return (
         <div {...restProps} class={collapsePanelClassNames}>
           <div {...headerProps}>
@@ -124,11 +127,11 @@ const CollapsePanel = defineComponent({
               {header}
             </span>
             {ifExtraExist && <div class={`${prefixCls}-extra`}>{extra}</div>}
-
-            <Transition {...transitionProps}>
-              {destroyInactivePanel || isActive ? panelContent : null}
-            </Transition>
           </div>
+
+          <Transition {...transitionProps}>
+            {!destroyInactivePanel || isActive ? panelContent : null}
+          </Transition>
         </div>
       )
     }
