@@ -53,7 +53,7 @@ const Collapse = defineComponent({
 
     return () => {
       const {
-        prefixCls,
+        prefixCls = 'vc-collapse',
         className,
         style,
         openMotion,

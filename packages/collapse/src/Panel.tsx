@@ -41,7 +41,7 @@ const CollapsePanel = defineComponent({
         openMotion = {},
         destroyInactivePanel,
         classNames: customizeClassNames = {},
-        showArrow,
+        showArrow = true,
         styles = {},
         header,
       } = props
@@ -108,6 +108,7 @@ const CollapsePanel = defineComponent({
         ...openMotion,
       }
 
+      console.log(showArrow)
       return (
         <div {...restProps} class={collapsePanelClassNames}>
           <div {...headerProps}>

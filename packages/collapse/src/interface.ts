@@ -18,16 +18,25 @@ export function generatorCollapsePanelProps() {
     header: [String, Object] as PropType<string | VNode>,
     prefixCls: String,
     headerClass: String,
-    showArrow: Boolean,
+    showArrow: {
+      type: Boolean as PropType<boolean | undefined>,
+      default: true,
+    },
     className: String,
-    classNames: Object as PropType<Partial<Record<SemanticName, string>>>,
+    classNames: {
+      type: Object as PropType<Partial<Record<SemanticName, string>>>,
+      default: () => ({}),
+    },
     style: Object as PropType<Record<string, string>>,
-    styles: Object as PropType<Partial<Record<SemanticName, CSSProperties>>>,
+    styles: {
+      type: Object as PropType<Partial<Record<SemanticName, CSSProperties>>>,
+      default: () => ({}),
+    },
     isActive: Boolean,
     openMotion: Object as PropType<Partial<TransitionProps>>,
-    destroyInactivePanel: Boolean,
+    destroyInactivePanel: Boolean as PropType<boolean | undefined>,
     accordion: Boolean,
-    forceRender: Boolean,
+    forceRender: Boolean as PropType<boolean | undefined>,
     onItemClick: Function as PropType<(props: Key) => void>,
     extra: [String, Object] as PropType<string | VNode>,
     panelKey: [String, Number],
@@ -39,8 +48,19 @@ export function generatorCollapsePanelProps() {
 
 export type Key = string | number | bigint
 
-export type CollapsePanelProps = ExtractPropTypes<
+type InternalCollapsePanelProps = ExtractPropTypes<
   ReturnType<typeof generatorCollapsePanelProps>
+>
+
+export type CollapsePanelProps = Omit<
+  InternalCollapsePanelProps,
+  'showArrow' | 'classNames' | 'styles' | 'isActive' | 'accordion'
+> &
+Partial<
+  Pick<
+    InternalCollapsePanelProps,
+      'showArrow' | 'classNames' | 'styles' | 'isActive' | 'accordion'
+  >
 >
 
 export interface ItemType
@@ -56,6 +76,7 @@ export interface ItemType
   > {
   key?: CollapsePanelProps['panelKey']
   label?: CollapsePanelProps['header']
+  children?: VueNode
   ref?: Ref<HTMLDivElement>
 }
 
@@ -78,6 +99,14 @@ export function generatorCollapseProps() {
   }
 }
 
-export type CollapseProps = ExtractPropTypes<
+type InternalCollapseProps = ExtractPropTypes<
   ReturnType<typeof generatorCollapseProps>
+>
+
+export type CollapseProps = Omit<
+  InternalCollapseProps,
+  'accordion' | 'destroyInactivePanel'
+> &
+Partial<
+  Pick<InternalCollapsePanelProps, 'accordion' | 'destroyInactivePanel'>
 >
