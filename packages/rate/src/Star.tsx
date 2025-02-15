@@ -1,29 +1,29 @@
-import type { ExtractPropTypes } from 'vue'
-import PropTypes from '@v-c/util/dist/vue-types'
 import { computed, defineComponent } from 'vue'
 
-export const starProps = {
-  value: Number,
-  index: Number,
-  prefixCls: String,
-  allowHalf: { type: Boolean, default: undefined },
-  disabled: { type: Boolean, default: undefined },
-  character: PropTypes.any,
-  characterRender: Function,
-  focused: { type: Boolean, default: undefined },
-  count: Number,
-  onClick: Function,
-  onHover: Function,
+export interface StarProps {
+  value?: number
+  index?: number
+  prefixCls?: string
+  allowHalf?: boolean
+  disabled?: boolean
+  character?: any
+  characterRender?: Function
+  focused?: boolean
+  count?: number
+  onClick?: Function
+  onHover?: Function
 }
 
-export type StarProps = Partial<ExtractPropTypes<typeof starProps>>
-
-export default defineComponent({
+const defaults = {
+  allowHalf: undefined,
+  disabled: undefined,
+  focused: undefined,
+} as StarProps
+export default defineComponent<StarProps>({
   name: 'Star',
-  props: starProps,
   inheritAttrs: false,
   emits: ['hover', 'click'],
-  setup(props, { emit }) {
+  setup(props = defaults, { emit }) {
     const onHover = (e: MouseEvent) => {
       const { index } = props
       emit('hover', e, index)
@@ -66,12 +66,12 @@ export default defineComponent({
       const characterNode
         = typeof character === 'function'
           ? character({
-            disabled,
-            prefixCls,
-            index,
-            count,
-            value,
-          })
+              disabled,
+              prefixCls,
+              index,
+              count,
+              value,
+            })
           : character
       let star = (
         <li class={cls.value}>

@@ -1,10 +1,8 @@
 import type { FocusEventHandler, KeyboardEventHandler } from '@v-c/util/dist/EventInterface'
-import type { CSSProperties, ExtractPropTypes, PropType, VNode } from 'vue'
+import type { CSSProperties, VNode } from 'vue'
 import useMergedState from '@v-c/util/dist/hooks/useMergedState'
 import KeyCode from '@v-c/util/dist/KeyCode'
 import pickAttrs from '@v-c/util/dist/pickAttrs'
-import { initDefaultProps } from '@v-c/util/dist/props-util'
-import PropTypes from '@v-c/util/dist/vue-types'
 import classNames from 'classnames'
 import { computed, defineComponent, onMounted, ref } from 'vue'
 import Star from './Star'
@@ -14,47 +12,44 @@ import { getOffsetLeft } from './util'
 // TODO: Import from other components
 export type Direction = 'ltr' | 'rtl'
 
-export function rateProps() {
-  return {
-    'prefixCls': String,
-    'defaultValue': Number,
-    'value': Number,
-    'count': Number,
-    'allowHalf': { type: Boolean, default: undefined },
-    'allowClear': { type: Boolean, default: undefined },
-    'keyboard': Boolean,
-    'character': PropTypes.any,
-    'characterRender': Function,
-    'disabled': { type: Boolean, default: undefined },
-    'direction': String as PropType<Direction>,
-    'tabIndex': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    'autoFocus': { type: Boolean, default: undefined },
-    'onHoverChange': Function as PropType<(value: number) => void>,
-    'onChange': Function as PropType<(value: number) => void>,
-    'onFocus': Function as PropType<() => void>,
-    'onBlur': Function as PropType<() => void>,
-    'onKeyDown': Function as PropType<KeyboardEventHandler>,
-    'onMouseLeave': Function as PropType<FocusEventHandler>,
-    'onUpdate:value': Function as PropType<(value: number) => void>,
-  }
+const defaults = {
+  prefixCls: 'vc-rate',
+  count: 5,
+  allowHalf: false,
+  allowClear: true,
+  keyboard: true,
+  character: '★',
+  direction: 'ltr',
+  tabIndex: 0,
+} as RateProps
+
+export interface RateProps {
+  'prefixCls'?: string
+  'defaultValue'?: number
+  'value'?: number
+  'count'?: number
+  'allowHalf'?: boolean
+  'allowClear'?: boolean
+  'keyboard'?: boolean
+  'character'?: any
+  'characterRender'?: Function
+  'disabled'?: boolean
+  'direction'?: Direction
+  'tabIndex'?: number | string
+  'autoFocus'?: boolean
+  'onHoverChange'?: (value: number) => void
+  'onChange'?: (value: number) => void
+  'onFocus'?: () => void
+  'onBlur'?: () => void
+  'onKeyDown'?: KeyboardEventHandler
+  'onMouseLeave'?: FocusEventHandler
+  'onUpdate:value'?: (value: number) => void
 }
 
-export type RateProps = Partial<ExtractPropTypes<ReturnType<typeof rateProps>>>
-
-export default defineComponent({
+export default defineComponent<RateProps>({
   name: 'ARate',
   inheritAttrs: false,
-  props: initDefaultProps(rateProps(), {
-    prefixCls: 'vc-rate',
-    count: 5,
-    allowHalf: false,
-    allowClear: true,
-    keyboard: true,
-    character: '★',
-    direction: 'ltr',
-    tabIndex: 0,
-  }),
-  setup(props, { attrs, emit, expose }) {
+  setup(props = defaults, { attrs, emit, expose }) {
     const [setStarRef, starRefs] = useRefs()
     const rateRef = ref<HTMLUListElement | null>(null)
 
