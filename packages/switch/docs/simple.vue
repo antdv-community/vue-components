@@ -9,7 +9,6 @@ const checked = ref(false)
 function onChange(value: boolean, event: Event) {
   // Log the switch status and event
   console.log(`switch checked: ${value}`, event)
-  checked.value = value
 }
 
 function toggle() {
@@ -20,7 +19,7 @@ function toggle() {
 <template>
   <div style="margin: 20px;">
     <Switch
-      :checked="checked"
+      v-model:checked="checked"
       :disabled="disabled"
       checked-children="开"
       un-checked-children="关"
