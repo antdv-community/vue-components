@@ -9,5 +9,5 @@ export type VueInstance = ComponentPublicInstance
  */
 export function unrefElement<T extends Element>(elRef: MaybeRef<T>): T {
   const plain = toValue(elRef)
-  return (plain as VueInstance)?.$el ?? plain
+  return (plain as any)?.$el ?? plain
 }

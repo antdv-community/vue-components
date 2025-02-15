@@ -6,11 +6,9 @@ import Bootstrap from './bootstrap.vue'
 <template>
   <Story title="Dialog">
     <Variant title="AntDesign">
-      <!--      测试 -->
       <AntDesign />
     </Variant>
     <Variant title="Bootstrap">
-      <!--      测试 -->
       <Bootstrap />
     </Variant>
   </Story>

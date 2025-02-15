@@ -24,7 +24,9 @@ export function useTransitionDuration(): Ref<SVGPathElement[]> {
         return
       }
       updated = true
-
+      if (!path.style) {
+        (path as any).style = {}
+      }
       const pathStyle = path.style
       pathStyle.transitionDuration = '.3s, .3s, .3s, .06s'
 
