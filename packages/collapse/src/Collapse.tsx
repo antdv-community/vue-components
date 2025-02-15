@@ -1,8 +1,9 @@
 import type { Ref } from 'vue'
 import useMergedState from '@v-c/util/dist/hooks/useMergedState'
 import pickAttrs from '@v-c/util/dist/pickAttrs'
-import classNames from 'classnames'
+import classnames from 'classnames'
 import { defineComponent, ref, toRef } from 'vue'
+import { useItems } from './hooks/useItems'
 import { generatorCollapseProps, type Key } from './interface'
 
 function getActiveKeysArray(activeKey: Key | Array<Key>) {
@@ -51,11 +52,36 @@ const Collapse = defineComponent({
     }
 
     return () => {
-      const { prefixCls, className, style, accordion } = props
+      const {
+        prefixCls,
+        className,
+        style,
+        openMotion,
+        expandIcon,
+        collapsible,
+        accordion,
+        destroyInactivePanel,
+        classNames,
+        styles,
+        items,
+      } = props
 
-      const collapseClassName = classNames(prefixCls, className)
+      const collapseClassName = classnames(prefixCls, className)
 
       const mergedProps = { ...props, ...attrs }
+
+      const mergedChildren = useItems(items, {
+        prefixCls,
+        accordion,
+        openMotion,
+        expandIcon,
+        collapsible,
+        destroyInactivePanel,
+        onItemClick,
+        activeKey: activeKey.value,
+        classNames,
+        styles,
+      })
 
       return (
         <div
@@ -65,6 +91,7 @@ const Collapse = defineComponent({
           role={accordion ? 'tablist' : undefined}
           {...pickAttrs(mergedProps, { aria: true, data: true })}
         >
+          {mergedChildren}
         </div>
       )
     }
