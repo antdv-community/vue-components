@@ -3,6 +3,7 @@ import type { CollapseProps } from '../src/interface'
 import { h } from 'vue'
 import Collapse from '../src/index'
 import CustomIcon from './custom-icon.vue'
+import Simple from './simple.vue'
 import '../assets/index.less'
 
 const basicCollapseItems: CollapseProps['items'] = [
@@ -33,6 +34,10 @@ const basicCollapseItems: CollapseProps['items'] = [
 
     <Variant title="custom icon">
       <CustomIcon />
+    </Variant>
+
+    <Variant title="simple">
+      <Simple />
     </Variant>
   </Story>
 </template>

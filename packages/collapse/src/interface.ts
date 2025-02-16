@@ -38,7 +38,7 @@ export function generatorCollapsePanelProps() {
     accordion: Boolean,
     forceRender: Boolean as PropType<boolean | undefined>,
     onItemClick: Function as PropType<(props: Key) => void>,
-    extra: [String, Object] as PropType<string | VNode>,
+    extra: [String, Object] as PropType<string | VueNode>,
     panelKey: [String, Number],
     collapsible: String as PropType<CollapsibleType>,
     expandIcon: Function as PropType<(props: any) => VueNode>,
