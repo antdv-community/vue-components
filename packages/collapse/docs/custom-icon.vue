@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import type { ComputedRef } from 'vue'
 import type { CollapseProps } from '../src/index'
-import { computed, h, ref, watch } from 'vue'
+import { h, ref, shallowRef, watch } from 'vue'
 import Collapse from '../src/index'
 
 const initLength = 3
@@ -96,14 +95,66 @@ const openMotion = {
   onAfterLeave: skipOpacityTransition,
 }
 
-const items: ComputedRef<CollapseProps['items']> = computed(() => {
-  return Array.from({ length: initLength }).map((_, i) => {
-    return {
-      label: `This is panel header ${i + 1}`,
-      children: h('p', {}, [text.repeat(time.value)]),
-    }
-  })
-})
+const items = shallowRef<CollapseProps['items']>([])
+function handleUpdateItems() {
+  items.value = Array.from({ length: initLength })
+    .map((_, i) => {
+      return {
+        label: `This is panel header ${i + 1}`,
+        key: i + 1,
+        children: h('p', {}, [text.repeat(time.value)]),
+      }
+    })
+    .concat([
+      {
+        label: `This is panel header ${initLength + 1}`,
+        key: initLength + 1,
+        children: h(Collapse, {
+          defaultActiveKey: '1',
+          expandIcon,
+          items: [
+            {
+              label: 'This is panel nest panel',
+              key: '1',
+              children: h('p', {}, [text]),
+            },
+          ],
+        }),
+      },
+      {
+        label: `This is panel header ${initLength + 2}`,
+        key: initLength + 2,
+        children: h(Collapse, {
+          defaultActiveKey: '1',
+          items: [
+            {
+              label: 'This is panel nest panel',
+              children: h('form', {}, [
+                h(
+                  'label',
+                  {
+                    htmlFor: 'test',
+                  },
+                  ['Name:&nbsp;'],
+                ),
+                h('input', {
+                  type: 'text',
+                  id: 'test',
+                }),
+              ]),
+            },
+          ],
+        }),
+      },
+    ])
+}
+watch(
+  () => time.value,
+  () => {
+    handleUpdateItems()
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -112,12 +163,12 @@ const items: ComputedRef<CollapseProps['items']> = computed(() => {
   </button>
   <br>
   <br>
-  <button type="button">
+  <button type="button" @click="accordion = !accordion">
     {{ accordion ? "Mode: accordion" : "Mode: collapse" }}
   </button>
   <br>
   <br>
-  <button type="button">
+  <button type="button" @click="activeKey = ['2']">
     active header 2
   </button>
   <br>
