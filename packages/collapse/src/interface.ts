@@ -41,8 +41,9 @@ export function generatorCollapsePanelProps() {
     extra: [String, Object] as PropType<string | VNode>,
     panelKey: [String, Number],
     collapsible: String as PropType<CollapsibleType>,
-    expandIcon: Function as PropType<(props: object) => VueNode>,
+    expandIcon: Function as PropType<(props: any) => VueNode>,
     role: String,
+    children: Object as PropType<VueNode>,
   }
 }
 
@@ -93,7 +94,7 @@ export function generatorCollapseProps() {
     style: Object,
     styles: Object as PropType<Partial<Record<SemanticName, CSSProperties>>>,
     destroyInactivePanel: Boolean,
-    expandIcon: Function as PropType<(props: object) => VueNode>,
+    expandIcon: Function as PropType<(props: any) => VueNode>,
     collapsible: String as PropType<CollapsibleType>,
     items: Array as PropType<ItemType[]>,
   }
@@ -110,3 +111,19 @@ export type CollapseProps = Omit<
 Partial<
   Pick<InternalCollapsePanelProps, 'accordion' | 'destroyInactivePanel'>
 >
+
+export function generatorCollapsePanelContentProps() {
+  return {
+    isActive: Boolean,
+    prefixCls: String,
+    className: String,
+    classNames: Object as PropType<{ header?: string, body?: string }>,
+    style: Object as PropType<Record<string, string>>,
+    styles: Object as PropType<{
+      header?: CSSProperties
+      body?: CSSProperties
+    }>,
+    role: String,
+    forceRender: Boolean,
+  }
+}

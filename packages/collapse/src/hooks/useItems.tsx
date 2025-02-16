@@ -20,7 +20,6 @@ Pick<CollapseProps, 'accordion' | 'collapsible' | 'destroyInactivePanel'> & {
 }
 
 function convertItemsToNodes(items: ItemType[], props: Props) {
-  // TODO:
   const {
     prefixCls,
     accordion,
@@ -35,7 +34,6 @@ function convertItemsToNodes(items: ItemType[], props: Props) {
   } = props
 
   return items.map((item, index) => {
-    // TODO: children
     const {
       label,
       key: rawKey,

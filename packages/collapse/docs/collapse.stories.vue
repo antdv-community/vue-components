@@ -2,11 +2,14 @@
 import type { CollapseProps } from '../src/interface'
 import { h } from 'vue'
 import Collapse from '../src/index'
+import CustomIcon from './custom-icon.vue'
 import '../assets/index.less'
 
 const basicCollapseItems: CollapseProps['items'] = [
   {
-    label: h('input', { on: { keydown: (e: MouseEvent) => e.stopPropagation() } }),
+    label: h('input', {
+      on: { keydown: (e: MouseEvent) => e.stopPropagation() },
+    }),
     children: 'content',
   },
   {
@@ -26,6 +29,10 @@ const basicCollapseItems: CollapseProps['items'] = [
   <Story title="Collapse">
     <Variant title="Basic">
       <Collapse :items="basicCollapseItems" />
+    </Variant>
+
+    <Variant title="custom icon">
+      <CustomIcon />
     </Variant>
   </Story>
 </template>

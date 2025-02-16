@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from 'vue'
 import classnames from 'classnames'
-import { computed, defineComponent, Transition, useSlots } from 'vue'
+import { computed, defineComponent, Transition } from 'vue'
 import { generatorCollapsePanelProps } from './interface'
 import PanelContent from './PanelContent'
 
@@ -24,8 +24,6 @@ const CollapsePanel = defineComponent({
         },
       }
     })
-
-    const slots = useSlots()
 
     return () => {
       const {
@@ -101,17 +99,17 @@ const CollapsePanel = defineComponent({
           isActive={isActive}
           forceRender={forceRender}
           role={accordion ? 'tabpanel' : undefined}
-          v-slots={{ default: () => <div>123</div> }}
+          v-slots={{ default: () => props.children }}
         />
       )
 
       const transitionProps = {
         'appear': false,
-        'css': false,
         'leave-to-class': `${prefixCls}-panel-hidden`,
         ...openMotion,
       }
 
+      console.log(transitionProps)
       return (
         <div {...restProps} class={collapsePanelClassNames}>
           <div {...headerProps}>

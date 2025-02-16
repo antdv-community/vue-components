@@ -1,22 +1,10 @@
-import type { CSSProperties, PropType } from 'vue'
 import classnames from 'classnames'
 import { defineComponent, ref, watch } from 'vue'
+import { generatorCollapsePanelContentProps } from './interface'
 
 const PanelContent = defineComponent({
   name: 'PanelContent',
-  props: {
-    isActive: Boolean,
-    prefixCls: String,
-    className: String,
-    classNames: Object as PropType<{ header?: string, body?: string }>,
-    style: Object as PropType<Record<string, string>>,
-    styles: Object as PropType<{
-      header?: CSSProperties
-      body?: CSSProperties
-    }>,
-    role: String,
-    forceRender: Boolean,
-  },
+  props: generatorCollapsePanelContentProps(),
   setup(props, { slots }) {
     const rendered = ref(props.isActive || props.forceRender)
 
@@ -47,10 +35,10 @@ const PanelContent = defineComponent({
       return (
         <div
           class={classnames(
-            `${prefixCls}-content`,
+            `${prefixCls}-panel`,
             {
-              [`${prefixCls}-content-active`]: isActive,
-              [`${prefixCls}-content-inactive`]: !isActive,
+              [`${prefixCls}-panel-active`]: isActive,
+              [`${prefixCls}-panel-inactive`]: !isActive,
             },
             className,
           )}
@@ -59,7 +47,7 @@ const PanelContent = defineComponent({
         >
           <div
             class={classnames(
-              `${prefixCls}-content-box`,
+              `${prefixCls}-body`,
               customizeizeClassNames?.body,
             )}
             style={styles?.body}
