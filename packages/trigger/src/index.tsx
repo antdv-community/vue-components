@@ -355,7 +355,7 @@ export const Trigger = defineComponent({
       }
     }
 
-    useWatch(mergedOpen.value, targetEle.value, popupEle.value, triggerAlign, onScroll)
+    watch([mergedOpen, targetEle, popupEle], () => useWatch(mergedOpen.value, targetEle.value, popupEle.value, triggerAlign, onScroll))
     watch([mousePos, () => props.popupPlacement], () => {
       triggerAlign()
     })
@@ -581,6 +581,7 @@ export const Trigger = defineComponent({
 
     expose({
       getTriggerDOMNode: () => triggerNodeRef.value,
+      forceAlign: () => triggerAlign(),
     })
 
     return () => {

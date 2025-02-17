@@ -27,7 +27,7 @@ const enoughTop = ref(true)
 const triggerRef = ref()
 onMounted(() => {
   if (enoughTop.value) {
-    // triggerRef.value!.forceAlign()
+    triggerRef.value!.forceAlign()
   }
 })
 </script>

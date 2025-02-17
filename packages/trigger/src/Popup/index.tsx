@@ -272,7 +272,6 @@ export const Popup = defineComponent({
       }
 
       const transitionProps = getTransitionProps(motion?.name, motion)
-      console.log(transitionProps)
       return (
         <Portal
           open={forceRender || isNodeVisible}

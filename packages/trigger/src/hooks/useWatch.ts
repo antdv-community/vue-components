@@ -1,4 +1,4 @@
-import { watchEffect } from 'vue'
+import { onUnmounted } from 'vue'
 import { collectScroller, getWin } from '../util'
 
 export default function useWatch(
@@ -8,41 +8,38 @@ export default function useWatch(
   onAlign: VoidFunction,
   onScroll: VoidFunction,
 ) {
-  watchEffect((onCleanup) => {
-    if (open && target && popup) {
-      const targetElement = target
-      const popupElement = popup
-      const targetScrollList = collectScroller(targetElement)
-      const popupScrollList = collectScroller(popupElement)
+  if (open && target && popup) {
+    const targetElement = target
+    const popupElement = popup
+    const targetScrollList = collectScroller(targetElement)
+    const popupScrollList = collectScroller(popupElement)
 
-      const win = getWin(popupElement)
+    const win = getWin(popupElement)
 
-      const mergedList = new Set([
-        win,
-        ...targetScrollList,
-        ...popupScrollList,
-      ])
+    const mergedList = new Set([
+      win,
+      ...targetScrollList,
+      ...popupScrollList,
+    ])
 
-      function notifyScroll() {
-        onAlign()
-        onScroll()
-      }
-
-      mergedList.forEach((scroller) => {
-        scroller && scroller.addEventListener('scroll', notifyScroll, { passive: true })
-      })
-
-      win && win.addEventListener('resize', notifyScroll, { passive: true })
-
-      // First time always do align
+    function notifyScroll() {
       onAlign()
-
-      onCleanup(() => {
-        mergedList.forEach((scroller) => {
-          scroller && scroller.removeEventListener('scroll', notifyScroll)
-          win && win.removeEventListener('resize', notifyScroll)
-        })
-      })
+      onScroll()
     }
-  })
+
+    mergedList.forEach((scroller) => {
+      scroller && scroller.addEventListener('scroll', notifyScroll, { passive: true })
+    })
+
+    win && win.addEventListener('resize', notifyScroll, { passive: true })
+
+    // First time always do align
+    onAlign()
+    onUnmounted(() => {
+      mergedList.forEach((scroller) => {
+        scroller && scroller.removeEventListener('scroll', notifyScroll)
+        win && win.removeEventListener('resize', notifyScroll)
+      })
+    })
+  }
 }
