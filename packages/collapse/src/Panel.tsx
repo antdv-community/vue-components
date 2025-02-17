@@ -109,7 +109,6 @@ const CollapsePanel = defineComponent({
         ...openMotion,
       }
 
-      console.log(transitionProps)
       return (
         <div {...restProps} class={collapsePanelClassNames}>
           <div {...headerProps}>
@@ -124,7 +123,7 @@ const CollapsePanel = defineComponent({
             >
               {header}
             </span>
-            {ifExtraExist && <div class={`${prefixCls}-extra`}>{extra}</div>}
+            {ifExtraExist.value && <div class={`${prefixCls}-extra`}>{extra}</div>}
           </div>
 
           <Transition {...transitionProps}>
