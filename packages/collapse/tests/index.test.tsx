@@ -144,7 +144,7 @@ describe('collapse', () => {
       const onChangeSpy = vi.fn()
 
       const ControlledCollapse = defineComponent(() => {
-        const activeKey = ref(['2'])
+        const activeKey = ref<CollapseProps['activeKey']>(['2'])
         const handleChange: CollapseProps['onChange'] = (key) => {
           activeKey.value = key
           onChangeSpy(key)
