@@ -93,7 +93,13 @@ describe('collapse', () => {
     it ('should not have role', () => {
       const item = collapse.find('.vc-collapse')
       expect(item).toBeTruthy()
-      console.log(item.attributes())
+      expect(item.attributes().role).toBe(undefined)
+    })
+
+    it('should set button role on panel title', () => {
+      const item = collapse.find('.vc-collapse-header')
+      expect(item).toBeTruthy()
+      expect(item.attributes().role).toBe('button')
     })
   }
 

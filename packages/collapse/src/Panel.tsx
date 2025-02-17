@@ -22,6 +22,15 @@ const CollapsePanel = defineComponent({
         onClick: () => {
           props.onItemClick?.(props.panelKey!)
         },
+        onKeydown: (e) => {
+          if (e.key === 'Enter' || e.keyCode === KeyCode.ENTER || e.which === KeyCode.ENTER) {
+            onItemClick?.(panelKey);
+          }
+        },
+        role: props.accordion ? 'tab' : 'button',
+        ['aria-expanded']: props.isActive,
+        ['aria-disabled']: disabled.value,
+        tabIndex: disabled.value ? -1 : 0,
       }
     })
 
