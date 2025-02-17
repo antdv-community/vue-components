@@ -43,7 +43,7 @@ export function generatorCollapsePanelProps() {
     collapsible: String as PropType<CollapsibleType>,
     expandIcon: Function as PropType<(props: any) => VueNode>,
     role: String,
-    children: Object as PropType<VueNode>,
+    children: [Object, String] as PropType<VueNode | string>,
   }
 }
 

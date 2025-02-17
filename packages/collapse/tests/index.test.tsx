@@ -75,17 +75,25 @@ describe('collapse', () => {
     })
 
     it('click should toggle panel state', async () => {
-      // const header = collapse.findAll('.vc-collapse-header')?.[1]
-      // await header?.trigger('click')
-      // // 等待 1 s
-      // const ret = sleep(1000)
-      // vi.runAllTimers()
-      // await ret
-      // console.log(collapse.html())
-      // expect(collapse.findAll('.vc-collapse-panel-active').length).toHaveLength(1)
-      // await header?.trigger('click')
-      // vi.runAllTimers()
-      // expect(collapse.find('.vc-collapse-panel-inactive')?.text()).toBe('<div class="vc-collapse-body">second</div>')
+      const header = collapse.findAll('.vc-collapse-header')?.[1]
+      await header?.trigger('click')
+      expect(collapse.findAll('.vc-collapse-panel-active')).toHaveLength(1)
+      await header?.trigger('click')
+      expect(collapse.find('.vc-collapse-panel-inactive')?.element.innerHTML).toBe('<div class="vc-collapse-body">second</div>')
+      expect(collapse.findAll('.vc-collapse-panel-active').length).toBeFalsy()
+    })
+
+    it ('click should not toggle disabled panel state', async () => {
+      const header = collapse.find('.vc-collapse-header')
+      expect(header).toBeTruthy()
+      await header.trigger('click')
+      expect(collapse.findAll('.vc-collapse-panel-active').length).toBeFalsy()
+    })
+
+    it ('should not have role', () => {
+      const item = collapse.find('.vc-collapse')
+      expect(item).toBeTruthy()
+      console.log(item.attributes())
     })
   }
 
@@ -102,16 +110,19 @@ describe('collapse', () => {
         label: 'collapse 1',
         key: '1',
         collapsible: 'disabled',
+        children: 'first',
       },
       {
         label: 'collapse 2',
         key: '2',
         extra: <span>Extra span</span>,
+        children: 'second',
       },
       {
         label: 'collapse 3',
         key: '3',
         className: 'important',
+        children: 'third',
       },
     ]
     const element = (
