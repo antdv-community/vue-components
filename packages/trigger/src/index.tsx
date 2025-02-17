@@ -211,7 +211,7 @@ export const Trigger = defineComponent({
     // ========================== Children ==========================
     const child = slots.default?.()
     const originChildProps = child[0]?.props || {}
-    const cloneProps: typeof originChildProps = {}
+    let cloneProps: typeof originChildProps = {}
 
     const inPopupOrChild = useEvent((ele: EventTarget) => {
       const childDOM = targetEle.value
@@ -427,7 +427,7 @@ export const Trigger = defineComponent({
       }
     }
 
-    watchEffect(() => {
+    watchEffect((onCleanup) => {
       const {
         mask,
         action = 'hover',
@@ -441,7 +441,6 @@ export const Trigger = defineComponent({
         blurDelay,
         alignPoint,
       } = props
-
       const [showActions, hideActions] = useAction(
         mobile.value,
         action,
@@ -560,6 +559,11 @@ export const Trigger = defineComponent({
           originChildProps.onContextmenu?.(event, ...args)
         }
       }
+
+      onCleanup(() => {
+        // Reset clone props to clean up previous event handlers
+        cloneProps = {}
+      })
     })
 
     // Pass props into cloneProps for nest usage
