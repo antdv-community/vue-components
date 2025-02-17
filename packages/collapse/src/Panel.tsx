@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'vue'
+import KeyCode from '@v-c/util/dist/keyCode'
 import classnames from 'classnames'
 import { computed, defineComponent, Transition } from 'vue'
 import { generatorCollapsePanelProps } from './interface'
@@ -19,18 +20,22 @@ const CollapsePanel = defineComponent({
 
     const collapsibleProps = computed(() => {
       return {
-        onClick: () => {
+        'onClick': () => {
           props.onItemClick?.(props.panelKey!)
         },
-        onKeydown: (e) => {
-          if (e.key === 'Enter' || e.keyCode === KeyCode.ENTER || e.which === KeyCode.ENTER) {
-            onItemClick?.(panelKey);
+        'onKeydown': (e: KeyboardEvent) => {
+          if (
+            e.key === 'Enter'
+            || e.keyCode === KeyCode.ENTER
+            || e.which === KeyCode.ENTER
+          ) {
+            props.onItemClick?.(props.panelKey!)
           }
         },
-        role: props.accordion ? 'tab' : 'button',
-        ['aria-expanded']: props.isActive,
-        ['aria-disabled']: disabled.value,
-        tabIndex: disabled.value ? -1 : 0,
+        'role': props.accordion ? 'tab' : 'button',
+        'aria-expanded': props.isActive,
+        'aria-disabled': disabled.value,
+        'tabIndex': disabled.value ? -1 : 0,
       }
     })
 
@@ -46,14 +51,17 @@ const CollapsePanel = defineComponent({
         collapsible,
         accordion,
         openMotion = {},
+        onItemClick,
         destroyInactivePanel,
         classNames: customizeClassNames = {},
         showArrow = true,
         styles = {},
         header,
+        panelKey,
+        children,
+        ...restProps
       } = props
 
-      const { ...restProps } = attrs
       const collapsePanelClassNames = classnames(
         `${prefixCls}-item`,
         {
@@ -108,7 +116,7 @@ const CollapsePanel = defineComponent({
           isActive={isActive}
           forceRender={forceRender}
           role={accordion ? 'tabpanel' : undefined}
-          v-slots={{ default: () => props.children }}
+          v-slots={{ default: () => children }}
         />
       )
 
@@ -118,8 +126,13 @@ const CollapsePanel = defineComponent({
         ...openMotion,
       }
 
+      const mergedRestProps = {
+        ...restProps,
+        ...attrs,
+      }
+
       return (
-        <div {...restProps} class={collapsePanelClassNames}>
+        <div {...mergedRestProps} class={collapsePanelClassNames}>
           <div {...headerProps}>
             {showArrow && iconNode}
             <span
@@ -132,7 +145,9 @@ const CollapsePanel = defineComponent({
             >
               {header}
             </span>
-            {ifExtraExist.value && <div class={`${prefixCls}-extra`}>{extra}</div>}
+            {ifExtraExist.value && (
+              <div class={`${prefixCls}-extra`}>{extra}</div>
+            )}
           </div>
 
           <Transition {...transitionProps}>

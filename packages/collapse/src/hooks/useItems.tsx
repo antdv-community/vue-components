@@ -37,16 +37,16 @@ function convertItemsToNodes(items: ItemType[], props: Props) {
     const {
       label,
       key: rawKey,
-      collapsible: rawCollapsiable,
+      collapsible: rawCollapsible,
       onItemClick: rawOnItemClick,
-      destroyInactivePanel: rawDestoryInacivePanel,
+      destroyInactivePanel: rawDestroyInactivePanel,
       ...restProps
     } = item
 
     const key = String(rawKey ?? index)
-    const mergeCollapsible = rawCollapsiable ?? collapsible
-    const mergeDestoryInactivePanel
-      = rawDestoryInacivePanel ?? destroyInactivePanel
+    const mergeCollapsible = rawCollapsible ?? collapsible
+    const mergeDestroyInactivePanel
+      = rawDestroyInactivePanel ?? destroyInactivePanel
 
     const handleItemClick = (value: Key) => {
       if (mergeCollapsible === 'disabled')
@@ -80,7 +80,7 @@ function convertItemsToNodes(items: ItemType[], props: Props) {
         header={label}
         collapsible={mergeCollapsible}
         onItemClick={handleItemClick}
-        destroyInactivePanel={mergeDestoryInactivePanel}
+        destroyInactivePanel={mergeDestroyInactivePanel}
       />
     )
   })
