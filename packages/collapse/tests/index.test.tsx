@@ -3,9 +3,7 @@ import type { CollapseProps } from '../src'
 import KeyCode from '@v-c/util/dist/KeyCode'
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { as } from 'vitest/dist/chunks/reporters.anwo7Y6a'
 import { defineComponent, ref } from 'vue'
-import collapse from '../src/Collapse.tsx'
 import Collapse from '../src/index'
 
 describe('collapse', () => {
@@ -655,6 +653,7 @@ describe('collapse', () => {
         key: '1',
         children: <div class="target">Click this</div>,
         showArrow: false,
+        // @ts-expect-error: ignore error
         onClick: clickHandler,
       },
     ]
@@ -722,7 +721,9 @@ describe('collapse', () => {
       },
     ]
     const wrapper = mount(<Collapse items={items}></Collapse>)
-    expect(wrapper.find('.vc-collapse-item').element?.style.color).toBe('red')
+    expect(
+      (wrapper.find('.vc-collapse-item').element as HTMLDivElement)?.style.color,
+    ).toBe('red')
   })
 
   describe('props items', () => {
@@ -847,11 +848,11 @@ describe('collapse', () => {
     it('should not support expandIcon', () => {
       const wrapper = mount(
         <Collapse
-          expandIcon={() => <i className="custom-icon">p</i>}
+          expandIcon={() => <i class="custom-icon">p</i>}
           items={[
             {
               label: 'title',
-              expandIcon: () => <i className="custom-icon">c</i>,
+              expandIcon: () => <i class="custom-icon">c</i>,
             } as any,
           ]}
         />,
