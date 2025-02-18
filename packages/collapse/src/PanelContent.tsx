@@ -4,6 +4,7 @@ import { generatorCollapsePanelContentProps } from './interface'
 
 const PanelContent = defineComponent({
   name: 'PanelContent',
+  inheritAttrs: false,
   props: generatorCollapsePanelContentProps(),
   setup(props, { slots }) {
     const rendered = ref(props.isActive || props.forceRender)

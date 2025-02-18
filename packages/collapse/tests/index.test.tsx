@@ -1,8 +1,11 @@
 import type { Mock } from 'vitest'
 import type { CollapseProps } from '../src'
+import KeyCode from '@v-c/util/dist/KeyCode'
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { as } from 'vitest/dist/chunks/reporters.anwo7Y6a'
 import { defineComponent, ref } from 'vue'
+import collapse from '../src/Collapse.tsx'
 import Collapse from '../src/index'
 
 describe('collapse', () => {
@@ -406,5 +409,319 @@ describe('collapse', () => {
     const element = <Collapse items={items} accordion onChange={onChange} />
 
     runAccordionTest(element)
+  })
+
+  describe('forceRender', () => {
+    it('when forceRender is not supplied it should lazy render the panel content', () => {
+      const items: CollapseProps['items'] = [
+        {
+          label: 'collapse 1',
+          key: '1',
+          collapsible: 'disabled',
+          children: 'first',
+        },
+        {
+          label: 'collapse 2',
+          key: '2',
+          children: 'second',
+        },
+      ]
+      const wrapper = mount(<Collapse items={items} />)
+      expect(wrapper.findAll('.vc-collapse-panel')).toHaveLength(0)
+    })
+
+    it('when forceRender is FALSE it should lazy render the panel content', () => {
+      const items: CollapseProps['items'] = [
+        {
+          label: 'collapse 1',
+          key: '1',
+          collapsible: 'disabled',
+          forceRender: false,
+          children: 'first',
+        },
+        {
+          label: 'collapse 2',
+          key: '2',
+          children: 'second',
+        },
+      ]
+
+      const wrapper = mount(<Collapse items={items} />)
+      expect(wrapper.findAll('.vc-collapse-panel')).toHaveLength(0)
+    })
+
+    it('when forceRender is TRUE then it should render all the panel content to the DOM', () => {
+      const items: CollapseProps['items'] = [
+        {
+          label: 'collapse 1',
+          key: '1',
+          collapsible: 'disabled',
+          forceRender: true,
+          children: 'first',
+        },
+        {
+          label: 'collapse 2',
+          key: '2',
+          children: 'second',
+        },
+      ]
+      const wrapper = mount(<Collapse items={items} />)
+
+      expect(wrapper.findAll('.vc-collapse-panel')).toHaveLength(1)
+      expect(wrapper.findAll('.vc-collapse-panel-active')).toHaveLength(0)
+      const inactiveDom = wrapper.find('div.vc-collapse-panel-inactive')
+      expect(inactiveDom.element).not.toBeFalsy()
+      expect(getComputedStyle(inactiveDom!.element)).toHaveProperty(
+        'display',
+        'none',
+      )
+    })
+  })
+
+  it('should toggle panel when press enter', async () => {
+    const myKeyEvent = {
+      keyCode: KeyCode.ENTER,
+    }
+
+    const items: CollapseProps['items'] = [
+      {
+        label: 'collapse 1',
+        key: '1',
+
+        children: 'first',
+      },
+      {
+        label: 'collapse 2',
+        key: '2',
+        children: 'second',
+      },
+      {
+        label: 'collapse 3',
+        key: '3',
+        children: 'second',
+        collapsible: 'disabled',
+      },
+    ]
+    const wrapper = mount(<Collapse items={items} />)
+
+    // fireEvent.keyDown(container.querySelectorAll('.rc-collapse-header')?.[2], myKeyEvent);
+    const el = wrapper.findAll('.vc-collapse-header')?.[2]
+    await el.trigger('keydown', myKeyEvent)
+    expect(wrapper.findAll('.vc-collapse-panel-active')).toHaveLength(0)
+
+    await wrapper.find('.vc-collapse-header')?.trigger('keydown', myKeyEvent)
+
+    expect(wrapper.findAll('.vc-collapse-panel-active')).toHaveLength(1)
+
+    expect(wrapper.find('.vc-collapse-panel').element.className).toContain(
+      'vc-collapse-panel-active',
+    )
+
+    await wrapper.find('.vc-collapse-header').trigger('keydown', myKeyEvent)
+
+    expect(wrapper.findAll('.vc-collapse-panel-active')).toHaveLength(0)
+    expect(wrapper.find('.vc-collapse-panel')!.element.className).not.toContain(
+      'vc-collapse-panel-active',
+    )
+  })
+
+  it('should support return null icon', () => {
+    const items: CollapseProps['items'] = [
+      { label: 'title', key: '1', children: 'first' },
+    ]
+    const wrapper = mount(
+      <Collapse expandIcon={() => null} items={items}></Collapse>,
+    )
+
+    const childrenNodes = wrapper.find('.vc-collapse-header').element.childNodes
+    let len = 0
+    for (const node of childrenNodes) {
+      if (node.nodeType !== 8) {
+        len++
+      }
+    }
+    expect(len).toBe(1)
+  })
+
+  describe('prop: collapsible', () => {
+    it('default', async () => {
+      const items: CollapseProps['items'] = [
+        { label: 'collapse 1', key: '1', children: 'first' },
+      ]
+      const wrapper = mount(<Collapse items={items}></Collapse>)
+      expect(wrapper.find('.vc-collapse-title')).toBeTruthy()
+      await wrapper.find('.vc-collapse-header')?.trigger('click')
+      expect(wrapper.findAll('.vc-collapse-item-active')).toHaveLength(1)
+    })
+    it('should work when value is header', async () => {
+      const items: CollapseProps['items'] = [
+        { label: 'collapse 1', key: '1', children: 'first' },
+      ]
+      const wrapper = mount(
+        <Collapse collapsible="header" items={items}></Collapse>,
+      )
+      expect(wrapper.find('.vc-collapse-title')).toBeTruthy()
+      await wrapper.find('.vc-collapse-header').trigger('click')
+      expect(wrapper.findAll('.vc-collapse-item-active')).toHaveLength(0)
+      await wrapper.find('.vc-collapse-title').trigger('click')
+      expect(wrapper.findAll('.vc-collapse-item-active')).toHaveLength(1)
+    })
+
+    it('should work when value is icon', async () => {
+      const items: CollapseProps['items'] = [
+        { label: 'collapse 1', key: '1', children: 'first' },
+      ]
+      const wrapper = mount(
+        <Collapse collapsible="icon" items={items}></Collapse>,
+      )
+      expect(wrapper.find('.vc-collapse-expand-icon')).toBeTruthy()
+      await wrapper.find('.vc-collapse-header')!.trigger('click')
+      expect(wrapper.findAll('.vc-collapse-item-active')).toHaveLength(0)
+      await wrapper.find('.vc-collapse-expand-icon')!.trigger('click')
+      expect(wrapper.findAll('.vc-collapse-item-active')).toHaveLength(1)
+    })
+
+    it('should disabled when value is disabled', async () => {
+      const items: CollapseProps['items'] = [
+        { label: 'collapse 1', key: '1', children: 'first' },
+      ]
+      const wrapper = mount(
+        <Collapse collapsible="disabled" items={items}></Collapse>,
+      )
+      expect(wrapper.find('.vc-collapse-title')).toBeTruthy()
+      expect(wrapper.findAll('.vc-collapse-item-disabled')).toHaveLength(1)
+      await wrapper.find('.vc-collapse-header').trigger('click')
+      expect(wrapper.findAll('.vc-collapse-item-active')).toHaveLength(0)
+    })
+
+    it('the value of panel should be read first', async () => {
+      const items: CollapseProps['items'] = [
+        {
+          label: 'collapse 1',
+          key: '1',
+          children: 'first',
+          collapsible: 'disabled',
+        },
+      ]
+      const wrapper = mount(
+        <Collapse collapsible="header" items={items}></Collapse>,
+      )
+      expect(wrapper.find('.vc-collapse-title')).toBeTruthy()
+
+      expect(wrapper.findAll('.vc-collapse-item-disabled')).toHaveLength(1)
+
+      await wrapper.find('.vc-collapse-header').trigger('click')
+      expect(wrapper.findAll('.vc-collapse-item-active')).toHaveLength(0)
+    })
+
+    it('icon trigger when collapsible equal header', async () => {
+      const items: CollapseProps['items'] = [
+        { label: 'collapse 1', key: '1', children: 'first' },
+      ]
+      const wrapper = mount(
+        <Collapse collapsible="header" items={items}></Collapse>,
+      )
+
+      await wrapper.find('.vc-collapse-header .arrow').trigger('click')
+      expect(wrapper.findAll('.vc-collapse-item-active')).toHaveLength(1)
+    })
+
+    it('header not trigger when collapsible equal icon', async () => {
+      const items: CollapseProps['items'] = [
+        { label: 'collapse 1', key: '1', children: 'first' },
+      ]
+      const wrapper = mount(
+        <Collapse collapsible="icon" items={items}></Collapse>,
+      )
+      await wrapper.find('.vc-collapse-title').trigger('click')
+      expect(wrapper.findAll('.vc-collapse-item-active')).toHaveLength(0)
+    })
+  })
+
+  it('!showArrow', () => {
+    const items: CollapseProps['items'] = [
+      { label: 'collapse 1', key: '1', children: 'first', showArrow: false },
+    ]
+    const wrapper = mount(<Collapse items={items}></Collapse>)
+
+    expect(wrapper.findAll('.vc-collapse-expand-icon')).toHaveLength(0)
+  })
+
+  it('panel container dom can set event handler', async () => {
+    const clickHandler = vi.fn()
+    const items: CollapseProps['items'] = [
+      {
+        label: 'collapse 1',
+        key: '1',
+        children: <div class="target">Click this</div>,
+        showArrow: false,
+        onClick: clickHandler,
+      },
+    ]
+
+    const wrapper = mount(
+      <Collapse defaultActiveKey="1" items={items}></Collapse>,
+    )
+
+    await wrapper.find('.target').trigger('click')
+    expect(clickHandler).toHaveBeenCalled()
+  })
+
+  it('ref should work', async () => {
+    const panelRef = ref()
+    const items: CollapseProps['items'] = [
+      { label: 'collapse 1', key: '1', children: 'first', ref: panelRef  },
+    ]
+    const wrapper = mount(<Collapse items={items} />)
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.ref).toBe(wrapper.vm.$el)
+    expect(panelRef.value.ref).toBe(wrapper.find('.vc-collapse-item').element)
+  })
+
+  // https://github.com/react-component/collapse/issues/235
+  it('onItemClick should work', async () => {
+    const onItemClick = vi.fn()
+    const items: CollapseProps['items'] = [
+      {
+        label: 'collapse 1',
+        key: '1',
+        children: 'first',
+        onItemClick,
+      },
+    ]
+    const wrapper = mount(<Collapse items={items}></Collapse>)
+    await wrapper.find('.vc-collapse-header').trigger('click')
+    expect(onItemClick).toHaveBeenCalled()
+  })
+
+  it('onItemClick should not work when collapsible is disabled', async () => {
+    const onItemClick = vi.fn()
+    const items: CollapseProps['items'] = [
+      {
+        label: 'collapse 1',
+        key: '1',
+        children: 'first',
+        onItemClick,
+      },
+    ]
+    const wrapper = mount(
+      <Collapse collapsible="disabled" items={items}></Collapse>,
+    )
+    await wrapper.find('.vc-collapse-header').trigger('click')
+    expect(onItemClick).not.toHaveBeenCalled()
+  })
+
+  it('panel style should work', () => {
+    const items: CollapseProps['items'] = [
+      {
+        label: 'collapse 1',
+        key: '1',
+        children: 'first',
+        style: { color: 'red' },
+      },
+    ]
+    const wrapper = mount(<Collapse items={items}></Collapse>)
+    expect(wrapper.find('.vc-collapse-item').element?.style.color).toBe('red')
   })
 })

@@ -21,7 +21,8 @@ function getActiveKeysArray(activeKey: Key | Array<Key>) {
 const Collapse = defineComponent({
   props: generatorCollapseProps(),
   name: 'VcCollapse',
-  setup(props, { attrs }) {
+  inheritAttrs: false,
+  setup(props, { attrs, expose }) {
     const refWrapper = ref<HTMLDivElement>()
 
     const [activeKey, setActiveKey] = useMergedState<
@@ -51,6 +52,10 @@ const Collapse = defineComponent({
       activeKey.value = getActiveKey(key)
       setActiveKey(activeKey.value)
     }
+
+    expose({
+      ref: refWrapper
+    })
 
     return () => {
       const {
