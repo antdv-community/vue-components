@@ -1,16 +1,17 @@
 import type { HTMLAttributes } from 'vue'
 import KeyCode from '@v-c/util/dist/KeyCode'
 import classnames from 'classnames'
-import { computed, defineComponent, Transition } from 'vue'
+import { computed, defineComponent, ref, Transition } from 'vue'
 import { generatorCollapsePanelProps } from './interface'
 import PanelContent from './PanelContent'
 
 const CollapsePanel = defineComponent({
   name: 'CollapsePanel',
   props: generatorCollapsePanelProps(),
-  setup(props, { attrs }) {
+  inheritAttrs: false,
+  setup(props, { attrs, expose }) {
     const disabled = computed(() => props.collapsible === 'disabled')
-
+    const refWrapper = ref()
     const ifExtraExist = computed(
       () =>
         props.extra !== null
@@ -98,7 +99,8 @@ const CollapsePanel = defineComponent({
             )
       const iconNode = iconNodeInner && (
         <div
-          class={`${prefixCls}-expand-icon`}
+          class={classnames(`${prefixCls}-expand-icon`, customizeClassNames?.icon)}
+          style={styles?.icon}
           {...(['header', 'icon'].includes(collapsible!)
             ? collapsibleProps.value
             : {})}
@@ -131,8 +133,16 @@ const CollapsePanel = defineComponent({
         ...attrs,
       }
 
+      expose({
+        ref: refWrapper,
+      })
+
       return (
-        <div {...mergedRestProps} class={collapsePanelClassNames}>
+        <div
+          {...mergedRestProps}
+          ref={refWrapper}
+          class={collapsePanelClassNames}
+        >
           <div {...headerProps}>
             {showArrow && iconNode}
             <span
@@ -141,7 +151,7 @@ const CollapsePanel = defineComponent({
                 customizeClassNames?.title,
               )}
               style={styles?.title}
-              {...(collapsible === 'header' ? collapsibleProps : {})}
+              {...(collapsible === 'header' ? collapsibleProps.value : {})}
             >
               {header}
             </span>
