@@ -30,9 +30,9 @@ describe('collapse', () => {
       collapse = mount(element)
     })
 
-    // afterEach(() => {
-    //   collapse.unmount()
-    // })
+    afterEach(() => {
+      collapse.unmount()
+    })
 
     it('add className', () => {
       const el = collapse.findAll('.vc-collapse-item')?.[2]
@@ -88,20 +88,20 @@ describe('collapse', () => {
 
     it('click should not toggle disabled panel state', async () => {
       const header = collapse.find('.vc-collapse-header')
-      expect(header).toBeTruthy()
+      expect(header.element).toBeTruthy()
       await header.trigger('click')
       expect(collapse.findAll('.vc-collapse-panel-active').length).toBeFalsy()
     })
 
     it('should not have role', () => {
       const item = collapse.find('.vc-collapse')
-      expect(item).toBeTruthy()
+      expect(item.element).toBeTruthy()
       expect(item.attributes().role).toBe(undefined)
     })
 
     it('should set button role on panel title', () => {
       const item = collapse.find('.vc-collapse-header')
-      expect(item).toBeTruthy()
+      expect(item.element).toBeTruthy()
       expect(item.attributes().role).toBe('button')
     })
   }
@@ -180,7 +180,7 @@ describe('collapse', () => {
 
       expect(el.findAll('.vc-collapse-panel-active')).toHaveLength(1)
       const header = el.find('.vc-collapse-header')
-      expect(header).toBeTruthy()
+      expect(header.element).toBeTruthy()
       await header.trigger('click')
       expect(el.findAll('.vc-collapse-panel-active')).toHaveLength(2)
       expect(onChangeSpy).toBeCalledWith(['2', '1'])
@@ -318,5 +318,93 @@ describe('collapse', () => {
       await header.trigger('click')
       expect(wrapper.findAll('.vc-collapse-panel-inactive').length).toBeFalsy()
     })
+  })
+
+  function runAccordionTest(element: any) {
+    let collapse: ReturnType<typeof mount>
+
+    beforeEach(() => {
+      collapse = mount(element)
+    })
+
+    afterEach(() => {
+      collapse.unmount()
+    })
+
+    it('accordion content, should default open zero item', () => {
+      expect(collapse.findAll('.vc-collapse-panel-active')).toHaveLength(0)
+    })
+
+    it('accordion item, should default open zero item', () => {
+      expect(collapse.findAll('.vc-collapse-item-active')).toHaveLength(0)
+    })
+
+    it('should toggle show on panel', async () => {
+      let header = collapse.findAll('.vc-collapse-header')?.[1]
+      await header.trigger('click')
+      expect(collapse.findAll('.vc-collapse-panel-active')).toHaveLength(1)
+      expect(collapse.findAll('.vc-collapse-item-active')).toHaveLength(1)
+      header = collapse.findAll('.vc-collapse-header')?.[1]
+      await header.trigger('click')
+      expect(collapse.findAll('.vc-collapse-panel-active')).toHaveLength(0)
+      expect(collapse.findAll('.vc-collapse-item-active')).toHaveLength(0)
+    })
+
+    it('should only show on panel', async () => {
+      let header = collapse.find('.vc-collapse-header')
+      expect(header.element).toBeTruthy()
+      await header.trigger('click')
+      expect(collapse.findAll('.vc-collapse-panel-active')).toHaveLength(1)
+      expect(collapse.findAll('.vc-collapse-item-active')).toHaveLength(1)
+      header = collapse.findAll('.vc-collapse-header')?.[2]
+      await header.trigger('click')
+      expect(collapse.findAll('.vc-collapse-panel-active')).toHaveLength(1)
+      expect(collapse.findAll('.vc-collapse-item-active')).toHaveLength(1)
+    })
+
+    it('should add tab role on panel title', () => {
+      const item = collapse.find('.vc-collapse-header')
+      expect(item.element).toBeTruthy()
+      expect(item.element.getAttribute('role')).toBe('tab')
+    })
+
+    it('should add tablist role on accordion', () => {
+      const item = collapse.find('.vc-collapse')
+      expect(item.element).toBeTruthy()
+      expect(item.element.getAttribute('role')).toBe('tablist')
+    })
+
+    it('should add tablist role on PanelContent', async () => {
+      const header = collapse.find('.vc-collapse-header')
+      expect(header.element).toBeTruthy()
+      await header.trigger('click')
+      const item = collapse.find('.vc-collapse-panel')
+      expect(item.element).toBeTruthy()
+      expect(item!.element.getAttribute('role')).toBe('tabpanel')
+    })
+  }
+
+  describe('prop: accordion', () => {
+    const items: CollapseProps['items'] = [
+      {
+        label: 'collapse 1',
+        key: '1',
+        children: 'first',
+      },
+      {
+        label: 'collapse 2',
+        key: '2',
+        children: 'second',
+      },
+      {
+        label: 'collapse 3',
+        key: '3',
+        children: 'third',
+      },
+    ]
+
+    const element = <Collapse items={items} accordion onChange={onChange} />
+
+    runAccordionTest(element)
   })
 })
