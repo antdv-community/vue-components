@@ -1,4 +1,3 @@
-import { onUnmounted } from 'vue'
 import { collectScroller, getWin } from '../util'
 
 export default function useWatch(
@@ -7,6 +6,7 @@ export default function useWatch(
   popup: HTMLElement | null,
   onAlign: VoidFunction,
   onScroll: VoidFunction,
+  onCleanup: Function,
 ) {
   if (open && target && popup) {
     const targetElement = target
@@ -35,7 +35,7 @@ export default function useWatch(
 
     // First time always do align
     onAlign()
-    onUnmounted(() => {
+    onCleanup(() => {
       mergedList.forEach((scroller) => {
         scroller && scroller.removeEventListener('scroll', notifyScroll)
         win && win.removeEventListener('resize', notifyScroll)

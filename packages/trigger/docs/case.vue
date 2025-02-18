@@ -177,7 +177,7 @@ function onForceRender(e) {
 
       <label>
         Motion
-        <input type="checkbox" :checked="!!state.motion">
+        <input type="checkbox" :checked="!!state.motion" @change="e => state.motion = e.target.checked">
       </label>
 
       <label>
@@ -258,4 +258,3 @@ function onForceRender(e) {
     </div>
   </div>
 </template>
-

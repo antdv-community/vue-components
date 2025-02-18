@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { h, onMounted } from 'vue'
+import { createApp, onMounted } from 'vue'
 import ShadowChild from './shadow-child.vue'
 
 onMounted(() => {
@@ -22,11 +22,13 @@ onMounted(() => {
   const container = document.createElement('div')
   container.id = 'popup-container'
   shadowRoot.appendChild(container)
+  const app = createApp(ShadowChild)
+  app.mount(container)
 })
 </script>
 
 <template>
-  <ShadowChild />
+  shadow demo
 </template>
 
 <style scoped>

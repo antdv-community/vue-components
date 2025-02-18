@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Trigger } from '../src'
 import './assets/index.less'
 
@@ -25,6 +25,7 @@ const builtinPlacements = {
 }
 const enoughTop = ref(true)
 const triggerRef = ref()
+const dynamicTop = computed(() => enoughTop.value ? '200px' : '90px')
 onMounted(() => {
   if (enoughTop.value) {
     triggerRef.value!.forceAlign()
@@ -37,11 +38,10 @@ onMounted(() => {
 
   <label>
     <input
+      v-model="enoughTop"
       type="checkbox"
-      :checked="enoughTop"
-      @change="() => enoughTop = !enoughTop"
     >
-    Enough Top (Placement: bottom)
+    Enough Top (Placement: bottom){{ `${enoughTop}:${dynamicTop}` }}
   </label>
 
   <div
@@ -61,28 +61,13 @@ onMounted(() => {
       arrow
       action="click"
       popup-visible
-      :get-popup-container="(n) => n.parentNode as any"
+      :get-popup-container="(n) => n?.parentNode as any"
       :popup-style="{ boxShadow: '0 0 5px red' }"
       :popup-placement="enoughTop ? 'bottom' : 'top'"
       :builtin-placements="builtinPlacements"
       stretch="minWidth"
     >
-      <span
-        :style="{
-          background: 'green',
-          color: '#FFF',
-          opacity: 0.9,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100px',
-          height: '100px',
-          position: 'absolute',
-          left: '50%',
-          top: enoughTop ? 200 : 90,
-          transform: 'translateX(-50%)',
-        }"
-      >
+      <span class="target">
         Target
       </span>
       <template #popup>
@@ -104,5 +89,18 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
+.target {
+  background: green;
+  color: #FFF;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width:100px;
+  height: 100px;
+  position: absolute;
+  left: 50%;
+  top: v-bind('dynamicTop');
+  transform: translateX(-50%);
+}
 </style>

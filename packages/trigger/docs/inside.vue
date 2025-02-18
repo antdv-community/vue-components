@@ -110,7 +110,7 @@ defineExpose({
 <template>
   <div style="position: fixed; top: 0; left: 0">
     <button
-      @click="() => popupHeight === 60 ? 200 : 60"
+      @click="() => popupHeight = popupHeight === 60 ? 200 : 60"
     >
       Popup Height: {{ popupHeight }}
     </button>
@@ -127,7 +127,7 @@ defineExpose({
     <div
       style="
         width: 300vw;
-        height: 300vh;
+        height: 450vh;
         background: rgba(0, 0, 255, 0.1);
         display: flex;
         align-items: center;
@@ -137,7 +137,7 @@ defineExpose({
       <Trigger
         arrow
         popup-visible
-        :get-popup-container="() => containerRef"
+        :get-popup-container="(triggerNode) => triggerNode?.parentNode as any"
         :popup-placement="popupPlacement"
         :builtin-placements="builtinPlacements"
       >
@@ -160,7 +160,7 @@ defineExpose({
               background: 'yellow',
               border: '1px solid blue',
               width: '200px',
-              height: popupHeight,
+              height: `${popupHeight}px`,
               opacity: 0.9,
             }"
           >

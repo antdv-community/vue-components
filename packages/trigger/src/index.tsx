@@ -355,7 +355,7 @@ export const Trigger = defineComponent({
       }
     }
 
-    watch([mergedOpen, targetEle, popupEle], () => useWatch(mergedOpen.value, targetEle.value, popupEle.value, triggerAlign, onScroll))
+    watch([mergedOpen, targetEle, popupEle], (newValue, oldValue, onCleanup) => useWatch(mergedOpen.value, targetEle.value, popupEle.value, triggerAlign, onScroll, onCleanup))
     watch([mousePos, () => props.popupPlacement], () => {
       triggerAlign()
     })

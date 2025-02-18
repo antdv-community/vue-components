@@ -42,9 +42,9 @@ export function getAlignPopupClassName(
 /** @deprecated We should not use this if we can refactor all deps */
 export function getMotion(
   prefixCls: string,
-  motion: unknown,
-  animation: AnimationType,
-  transitionName: TransitionNameType,
+  motion?: unknown,
+  animation?: AnimationType,
+  transitionName?: TransitionNameType,
 ): unknown {
   if (motion) {
     return motion
