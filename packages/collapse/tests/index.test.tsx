@@ -670,7 +670,7 @@ describe('collapse', () => {
   it('ref should work', async () => {
     const panelRef = ref()
     const items: CollapseProps['items'] = [
-      { label: 'collapse 1', key: '1', children: 'first', ref: panelRef  },
+      { label: 'collapse 1', key: '1', children: 'first', ref: panelRef },
     ]
     const wrapper = mount(<Collapse items={items} />)
     await wrapper.vm.$nextTick()
@@ -723,5 +723,212 @@ describe('collapse', () => {
     ]
     const wrapper = mount(<Collapse items={items}></Collapse>)
     expect(wrapper.find('.vc-collapse-item').element?.style.color).toBe('red')
+  })
+
+  describe('props items', () => {
+    const items: CollapseProps['items'] = [
+      {
+        key: '1',
+        label: 'collapse 1',
+        children: 'first',
+        collapsible: 'disabled',
+      },
+      {
+        key: '2',
+        label: 'collapse 2',
+        children: 'second',
+        extra: <span>Extra span</span>,
+      },
+      {
+        key: '3',
+        label: 'collapse 3',
+        className: 'important',
+        children: 'third',
+      },
+    ]
+
+    runNormalTest(
+      <Collapse
+        onChange={onChange}
+        expandIcon={() => (
+          <span>
+            text
+            {'>'}
+          </span>
+        )}
+        items={items}
+      />,
+    )
+
+    runAccordionTest(
+      <Collapse
+        onChange={onChange}
+        accordion
+        items={[
+          {
+            key: '1',
+            label: 'collapse 1',
+            children: 'first',
+          },
+          {
+            key: '2',
+            label: 'collapse 2',
+            children: 'second',
+          },
+          {
+            key: '3',
+            label: 'collapse 3',
+            children: 'third',
+          },
+        ]}
+      />,
+    )
+
+    it('should work with onItemClick', async () => {
+      const onItemClick = vi.fn()
+      const wrapper = mount(
+        <Collapse
+          items={[
+            {
+              label: 'title 3',
+              onItemClick,
+            },
+          ]}
+        />,
+      )
+      await wrapper.find('.vc-collapse-header').trigger('click')
+      expect(onItemClick).toHaveBeenCalled()
+      expect(onItemClick).lastCalledWith('0')
+    })
+
+    it('should work with collapsible', async () => {
+      const onItemClick = vi.fn()
+      const onChangeFn = vi.fn()
+      const wrapper = mount(
+        <Collapse
+          onChange={onChangeFn}
+          items={[
+            ...items.slice(0, 1),
+            {
+              label: 'title 3',
+              onItemClick,
+              collapsible: 'icon',
+            },
+          ]}
+        />,
+      )
+
+      await wrapper.find('.vc-collapse-header').trigger('click')
+
+      expect(onItemClick).not.toHaveBeenCalled()
+      await wrapper
+        .find('.vc-collapse-item:nth-child(2) .vc-collapse-expand-icon')
+        .trigger('click')
+      expect(onItemClick).toHaveBeenCalled()
+      expect(onChangeFn).toBeCalledTimes(1)
+      expect(onChangeFn).lastCalledWith(['1'])
+    })
+
+    it('should work with nested', () => {
+      const wrapper = mount(
+        <Collapse
+          items={[
+            ...items,
+            {
+              label: 'title 3',
+              children: <Collapse items={items} />,
+            },
+          ]}
+        />,
+      )
+      expect(wrapper.element.firstChild).toMatchSnapshot()
+    })
+
+    it('should not support expandIcon', () => {
+      const wrapper = mount(
+        <Collapse
+          expandIcon={() => <i className="custom-icon">p</i>}
+          items={[
+            {
+              label: 'title',
+              expandIcon: () => <i className="custom-icon">c</i>,
+            } as any,
+          ]}
+        />,
+      )
+
+      expect(wrapper.findAll('.custom-icon')).toHaveLength(1)
+      expect(wrapper.find('.custom-icon').element?.innerHTML).toBe('p')
+    })
+
+    it('should support data- and aria- attributes', () => {
+      const wrapper = mount(
+        <Collapse
+          data-testid="1234"
+          aria-label="test"
+          items={[
+            {
+              label: 'title',
+            } as any,
+          ]}
+        />,
+      )
+
+      expect(
+        wrapper.find('.vc-collapse').element?.getAttribute('data-testid'),
+      ).toBe('1234')
+      expect(
+        wrapper.find('.vc-collapse').element?.getAttribute('aria-label'),
+      ).toBe('test')
+    })
+
+    it('should support styles and classNames', () => {
+      const customStyles = {
+        header: { color: 'red' },
+        body: { color: 'blue' },
+        title: { color: 'green' },
+        icon: { color: 'yellow' },
+      }
+      const customClassnames = {
+        header: 'custom-header',
+        body: 'custom-body',
+        title: 'custom-title',
+        icon: 'custom-icon',
+      }
+
+      const wrapper = mount(
+        <Collapse
+          activeKey={['1']}
+          styles={customStyles}
+          classNames={customClassnames}
+          items={[
+            {
+              key: '1',
+              label: 'title',
+            },
+          ]}
+        />,
+      )
+      const headerElement = wrapper.find('.vc-collapse-header')
+        .element as HTMLElement
+      const bodyElement = wrapper.find('.vc-collapse-body')
+        .element as HTMLElement
+      const titleElement = wrapper.find('.vc-collapse-title')
+        .element as HTMLElement
+      const iconElement = wrapper.find('.vc-collapse-expand-icon')
+        .element as HTMLElement
+
+      // check classNames
+      expect(headerElement.classList).toContain('custom-header')
+      expect(bodyElement.classList).toContain('custom-body')
+      expect(titleElement.classList).toContain('custom-title')
+      expect(iconElement.classList).toContain('custom-icon')
+
+      // check styles
+      expect(headerElement.style.color).toBe('red')
+      expect(bodyElement.style.color).toBe('blue')
+      expect(titleElement.style.color).toBe('green')
+      expect(iconElement.style.color).toBe('yellow')
+    })
   })
 })

@@ -99,7 +99,8 @@ const CollapsePanel = defineComponent({
             )
       const iconNode = iconNodeInner && (
         <div
-          class={`${prefixCls}-expand-icon`}
+          class={classnames(`${prefixCls}-expand-icon`, customizeClassNames?.icon)}
+          style={styles?.icon}
           {...(['header', 'icon'].includes(collapsible!)
             ? collapsibleProps.value
             : {})}
