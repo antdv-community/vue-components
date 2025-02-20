@@ -1,6 +1,6 @@
 // import type { CSSMotionProps } from 'rc-motion'
 // import CSSMotion from 'rc-motion'
-import { Transition, type TransitionProps } from 'vue'
+import { defineComponent, Transition, type TransitionProps } from 'vue'
 
 export interface MaskProps {
   prefixCls: string
@@ -32,24 +32,25 @@ function getTransitionProps(transitionName: string, opt: TransitionProps = {}) {
   return transitionProps
 }
 
-export default function Mask(props: MaskProps) {
-  const {
-    prefixCls,
-    open,
-    zIndex,
-    mask,
-    motion = {},
-  } = props
+export default defineComponent<MaskProps>((props) => {
+  return () => {
+    const {
+      prefixCls,
+      open,
+      zIndex,
+      mask,
+      motion = {},
+    } = props
 
-  if (!mask) {
-    return null
+    if (!mask) {
+      return null
+    }
+    const maskMotion = getTransitionProps((motion as any).name, motion)
+
+    return (
+      <Transition appear {...maskMotion}>
+        {open && <div style={{ zIndex }} class={`${prefixCls}-mask`} />}
+      </Transition>
+    )
   }
-  const maskMotion = getTransitionProps(motion.name, motion)
-
-  console.log('motion', maskMotion)
-  return (
-    <Transition appear {...maskMotion}>
-      {open && <div style={{ zIndex }} class={`${prefixCls}-mask`} />}
-    </Transition>
-  )
-}
+})

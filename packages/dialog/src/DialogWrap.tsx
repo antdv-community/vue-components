@@ -59,7 +59,6 @@ const DialogWrap = defineComponent<IDialogPropTypes>(
         destroyOnClose = false,
         afterClose,
       } = props
-
       // Destroy on close will remove wrapped div
       if (!forceRender && destroyOnClose && !animatedVisible) {
         return null

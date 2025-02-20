@@ -1,10 +1,21 @@
 import type { CSSProperties, PropType, SlotsType, TransitionProps } from 'vue'
-import type { TriggerProps } from '../'
 import type { AlignType, ArrowPos, ArrowTypeOuter } from '../interface'
 import Portal from '@v-c/portal'
 import ResizeObserver from '@v-c/resize-observer'
 import classNames from 'classnames'
-import { Comment, defineComponent, Fragment, isVNode, ref, Text, Transition, watch, watchEffect } from 'vue'
+import {
+  Comment,
+  defineComponent,
+  Fragment,
+  isVNode,
+  ref,
+  Text,
+  Transition,
+  vShow,
+  watch,
+  watchEffect,
+  withDirectives,
+} from 'vue'
 import { useInjectTriggerContext } from '../context.ts'
 import { Arrow } from './Arrow'
 import Mask from './Mask'
@@ -99,9 +110,9 @@ const skipFlattenKey = Symbol('skipFlatten')
 function flattenChildren(children = [], filterEmpty = true) {
   const temp = Array.isArray(children) ? children : [children]
   const res: unknown[] = []
-  temp.forEach((child) => {
+  temp.forEach((child: any) => {
     if (Array.isArray(child)) {
-      res.push(...flattenChildren(child, filterEmpty))
+      res.push(...flattenChildren(child as any, filterEmpty))
     }
     else if (child && child.type === Fragment) {
       if (child.key === skipFlattenKey) {
@@ -218,18 +229,19 @@ export const Popup = defineComponent({
       // We can not remove holder only when motion finished.
       const isNodeVisible = open || keepDom
 
-      const cls = classNames(prefixCls, [attrs.class], { [`${prefixCls}-hidden`]: !isNodeVisible })
+      // const cls = classNames(prefixCls, [attrs.class], { [`${prefixCls}-hidden`]: !isNodeVisible })
+      const cls = classNames(prefixCls, [attrs.class])
       // ========================= Render =========================
       if (!show.value) {
         return null
       }
       // Set align style
       if (ready || !open) {
-        const { points } = align
+        const { points } = align!
         const dynamicInset
             = align?.dynamicInset || (align as any)._experimental?.dynamicInset
-        const alignRight = dynamicInset && points[0][1] === 'r'
-        const alignBottom = dynamicInset && points[0][0] === 'b'
+        const alignRight = dynamicInset && points?.[0]?.[1] === 'r'
+        const alignBottom = dynamicInset && points?.[0]?.[0] === 'b'
 
         if (alignRight) {
           offsetStyle.right = `${offsetR}px`
@@ -272,10 +284,54 @@ export const Popup = defineComponent({
       }
 
       const transitionProps = getTransitionProps(motion?.name, motion)
+      // transitionProps.enterFromClass = `${transitionProps.enterFromClass} ${prefixCls}-hidden`
+      transitionProps.leaveToClass = `${transitionProps.leaveToClass} ${prefixCls}-hidden`
+
+      const dom = (
+        <div
+          ref={popupRef}
+          class={cls}
+          style={
+            {
+              '--arrow-x': `${arrowPos?.x || 0}px`,
+              '--arrow-y': `${arrowPos?.y || 0}px`,
+              ...offsetStyle,
+              ...miscStyle,
+              'boxSizing': 'border-box',
+              zIndex,
+              ...attrs.style as CSSProperties,
+            } as CSSProperties
+          }
+          onMouseenter={e => onEmitEvent('mouseEnter', e)}
+          onMouseleave={e => onEmitEvent('mouseLeave', e)}
+          onPointerenter={e => onEmitEvent('pointerEnter', e)}
+          onClick={e => onEmitEvent('click', e)}
+          onPointerdown={e => onEmitEvent('pointerDownCapture', e)}
+        >
+          {arrow && (
+            <Arrow
+              prefixCls={prefixCls}
+              arrow={arrow}
+              arrowPos={arrowPos!}
+              align={align!}
+            />
+          )}
+          {childNode}
+        </div>
+      )
+
+      const renderDom = () => {
+        if (isNodeVisible || !autoDestroy) {
+          return withDirectives(dom, [
+            [vShow, isNodeVisible],
+          ])
+        }
+        return null
+      }
       return (
         <Portal
           open={forceRender || isNodeVisible}
-          getContainer={getPopupContainer && (() => getPopupContainer(target))}
+          getContainer={getPopupContainer && (() => getPopupContainer(target as any))}
           autoDestroy={autoDestroy}
         >
           <Mask
@@ -287,36 +343,7 @@ export const Popup = defineComponent({
           />
           <ResizeObserver onResize={onResize} disabled={!open}>
             <Transition onBeforeEnter={onPrepare} onAfterEnter={onPrepare} {...transitionProps}>
-              <div
-                ref={popupRef}
-                class={cls}
-                style={
-                  {
-                    '--arrow-x': `${arrowPos?.x || 0}px`,
-                    '--arrow-y': `${arrowPos?.y || 0}px`,
-                    ...offsetStyle,
-                    ...miscStyle,
-                    'boxSizing': 'border-box',
-                    zIndex,
-                    ...attrs.style as CSSProperties,
-                  } as CSSProperties
-                }
-                onMouseenter={e => onEmitEvent('mouseEnter', e)}
-                onMouseleave={e => onEmitEvent('mouseLeave', e)}
-                onPointerenter={e => onEmitEvent('pointerEnter', e)}
-                onClick={e => onEmitEvent('click', e)}
-                onPointerdown={e => onEmitEvent('pointerDownCapture', e)}
-              >
-                {arrow && (
-                  <Arrow
-                    prefixCls={prefixCls}
-                    arrow={arrow}
-                    arrowPos={arrowPos!}
-                    align={align!}
-                  />
-                )}
-                {childNode}
-              </div>
+              {renderDom()}
             </Transition>
           </ResizeObserver>
         </Portal>

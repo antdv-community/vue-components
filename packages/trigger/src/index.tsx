@@ -160,8 +160,6 @@ export const Trigger = defineComponent({
     let onPopupMouseLeave: VoidFunction
     let onPopupPointerDown: VoidFunction
 
-    const mergedAutoDestroy = props.autoDestroy || props.destroyPopupOnHide || false
-
     // =========================== Mobile ===========================
     const mobile = ref(false)
     watch(mobile, () => {
@@ -355,7 +353,7 @@ export const Trigger = defineComponent({
       }
     }
 
-    watch([mergedOpen, targetEle, popupEle], (newValue, oldValue, onCleanup) => useWatch(mergedOpen.value, targetEle.value, popupEle.value, triggerAlign, onScroll, onCleanup))
+    useWatch(mergedOpen, targetEle, popupEle, triggerAlign, onScroll)
     watch([mousePos, () => props.popupPlacement], () => {
       triggerAlign()
     })
@@ -589,6 +587,7 @@ export const Trigger = defineComponent({
     })
 
     return () => {
+      const mergedAutoDestroy = props.autoDestroy || props.destroyPopupOnHide || false
       const {
         prefixCls = 'vc-trigger-popup',
         // Open
@@ -669,10 +668,10 @@ export const Trigger = defineComponent({
       }
 
       passedEventList.forEach((eventName) => {
-        if (restProps[eventName]) {
+        if ((restProps as any)[eventName]) {
           passedProps[eventName] = (...args: any[]) => {
-            mergedChildrenProps[eventName]?.(...args)
-            restProps[eventName](...args)
+            mergedChildrenProps[eventName]?.(...args);
+            (restProps as any)[eventName](...args)
           }
         }
       })

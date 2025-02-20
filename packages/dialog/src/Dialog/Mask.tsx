@@ -38,7 +38,6 @@ const Mask = defineComponent<MaskProps>(
               />
             )
           }
-
         </Transition>
       )
     }

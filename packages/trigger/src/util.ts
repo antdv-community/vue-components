@@ -39,7 +39,9 @@ export function getAlignPopupClassName(
   return ''
 }
 
-/** @deprecated We should not use this if we can refactor all deps */
+/**
+ *  @deprecated We should not use this if we can refactor all deps
+ */
 export function getMotion(
   prefixCls: string,
   motion?: unknown,
@@ -72,7 +74,6 @@ export function getWin(ele: HTMLElement) {
 /**
  * Get all the scrollable parent elements of the element
  * @param ele       The element to be detected
- * @param areaOnly  Only return the parent which will cut visible area
  */
 export function collectScroller(ele: HTMLElement) {
   const scrollerList: HTMLElement[] = []
@@ -82,7 +83,7 @@ export function collectScroller(ele: HTMLElement) {
 
   while (current) {
     const { overflowX, overflowY, overflow }
-            = getWin(current).getComputedStyle(current)
+            = getWin(current)!.getComputedStyle(current)
     if ([overflowX, overflowY, overflow].some(o => scrollStyle.includes(o))) {
       scrollerList.push(current)
     }
@@ -114,7 +115,7 @@ export interface VisibleArea {
  *  **************************************
  *  Border                *
  *  **************************     *
- *  
+ *
  *  B  *                  *  S  *  B  *
  *  o  *                  *  c  *  o  *
  *  r  *      Content     *  r  *  r  *
@@ -122,8 +123,8 @@ export interface VisibleArea {
  *  e  *                  *  l  *  e  *
  *  r  ********************  l  *  r  *
  *  Scroll          *     *
- *  *     **************************     *
- *  *              Border                *
+ *  **************************     *
+ *  Border                *
  *  **************************************
  *
  */
@@ -149,7 +150,7 @@ export function getVisibleArea(
       borderBottomWidth,
       borderLeftWidth,
       borderRightWidth,
-    } = getWin(ele).getComputedStyle(ele)
+    } = getWin(ele)!.getComputedStyle(ele)
 
     const eleRect = ele.getBoundingClientRect()
     const {
@@ -198,19 +199,19 @@ export function getVisibleArea(
 
     const eleRight
             = eleLeft
-            + eleRect.width
-            + 2 * clipMarginWidth
-            - scaledBorderLeftWidth
-            - scaledBorderRightWidth
-            - eleScrollWidth
+              + eleRect.width
+              + 2 * clipMarginWidth
+              - scaledBorderLeftWidth
+              - scaledBorderRightWidth
+              - eleScrollWidth
 
     const eleBottom
             = eleTop
-            + eleRect.height
-            + 2 * clipMarginHeight
-            - scaledBorderTopWidth
-            - scaledBorderBottomWidth
-            - eleScrollHeight
+              + eleRect.height
+              + 2 * clipMarginHeight
+              - scaledBorderTopWidth
+              - scaledBorderBottomWidth
+              - eleScrollHeight
 
     visibleArea.left = Math.max(visibleArea.left, eleLeft)
     visibleArea.top = Math.max(visibleArea.top, eleTop)

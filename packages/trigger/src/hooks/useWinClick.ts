@@ -37,7 +37,7 @@ export default function useWinClick(
       }
 
       // shadow root
-      const targetShadowRoot = getShadowRoot(targetEle)
+      const targetShadowRoot: any = getShadowRoot(targetEle)
       if (targetShadowRoot) {
         targetShadowRoot.addEventListener('mousedown', onTriggerClose, true)
         targetShadowRoot.addEventListener('contextmenu', onTriggerClose, true)
@@ -54,7 +54,6 @@ export default function useWinClick(
         )
       }
       onCleanup(() => {
-        console.log('watchEffect-onCleanup')
         if (win) {
           win.removeEventListener('pointerdown', onPointerDown, true)
           win.removeEventListener('mousedown', onTriggerClose, true)
