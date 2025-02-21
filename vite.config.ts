@@ -18,6 +18,7 @@ const comps = [
   'notification',
   'trigger',
   'dialog',
+  'drawer',
 ]
 
 export function genListAlias() {

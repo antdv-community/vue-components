@@ -1,0 +1,30 @@
+{
+  "name": "@v-c/drawer",
+  "type": "module",
+  "version": "1.0.0","exports": {
+  ".": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  },
+  "./dist/*": "./dist/*",
+  "./package.json": "./package.json"
+},
+  "description": "drawer component for vue",
+  "main": "index.js",
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest"
+  },
+  "keywords": ["drawer"],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "dependencies": {
+    "@v-c/util": "workspace:*",
+    "@v-c/portal": "workspace:*",
+    "classnames": "^2.5.1"
+  }
+}
