@@ -44,12 +44,10 @@ export default function Mask(props: MaskProps) {
   if (!mask) {
     return null
   }
-  const maskMotion = getTransitionProps(motion.name, motion)
-
-  console.log('motion', maskMotion)
+  const maskMotion = motion ? getTransitionProps(motion.name) : {}
   return (
     <Transition appear {...maskMotion}>
-      {open && <div style={{ zIndex }} class={`${prefixCls}-mask`} />}
+      <div v-show={open} style={{ zIndex }} class={`${prefixCls}-mask`} />
     </Transition>
   )
 }

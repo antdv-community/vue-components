@@ -1,0 +1,31 @@
+{
+  "name": "@v-c/tooltip",
+  "type": "module",
+  "version": "1.0.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
+  "description": "tooltip",
+  "main": "index.js",
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "dependencies": {
+    "@v-c/util": "workspace:*",
+    "@v-c/trigger": "workspace:*",
+    "classnames": "^2.5.1"
+  },
+  "keywords": ["tooltip"],
+  "author": "",
+  "license": "MIT"
+}

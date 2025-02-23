@@ -43,14 +43,14 @@ function drawerPopupProps() {
     maskStyle: Object,
     motion: [Function, Object],
     maskMotion: Object,
-    onAfterOpenChange: Function as PropType<(visible: boolean) => void>,
-    onClose: Function as PropType<(e: MouseEvent | KeyboardEvent) => void>,
-    onMouseenter: Function as PropType<(e: MouseEvent) => void>,
-    onMouseover: Function as PropType<(e: MouseEvent) => void>,
-    onMouseleave: Function as PropType<(e: MouseEvent) => void>,
-    onClick: Function as PropType<(e: MouseEvent) => void>,
-    onKeydown: Function as PropType<(e: KeyboardEvent) => void>,
-    onKeyup: Function as PropType<(e: KeyboardEvent) => void>,
+    onAfterOpenChange: Function,
+    onClose: Function,
+    onMouseenter: Function,
+    onMouseover: Function,
+    onMouseleave: Function,
+    onClick: Function,
+    onKeydown: Function,
+    onKeyup: Function,
   }
 }
 
@@ -85,16 +85,11 @@ export default defineComponent({
     default: () => any
     drawerRender: () => any
   }>,
-  setup(props, { attrs, slots, emit, expose }) {
+  setup(props, { attrs, slots, emit }) {
     const panelRef = ref<HTMLDivElement>()
     const sentinelStartRef = ref<HTMLDivElement>()
     const sentinelEndRef = ref<HTMLDivElement>()
 
-    expose({
-      panelRef,
-      sentinelStartRef,
-      sentinelEndRef,
-    })
     const onPanelKeyDown = (event: KeyboardEvent) => {
       const { key, shiftKey } = event
 
