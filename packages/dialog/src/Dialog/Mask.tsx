@@ -27,18 +27,14 @@ const Mask = defineComponent<MaskProps>(
         <Transition
           {...getTransitionProps(motionName!)}
           key="mask"
-          leaveToClass={`${prefixCls}-mask-hidden`}
         >
-          {
-            visible && (
-              <div
-                style={[style]}
-                class={classNames(`${prefixCls}-mask`, className)}
-                {...maskProps}
-              />
-            )
-          }
-
+          {visible && (
+            <div
+              style={[style]}
+              class={classNames(`${prefixCls}-mask`, className)}
+              {...maskProps}
+            />
+          )}
         </Transition>
       )
     }

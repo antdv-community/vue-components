@@ -77,6 +77,7 @@ const DialogWrap = defineComponent<IDialogPropTypes>(
             destroyOnClose={destroyOnClose}
             afterClose={() => {
               afterClose?.()
+              console.log('Sd')
               animatedVisible.value = false
             }}
           />

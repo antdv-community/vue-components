@@ -171,7 +171,6 @@ const Dialog = defineComponent<IDialogPropTypes>(
         maskProps,
         classNames: modalClassNames,
       } = props
-      console.log(props)
       const mergedStyle: CSSProperties = {
         zIndex,
         ...wrapStyle,
