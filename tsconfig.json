@@ -30,6 +30,12 @@
       ],
       "@v-c/portal": [
         "./packages/portal/src"
+      ],
+      "@v-c/trigger": [
+        "./packages/trigger/src"
+      ],
+      "@v-c/drawer": [
+        "./packages/drawer/src"
       ]
     },
     "resolveJsonModule": true,

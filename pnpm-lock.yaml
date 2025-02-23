@@ -114,6 +114,21 @@ importers:
         specifier: ^3.0.0
         version: 3.5.13(typescript@5.7.3)
 
+  packages/drawer:
+    dependencies:
+      '@v-c/portal':
+        specifier: workspace:*
+        version: link:../portal
+      '@v-c/util':
+        specifier: workspace:*
+        version: link:../util
+      classnames:
+        specifier: ^2.5.1
+        version: 2.5.1
+      vue:
+        specifier: ^3.0.0
+        version: 3.5.13(typescript@5.7.3)
+
   packages/input:
     dependencies:
       '@v-c/util':

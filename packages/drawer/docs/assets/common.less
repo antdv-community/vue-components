@@ -1,0 +1,61 @@
+@ease-in-out-circ: cubic-bezier(0.78, 0.14, 0.15, 0.86);
+@duration: 0.3s;
+@prefixCls: vc-drawer;
+@zIndex: 1050;
+
+.inset-0() {
+  inset: 0;
+}
+
+.@{prefixCls} {
+  .inset-0;
+
+  position: fixed;
+  z-index: @zIndex;
+  pointer-events: none;
+
+  &-inline {
+    position: absolute;
+  }
+
+  &-mask {
+    .inset-0;
+
+    position: absolute;
+    z-index: @zIndex;
+    background: rgb(0 0 0 / 50%);
+    pointer-events: auto;
+  }
+
+  &-content-wrapper {
+    position: absolute;
+    z-index: @zIndex;
+    overflow: hidden;
+    transition: transform @duration;
+
+    &-hidden {
+      display: none;
+    }
+
+    // Placement
+    .@{prefixCls}-left & {
+      top: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .@{prefixCls}-right & {
+      top: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
+
+  &-content {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: #fff;
+    pointer-events: auto;
+  }
+}
