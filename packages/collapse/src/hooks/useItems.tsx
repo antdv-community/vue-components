@@ -1,11 +1,18 @@
-import type { RendererElement, RendererNode, VNode, VNodeNormalizedChildren } from 'vue'
+import type { VueNode } from '@v-c/util/dist/type'
+import type {
+  RendererElement,
+  RendererNode,
+  VNode,
+  VNodeNormalizedChildren,
+} from 'vue'
 import type {
   CollapsePanelProps,
   CollapseProps,
   ItemType,
   Key,
 } from '../interface'
-import { flattenChildren, isEmptyElement } from '@v-c/util/dist/props-util'
+import { toArray } from '@v-c/util/dist/Children/toArray'
+import { isEmptyElement } from '@v-c/util/dist/props-util'
 import { cloneElement } from '@v-c/util/dist/vnode'
 import CollapsePanel from '../Panel'
 
@@ -20,6 +27,10 @@ type Props = Pick<
 > &
 Pick<CollapseProps, 'accordion' | 'collapsible' | 'destroyInactivePanel'> & {
   activeKey: Key[]
+}
+
+interface ChildrenSlots {
+  default?: () => VueNode
 }
 
 function convertItemsToNodes(items: ItemType[], props: Props) {
@@ -160,7 +171,7 @@ function getNewChild(
     destroyInactivePanel: childDestroyInactivePanel ?? destroyInactivePanel,
     openMotion,
     accordion,
-    children: child.props?.children,
+    children: (child.children as ChildrenSlots)?.default?.(),
     onItemClick: handleItemClick,
     expandIcon,
     collapsible: mergeCollapsible,
@@ -177,10 +188,16 @@ function getNewChild(
   return cloneElement(child, childProps)
 }
 
-export function useItems(items?: ItemType[], children?: () => VNode | VNodeNormalizedChildren, props?: Props) {
+export function useItems(
+  items?: ItemType[],
+  children?: () => VNode | VNodeNormalizedChildren,
+  props?: Props,
+) {
   if (Array.isArray(items)) {
     return convertItemsToNodes(items, props!)
   }
 
-  return flattenChildren(children?.()).map((target, index) => getNewChild(target, index, props!))
+  return toArray(children?.()).map((target, index) =>
+    getNewChild(target, index, props!),
+  )
 }

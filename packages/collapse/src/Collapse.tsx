@@ -76,7 +76,7 @@ const Collapse = defineComponent({
 
       const mergedProps = { ...props, ...attrs }
 
-      const mergedChildren = useItems(items, slots.children, {
+      const mergedChildren = useItems(items, slots.default, {
         prefixCls,
         accordion,
         openMotion,
