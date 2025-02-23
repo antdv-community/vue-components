@@ -1,4 +1,5 @@
-import type { CSSProperties, VNode } from 'vue'
+import type { CSSMotionProps } from '@v-c/util/dist/utils/transition'
+import type { CSSProperties, VNodeChild } from 'vue'
 
 export type Placement =
   | 'top'
@@ -93,7 +94,7 @@ export interface AlignType {
 
 export interface ArrowTypeOuter {
   className?: string
-  content?: VNode
+  content?: VNodeChild | (() => VNodeChild)
 }
 
 export interface ArrowPos {
@@ -121,8 +122,9 @@ export interface CommonEventHandler {
 }
 
 export interface MobileConfig {
-  popupMotion?: unknown
+  /** Set popup motion. You can ref `rc-motion` for more info. */
+  popupMotion?: CSSMotionProps
   popupClassName?: string
   popupStyle?: CSSProperties
-  popupRender?: (originNode: VNode) => VNode
+  popupRender?: (originNode: VNodeChild) => VNodeChild
 }

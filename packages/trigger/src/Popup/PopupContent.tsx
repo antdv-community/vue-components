@@ -1,23 +1,14 @@
 import { defineComponent } from 'vue'
 
-function PopupContentProps() {
-  return {
-    catch: Boolean,
-  }
+export interface PopupContentProps {
+  cache?: boolean
 }
 
-const PopupContent = defineComponent({
-  name: 'PopupContent',
-  props: { ...PopupContentProps() },
-  setup(_, { slots }) {
-    return () => {
-      return (
-        <>
-          {slots.default?.()}
-        </>
-      )
-    }
-  },
+const PopupContent = defineComponent<PopupContentProps>((_props, { slots }) => {
+  return () => {
+    // const { cache } = props
+    return slots.default?.()
+  }
 })
 
 export default PopupContent

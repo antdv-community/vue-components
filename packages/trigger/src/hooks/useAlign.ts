@@ -1,4 +1,4 @@
-import type { Ref } from 'vue'
+import type { ComputedRef, MaybeRef } from 'vue'
 import type { TriggerProps } from '../index.tsx'
 import type {
   AlignPointLeftRight,
@@ -8,29 +8,16 @@ import type {
 } from '../interface'
 import { isDOM } from '@v-c/util/dist/Dom/findDOMNode'
 import isVisible from '@v-c/util/dist/Dom/isVisible'
-import useEvent from '@v-c/util/dist/hooks/useEvent'
-import { computed, ref, watch } from 'vue'
-import { collectScroller, getVisibleArea, getWin, toNum } from '../util'
+import { computed, nextTick, reactive, ref, shallowRef, unref, watch } from 'vue'
+import { collectScroller, getVisibleArea, getWin, toNum } from '../util.ts'
 
 type Rect = Record<'x' | 'y' | 'width' | 'height', number>
 
 type Points = [topBottom: AlignPointTopBottom, leftRight: AlignPointLeftRight]
-interface Info {
-  ready: boolean
-  offsetX: number
-  offsetY: number
-  offsetR: number
-  offsetB: number
-  arrowX: number
-  arrowY: number
-  scaleX: number
-  scaleY: number
-  align: AlignType
-}
 
 function getUnitOffset(size: number, offset: OffsetType = 0) {
   const offsetStr = `${offset}`
-  const cells = offsetStr.match(/^(.*)%$/)
+  const cells = offsetStr.match(/^(.*)\%$/)
   if (cells) {
     return size * (parseFloat(cells[1]) / 100)
   }
@@ -86,7 +73,7 @@ function getAlignPoint(rect: Rect, points: Points) {
 }
 
 function reversePoints(points: Points, index: number): string {
-  const reverseMap: Record<'t' | 'b' | 'l' | 'r', 't' | 'b' | 'l' | 'r'> = {
+  const reverseMap = {
     t: 'b',
     b: 't',
     l: 'r',
@@ -96,7 +83,7 @@ function reversePoints(points: Points, index: number): string {
   return points
     .map((point, i) => {
       if (i === index) {
-        return reverseMap[point as 't' | 'b' | 'l' | 'r'] || 'c'
+        return (reverseMap as any)[point] || 'c'
       }
       return point
     })
@@ -104,19 +91,38 @@ function reversePoints(points: Points, index: number): string {
 }
 
 export default function useAlign(
-  open: boolean,
-  popupEle: HTMLElement | null,
-  target: HTMLElement | [x: number, y: number] | null,
-  placement: string,
-  builtinPlacements: any,
-  popupAlign?: AlignType,
+  open: MaybeRef< boolean>,
+  popupEle: MaybeRef<HTMLElement>,
+  target: MaybeRef<HTMLElement | [x: number, y: number]>,
+  placement: MaybeRef< string>,
+  builtinPlacements: MaybeRef<any>,
+  popupAlign?: MaybeRef< AlignType>,
   onPopupAlign?: TriggerProps['onPopupAlign'],
-): [
-    offsetInfo: Ref<Info>,
+): ComputedRef<[
+    ready: boolean,
+    offsetX: number,
+    offsetY: number,
+    offsetR: number,
+    offsetB: number,
+    arrowX: number,
+    arrowY: number,
+    scaleX: number,
+    scaleY: number,
+    align: AlignType,
     onAlign: VoidFunction,
-    resetReady: VoidFunction,
-  ] {
-  const offsetInfo = ref<Info>({
+  ]> {
+  const offsetInfo = reactive<{
+    ready: boolean
+    offsetX: number
+    offsetY: number
+    offsetR: number
+    offsetB: number
+    arrowX: number
+    arrowY: number
+    scaleX: number
+    scaleY: number
+    align: AlignType
+  }>({
     ready: false,
     offsetX: 0,
     offsetY: 0,
@@ -126,21 +132,21 @@ export default function useAlign(
     arrowY: 0,
     scaleX: 1,
     scaleY: 1,
-    align: builtinPlacements[placement] || {},
+    align: unref(builtinPlacements)[unref(placement)] || {},
   })
-  const alignCountRef = ref(0)
 
+  const alignCountRef = shallowRef(0)
   const scrollerList = computed(() => {
-    if (!popupEle) {
+    const _popupEle = unref(popupEle)
+    if (!_popupEle) {
       return []
     }
-
-    return collectScroller(popupEle)
+    return collectScroller(_popupEle)
   })
 
   // ========================= Flip ==========================
   // We will memo flip info.
-  // If size change to make flip, it will `memo` the flip info and use it in next align.
+  // If size change to make flip, it will memo the flip info and use it in next align.
   const prevFlipRef = ref<{
     tb?: boolean
     bt?: boolean
@@ -152,23 +158,34 @@ export default function useAlign(
     prevFlipRef.value = {}
   }
 
-  if (!open) {
-    resetFlipCache()
-  }
-
+  watch(
+    () => unref(open),
+    (open) => {
+      if (!open) {
+        resetFlipCache()
+      }
+    },
+    {
+      immediate: true,
+    },
+  )
   // ========================= Align =========================
-  const onAlign = useEvent(() => {
-    if (popupEle && target && open) {
-      const popupElement = popupEle
+  const onAlign = () => {
+    const _popupEle = unref(popupEle)
+    const _target = unref(target)
+    const _open = unref(open)
+
+    if (_popupEle && _target && _open) {
+      const popupElement = _popupEle
 
       const doc = popupElement.ownerDocument
-      const win = getWin(popupElement)
+      const win = getWin(popupElement)!
 
       const {
         width,
         height,
         position: popupPosition,
-      } = win!.getComputedStyle(popupElement)
+      } = win.getComputedStyle(popupElement)
 
       const originLeft = popupElement.style.left
       const originTop = popupElement.style.top
@@ -178,8 +195,8 @@ export default function useAlign(
 
       // Placement
       const placementInfo: AlignType = {
-        ...builtinPlacements[placement],
-        ...popupAlign,
+        ...unref(builtinPlacements)[unref(placement)],
+        ...unref(popupAlign),
       }
 
       // placeholder element
@@ -200,16 +217,16 @@ export default function useAlign(
 
       // Calculate align style, we should consider `transform` case
       let targetRect: Rect
-      if (Array.isArray(target)) {
+      if (Array.isArray(_target)) {
         targetRect = {
-          x: target[0],
-          y: target[1],
+          x: _target[0],
+          y: _target[1],
           width: 0,
           height: 0,
         }
       }
       else {
-        const rect = target.getBoundingClientRect()
+        const rect = _target.getBoundingClientRect()
         rect.x = rect.x ?? rect.left
         rect.y = rect.y ?? rect.top
         targetRect = {
@@ -263,8 +280,7 @@ export default function useAlign(
       const scrollRegionArea = getVisibleArea(scrollRegion, scrollerList.value)
       const visibleRegionArea = getVisibleArea(visibleRegion, scrollerList.value)
 
-      const visibleArea
-          = htmlRegion === VISIBLE ? visibleRegionArea : scrollRegionArea
+      const visibleArea = htmlRegion === VISIBLE ? visibleRegionArea : scrollRegionArea
 
       // When set to `visibleFirst`,
       // the check `adjust` logic will use `visibleRegion` for check first.
@@ -298,11 +314,7 @@ export default function useAlign(
       )
 
       // No need to align since it's not visible in view
-      if (
-        scaleX === 0
-        || scaleY === 0
-        || (isDOM(target) && !isVisible(target))
-      ) {
+      if (scaleX === 0 || scaleY === 0 || (isDOM(_target && !isVisible(_target as any)))) {
         return
       }
 
@@ -373,7 +385,7 @@ export default function useAlign(
       const targetAlignPointBR = getAlignPoint(targetRect, ['b', 'r'])
       const popupAlignPointBR = getAlignPoint(popupRect, ['b', 'r'])
 
-      const overflow = placementInfo.overflow || { }
+      const overflow = placementInfo.overflow || {}
       const { adjustX, adjustY, shiftX, shiftY } = overflow
 
       const supportAdjust = (val: boolean | number) => {
@@ -384,10 +396,10 @@ export default function useAlign(
       }
 
       // Prepare position
-      let nextPopupY: number = 0
-      let nextPopupBottom: number = 0
-      let nextPopupX: number = 0
-      let nextPopupRight: number = 0
+      let nextPopupY: number
+      let nextPopupBottom: number
+      let nextPopupX: number
+      let nextPopupRight: number
 
       function syncNextPopupPosition() {
         nextPopupY = popupRect.y + nextOffsetY
@@ -406,7 +418,7 @@ export default function useAlign(
       if (
         needAdjustY
         && popupPoints[0] === 't'
-        && (nextPopupBottom > adjustCheckVisibleArea.bottom
+        && (nextPopupBottom! > adjustCheckVisibleArea.bottom
           || prevFlipRef.value.bt)
       ) {
         let tmpNextOffsetY: number = nextOffsetY
@@ -416,7 +428,7 @@ export default function useAlign(
         }
         else {
           tmpNextOffsetY
-              = targetAlignPointTL.y - popupAlignPointBR.y - popupOffsetY
+                      = targetAlignPointTL.y - popupAlignPointBR.y - popupOffsetY
         }
 
         const newVisibleArea = getIntersectionVisibleArea(
@@ -434,7 +446,7 @@ export default function useAlign(
           newVisibleArea > originIntersectionVisibleArea
           || (newVisibleArea === originIntersectionVisibleArea
             && (!isVisibleFirst
-              // Choose recommend one
+            // Choose recommend one
               || newVisibleRecommendArea >= originIntersectionRecommendArea))
         ) {
           prevFlipRef.value.bt = true
@@ -455,7 +467,7 @@ export default function useAlign(
       if (
         needAdjustY
         && popupPoints[0] === 'b'
-        && (nextPopupY < adjustCheckVisibleArea.top || prevFlipRef.value.tb)
+        && (nextPopupY! < adjustCheckVisibleArea.top || prevFlipRef.value.tb)
       ) {
         let tmpNextOffsetY: number = nextOffsetY
 
@@ -463,8 +475,7 @@ export default function useAlign(
           tmpNextOffsetY += popupHeight - targetHeight
         }
         else {
-          tmpNextOffsetY
-              = targetAlignPointBR.y - popupAlignPointTL.y - popupOffsetY
+          tmpNextOffsetY = targetAlignPointBR.y - popupAlignPointTL.y - popupOffsetY
         }
 
         const newVisibleArea = getIntersectionVisibleArea(
@@ -482,7 +493,7 @@ export default function useAlign(
           newVisibleArea > originIntersectionVisibleArea
           || (newVisibleArea === originIntersectionVisibleArea
             && (!isVisibleFirst
-              // Choose recommend one
+            // Choose recommend one
               || newVisibleRecommendArea >= originIntersectionRecommendArea))
         ) {
           prevFlipRef.value.tb = true
@@ -509,7 +520,7 @@ export default function useAlign(
       if (
         needAdjustX
         && popupPoints[1] === 'l'
-        && (nextPopupRight > adjustCheckVisibleArea.right
+        && (nextPopupRight! > adjustCheckVisibleArea.right
           || prevFlipRef.value.rl)
       ) {
         let tmpNextOffsetX: number = nextOffsetX
@@ -518,8 +529,7 @@ export default function useAlign(
           tmpNextOffsetX -= popupWidth - targetWidth
         }
         else {
-          tmpNextOffsetX
-              = targetAlignPointTL.x - popupAlignPointBR.x - popupOffsetX
+          tmpNextOffsetX = targetAlignPointTL.x - popupAlignPointBR.x - popupOffsetX
         }
 
         const newVisibleArea = getIntersectionVisibleArea(
@@ -537,7 +547,7 @@ export default function useAlign(
           newVisibleArea > originIntersectionVisibleArea
           || (newVisibleArea === originIntersectionVisibleArea
             && (!isVisibleFirst
-              // Choose recommend one
+            // Choose recommend one
               || newVisibleRecommendArea >= originIntersectionRecommendArea))
         ) {
           prevFlipRef.value.rl = true
@@ -558,7 +568,7 @@ export default function useAlign(
       if (
         needAdjustX
         && popupPoints[1] === 'r'
-        && (nextPopupX < adjustCheckVisibleArea.left || prevFlipRef.value.lr)
+        && (nextPopupX! < adjustCheckVisibleArea.left || prevFlipRef.value.lr)
       ) {
         let tmpNextOffsetX: number = nextOffsetX
 
@@ -566,8 +576,7 @@ export default function useAlign(
           tmpNextOffsetX += popupWidth - targetWidth
         }
         else {
-          tmpNextOffsetX
-              = targetAlignPointBR.x - popupAlignPointTL.x - popupOffsetX
+          tmpNextOffsetX = targetAlignPointBR.x - popupAlignPointTL.x - popupOffsetX
         }
 
         const newVisibleArea = getIntersectionVisibleArea(
@@ -585,7 +594,7 @@ export default function useAlign(
           newVisibleArea > originIntersectionVisibleArea
           || (newVisibleArea === originIntersectionVisibleArea
             && (!isVisibleFirst
-              // Choose recommend one
+            // Choose recommend one
               || newVisibleRecommendArea >= originIntersectionRecommendArea))
         ) {
           prevFlipRef.value.lr = true
@@ -608,19 +617,18 @@ export default function useAlign(
       const numShiftX = shiftX === true ? 0 : shiftX
       if (typeof numShiftX === 'number') {
         // Left
-        if (nextPopupX < visibleRegionArea.left) {
-          nextOffsetX -= nextPopupX - visibleRegionArea.left - popupOffsetX
+        if (nextPopupX! < visibleRegionArea.left) {
+          nextOffsetX -= nextPopupX! - visibleRegionArea.left - popupOffsetX
 
           if (targetRect.x + targetWidth < visibleRegionArea.left + numShiftX) {
             nextOffsetX
-                += targetRect.x - visibleRegionArea.left + targetWidth - numShiftX
+                          += targetRect.x - visibleRegionArea.left + targetWidth - numShiftX
           }
         }
 
         // Right
-        if (nextPopupRight > visibleRegionArea.right) {
-          nextOffsetX
-              -= nextPopupRight - visibleRegionArea.right - popupOffsetX
+        if (nextPopupRight! > visibleRegionArea.right) {
+          nextOffsetX -= nextPopupRight! - visibleRegionArea.right - popupOffsetX
 
           if (targetRect.x > visibleRegionArea.right - numShiftX) {
             nextOffsetX += targetRect.x - visibleRegionArea.right + numShiftX
@@ -631,21 +639,19 @@ export default function useAlign(
       const numShiftY = shiftY === true ? 0 : shiftY
       if (typeof numShiftY === 'number') {
         // Top
-        if (nextPopupY < visibleRegionArea.top) {
-          nextOffsetY -= nextPopupY - visibleRegionArea.top - popupOffsetY
+        if (nextPopupY! < visibleRegionArea.top) {
+          nextOffsetY -= nextPopupY! - visibleRegionArea.top - popupOffsetY
 
           // When target if far away from visible area
           // Stop shift
           if (targetRect.y + targetHeight < visibleRegionArea.top + numShiftY) {
-            nextOffsetY
-                += targetRect.y - visibleRegionArea.top + targetHeight - numShiftY
+            nextOffsetY += targetRect.y - visibleRegionArea.top + targetHeight - numShiftY
           }
         }
 
         // Bottom
-        if (nextPopupBottom > visibleRegionArea.bottom) {
-          nextOffsetY
-              -= nextPopupBottom - visibleRegionArea.bottom - popupOffsetY
+        if (nextPopupBottom! > visibleRegionArea.bottom) {
+          nextOffsetY -= nextPopupBottom! - visibleRegionArea.bottom - popupOffsetY
 
           if (targetRect.y > visibleRegionArea.bottom - numShiftY) {
             nextOffsetY += targetRect.y - visibleRegionArea.bottom + numShiftY
@@ -677,13 +683,13 @@ export default function useAlign(
       const yCenter = (maxTop + minBottom) / 2
       const nextArrowY = yCenter - popupTop
 
-      onPopupAlign?.(popupEle, nextAlignInfo)
+      onPopupAlign?.(_popupEle, nextAlignInfo)
 
       // Additional calculate right & bottom position
       let offsetX4Right
-          = popupMirrorRect.right - popupRect.x - (nextOffsetX + popupRect.width)
+              = popupMirrorRect.right - popupRect.x - (nextOffsetX + popupRect.width)
       let offsetY4Bottom
-          = popupMirrorRect.bottom - popupRect.y - (nextOffsetY + popupRect.height)
+              = popupMirrorRect.bottom - popupRect.y - (nextOffsetY + popupRect.height)
 
       if (scaleX === 1) {
         nextOffsetX = Math.round(nextOffsetX)
@@ -694,7 +700,8 @@ export default function useAlign(
         nextOffsetY = Math.round(nextOffsetY)
         offsetY4Bottom = Math.round(offsetY4Bottom)
       }
-      offsetInfo.value = {
+
+      const nextOffsetInfo = {
         ready: true,
         offsetX: nextOffsetX / scaleX,
         offsetY: nextOffsetY / scaleY,
@@ -706,8 +713,10 @@ export default function useAlign(
         scaleY,
         align: nextAlignInfo,
       }
+
+      Object.assign(offsetInfo, nextOffsetInfo)
     }
-  })
+  }
 
   const triggerAlign = () => {
     alignCountRef.value += 1
@@ -723,30 +732,39 @@ export default function useAlign(
 
   // Reset ready status when placement & open changed
   const resetReady = () => {
-    offsetInfo.value = {
-      ready: false,
-      offsetX: 0,
-      offsetY: 0,
-      offsetR: 0,
-      offsetB: 0,
-      arrowX: 0,
-      arrowY: 0,
-      scaleX: 1,
-      scaleY: 1,
-      align: {},
-    }
+    offsetInfo.ready = false
   }
 
-  watch(() => placement, () => {
+  watch(() => unref(placement), async () => {
+    await nextTick()
     resetReady()
+  }, {
+    immediate: true,
+    flush: 'post',
+  })
+  watch(() => unref(open), async (open) => {
+    await nextTick()
+    if (!open) {
+      resetReady()
+    }
+  }, {
+    immediate: true,
+    flush: 'post',
   })
 
-  if (!open) {
-    resetReady()
-  }
-  return [
-    offsetInfo,
-    triggerAlign,
-    resetReady,
-  ]
+  return computed(
+    () => [
+      offsetInfo.ready,
+      offsetInfo.offsetX,
+      offsetInfo.offsetY,
+      offsetInfo.offsetR,
+      offsetInfo.offsetB,
+      offsetInfo.arrowX,
+      offsetInfo.arrowY,
+      offsetInfo.scaleX,
+      offsetInfo.scaleY,
+      offsetInfo.align,
+      triggerAlign,
+    ],
+  )
 }

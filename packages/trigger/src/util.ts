@@ -1,9 +1,6 @@
-// import type { CSSMotionProps } from 'rc-motion'
 import type {
   AlignType,
-  AnimationType,
   BuildInPlacements,
-  TransitionNameType,
 } from './interface'
 
 function isPointsEq(
@@ -39,34 +36,6 @@ export function getAlignPopupClassName(
   return ''
 }
 
-/**
- *  @deprecated We should not use this if we can refactor all deps
- */
-export function getMotion(
-  prefixCls: string,
-  motion?: unknown,
-  animation?: AnimationType,
-  transitionName?: TransitionNameType,
-): unknown {
-  if (motion) {
-    return motion
-  }
-
-  if (animation) {
-    return {
-      name: `${prefixCls}-${animation}`,
-    }
-  }
-
-  if (transitionName) {
-    return {
-      name: transitionName,
-    }
-  }
-
-  return null
-}
-
 export function getWin(ele: HTMLElement) {
   return ele.ownerDocument.defaultView
 }
@@ -74,6 +43,7 @@ export function getWin(ele: HTMLElement) {
 /**
  * Get all the scrollable parent elements of the element
  * @param ele       The element to be detected
+ * @param areaOnly  Only return the parent which will cut visible area
  */
 export function collectScroller(ele: HTMLElement) {
   const scrollerList: HTMLElement[] = []
@@ -150,7 +120,7 @@ export function getVisibleArea(
       borderBottomWidth,
       borderLeftWidth,
       borderRightWidth,
-    } = getWin(ele)!.getComputedStyle(ele)
+    } = getWin(ele)!.getComputedStyle(ele!)
 
     const eleRect = ele.getBoundingClientRect()
     const {

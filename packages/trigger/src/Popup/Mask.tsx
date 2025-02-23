@@ -1,6 +1,5 @@
-// import type { CSSMotionProps } from 'rc-motion'
-// import CSSMotion from 'rc-motion'
-import { defineComponent, Transition, type TransitionProps } from 'vue'
+import type { CSSMotionProps } from '@v-c/util/dist/utils/transition'
+import { defineComponent, Transition } from 'vue'
 
 export interface MaskProps {
   prefixCls: string
@@ -9,48 +8,30 @@ export interface MaskProps {
   mask?: boolean
 
   // Motion
-  motion?: object
+  motion?: CSSMotionProps
 }
-function getTransitionProps(transitionName: string, opt: TransitionProps = {}) {
-  const transitionProps: TransitionProps = transitionName
-    ? {
-        name: transitionName,
-        appear: true,
-        // type: 'animation',
-        // appearFromClass: `${transitionName}-appear ${transitionName}-appear-prepare`,
-        // appearActiveClass: `antdv-base-transtion`,
-        // appearToClass: `${transitionName}-appear ${transitionName}-appear-active`,
-        enterFromClass: `${transitionName}-enter ${transitionName}-enter-prepare ${transitionName}-enter-start`,
-        enterActiveClass: `${transitionName}-enter ${transitionName}-enter-prepare`,
-        enterToClass: `${transitionName}-enter ${transitionName}-enter-active`,
-        leaveFromClass: ` ${transitionName}-leave`,
-        leaveActiveClass: `${transitionName}-leave ${transitionName}-leave-active`,
-        leaveToClass: `${transitionName}-leave ${transitionName}-leave-active`,
-        ...opt,
+
+const Mask = defineComponent<MaskProps>(
+  (props, { attrs }) => {
+    return () => {
+      const {
+        prefixCls,
+        open,
+        zIndex,
+        mask,
+        motion,
+      } = props
+
+      if (!mask) {
+        return null
       }
-    : { css: false, ...opt }
-  return transitionProps
-}
-
-export default defineComponent<MaskProps>((props) => {
-  return () => {
-    const {
-      prefixCls,
-      open,
-      zIndex,
-      mask,
-      motion = {},
-    } = props
-
-    if (!mask) {
-      return null
+      return (
+        <Transition {...motion} appear>
+          {open && <div style={{ zIndex }} class={[`${prefixCls}-mask`, attrs.class]}></div>}
+        </Transition>
+      )
     }
-    const maskMotion = getTransitionProps((motion as any).name, motion)
+  },
+)
 
-    return (
-      <Transition appear {...maskMotion}>
-        {open && <div style={{ zIndex }} class={`${prefixCls}-mask`} />}
-      </Transition>
-    )
-  }
-})
+export default Mask

@@ -1,66 +1,56 @@
 import type { MaybeRef } from 'vue'
-import { nextTick, onBeforeUnmount, onMounted, unref, watch } from 'vue'
-import { collectScroller, getWin } from '../util'
+import { nextTick, unref, watch } from 'vue'
+import { collectScroller, getWin } from '../util.ts'
 
 export default function useWatch(
-  open: MaybeRef< boolean>,
-  target: MaybeRef<HTMLElement | null>,
-  popup: MaybeRef<HTMLElement | null>,
+  open: MaybeRef<boolean>,
+  target: MaybeRef<HTMLElement>,
+  popup: MaybeRef<HTMLElement>,
   onAlign: VoidFunction,
   onScroll: VoidFunction,
 ) {
-  let mergedList = new Set()
-  let win: Window | null = null
-  function notifyScroll() {
-    onAlign()
-    onScroll()
-  }
-  const watchData = () => {
-    const _open = unref(open)
-    const _target = unref(target)
-    const _popup = unref(popup)
-    if (_open && _target && _popup) {
-      const targetElement = _target
-      const popupElement = _popup
+  watch([
+    () => unref(open),
+    () => unref(target),
+    () => unref(popup),
+  ], async ([open, target, popup], _, onCleanup) => {
+    await nextTick()
+    if (open && target && popup) {
+      const targetElement = target
+      const popupElement = popup
       const targetScrollList = collectScroller(targetElement)
       const popupScrollList = collectScroller(popupElement)
 
-      win = getWin(popupElement)
+      const win = getWin(popupElement)!
 
-      mergedList = new Set([
+      const mergedList = new Set([
         win,
         ...targetScrollList,
         ...popupScrollList,
       ])
 
+      function notifyScroll() {
+        onAlign()
+        onScroll()
+      }
+
       mergedList.forEach((scroller) => {
-        scroller && (scroller as any)?.addEventListener?.('scroll', notifyScroll, { passive: true })
+        scroller.addEventListener('scroll', notifyScroll, { passive: true })
       })
 
-      win && win.addEventListener('resize', notifyScroll, { passive: true })
+      win.addEventListener('resize', notifyScroll, { passive: true })
 
       // First time always do align
       onAlign()
+      onCleanup(() => {
+        mergedList.forEach((scroller) => {
+          scroller.removeEventListener('scroll', notifyScroll)
+          win.removeEventListener('resize', notifyScroll)
+        })
+      })
     }
-  }
-  watch(
-    [open, target, popup],
-    async () => {
-      await nextTick()
-      watchData()
-    },
-    {
-      flush: 'post',
-    },
-  )
-  onBeforeUnmount(() => {
-    mergedList.forEach((scroller) => {
-      scroller && (scroller as any).removeEventListener('scroll', notifyScroll)
-      win && win.removeEventListener('resize', notifyScroll)
-    })
-  })
-
-  onMounted(() => {
-    watchData()
+  }, {
+    immediate: true,
+    flush: 'post',
   })
 }

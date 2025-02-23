@@ -1,27 +1,51 @@
-import { getShadowRoot } from '@v-c/util/dist/Dom/shadow'
-import { warning } from '@v-c/util/dist/warning'
-import { ref, watchEffect } from 'vue'
-import { getWin } from '../util'
+import type { MaybeRef } from 'vue'
+import { warning } from '@v-c/util'
+import { getShadowRoot } from '@v-c/util/dist/Dom/shadow.ts'
+import { nextTick, shallowRef, unref, watch } from 'vue'
+import { getWin } from '../util.ts'
 
 export default function useWinClick(
-  open: boolean,
-  clickToHide: boolean,
-  targetEle: HTMLElement,
-  popupEle: HTMLElement,
-  mask: boolean,
-  maskClosable: boolean,
+  open: MaybeRef<boolean>,
+  clickToHide: MaybeRef<boolean>,
+  targetEle: MaybeRef<HTMLElement>,
+  popupEle: MaybeRef<HTMLElement>,
+  mask: MaybeRef<boolean>,
+  maskCloseable: MaybeRef<boolean>,
   inPopupOrChild: (target: EventTarget) => boolean,
   triggerOpen: (open: boolean) => void,
 ) {
-  const popupPointerDownRef = ref(false)
-  watchEffect((onCleanup) => {
+  const openRef = shallowRef(unref(open))
+  watch(
+    () => unref(open),
+    () => {
+      openRef.value = unref(open)
+    },
+    {
+      immediate: true,
+    },
+  )
+
+  const popupPointerDownRef = shallowRef(false)
+
+  const onPopupPointerDown = () => {
+    popupPointerDownRef.value = true
+  }
+  watch([
+    () => unref(clickToHide),
+    () => unref(targetEle),
+    () => unref(popupEle),
+    () => unref(mask),
+    () => unref(maskCloseable),
+  ], async ([clickToHide, targetEle, popupEle, mask, maskClosable]) => {
+    await nextTick()
     if (clickToHide && popupEle && (!mask || maskClosable)) {
       const onPointerDown = () => {
         popupPointerDownRef.value = false
       }
+
       const onTriggerClose = (e: MouseEvent) => {
         if (
-          open
+          openRef.value
           && !inPopupOrChild(e.composedPath?.()?.[0] || e.target)
           && !popupPointerDownRef.value
         ) {
@@ -29,15 +53,14 @@ export default function useWinClick(
         }
       }
 
-      const win = getWin(popupEle)
-      if (win) {
-        win.addEventListener('pointerdown', onPointerDown, true)
-        win.addEventListener('mousedown', onTriggerClose, true)
-        win.addEventListener('contextmenu', onTriggerClose, true)
-      }
+      const win = getWin(popupEle)!
+
+      win.addEventListener('pointerdown', onPointerDown, true)
+      win.addEventListener('mousedown', onTriggerClose, true)
+      win.addEventListener('contextmenu', onTriggerClose, true)
 
       // shadow root
-      const targetShadowRoot: any = getShadowRoot(targetEle)
+      const targetShadowRoot: any = getShadowRoot(targetEle)!
       if (targetShadowRoot) {
         targetShadowRoot.addEventListener('mousedown', onTriggerClose, true)
         targetShadowRoot.addEventListener('contextmenu', onTriggerClose, true)
@@ -53,12 +76,11 @@ export default function useWinClick(
           `trigger element and popup element should in same shadow root.`,
         )
       }
-      onCleanup(() => {
-        if (win) {
-          win.removeEventListener('pointerdown', onPointerDown, true)
-          win.removeEventListener('mousedown', onTriggerClose, true)
-          win.removeEventListener('contextmenu', onTriggerClose, true)
-        }
+
+      return () => {
+        win.removeEventListener('pointerdown', onPointerDown, true)
+        win.removeEventListener('mousedown', onTriggerClose, true)
+        win.removeEventListener('contextmenu', onTriggerClose, true)
 
         if (targetShadowRoot) {
           targetShadowRoot.removeEventListener(
@@ -72,12 +94,12 @@ export default function useWinClick(
             true,
           )
         }
-      })
+      }
     }
+  }, {
+    immediate: true,
+    flush: 'post',
   })
-  function onPopupPointerDown() {
-    popupPointerDownRef.value = true
-  }
 
   return onPopupPointerDown
 }
