@@ -1,0 +1,23 @@
+{
+  "name": "@v-c/mini-decimal",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
+  "description": "Lite lib to only support decimal add calculation",
+  "main": "index.js",
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest"
+  },
+  "keywords": ["decimal"],
+  "author": "",
+  "license": "MIT"
+}
