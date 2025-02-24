@@ -13,14 +13,14 @@ function tooltipProps() {
     trigger: { type: [String, Array] as PropType<ActionType | ActionType[]> },
     defaultVisible: { type: Boolean },
     visible: { type: Boolean },
-    placement: { type: String },
+    placement: { type: String as PropType<'top' | 'left' | 'right' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'leftTop' | 'leftBottom' | 'rightTop' | 'rightBottom'>, default: 'right' },
     motion: { type: Object as PropType<TriggerProps['popupMotion']> },
     onVisibleChange: { type: Function as PropType<(visible: boolean) => void> },
     afterVisibleChange: { type: Function as PropType<(visible: boolean) => void> },
     overlay: { type: String },
     overlayStyle: { type: Object },
     overlayClassName: { type: String },
-    getTooltipContainer: { type: Function as PropType<(node: HTMLElement) => HTMLElement> },
+    getTooltipContainer: { type: Function as PropType<(node?: HTMLElement) => HTMLElement> },
     destroyTooltipOnHide: { type: Boolean, default: false },
     align: { type: Object as PropType<AlignType>, default: () => ({}) },
     showArrow: { type: [Boolean, Object] as PropType<boolean | ArrowType>, default: true as boolean | ArrowType },
@@ -75,7 +75,7 @@ export default defineComponent({
       } = props
 
       // 合并额外的属性
-      const extraProps: Partial<TooltipProps & TriggerProps> = { ...restProps }
+      const extraProps: Partial<TooltipProps & Omit<TriggerProps, 'onPopupClick'>> = { ...restProps }
       if ('visible' in props) {
         extraProps.popupVisible = props.visible
       }
@@ -85,7 +85,7 @@ export default defineComponent({
           key="content"
           prefixCls={prefixCls}
           id={mergedId}
-          bodyClassName={attrs?.class}
+          bodyClassName={attrs?.class as string}
           overlayInnerStyle={{ ...overlayInnerStyle, ...attrs?.style as CSSProperties }}
         >
           {overlay ?? slots.overlay?.()}
@@ -97,7 +97,7 @@ export default defineComponent({
 
         const mergedChildProps = {
           ...childProps,
-          'aria-describedby': overlay ? mergedId.value : null,
+          'aria-describedby': overlay ? mergedId : null,
         }
         return child
           ? cloneElement(child, mergedChildProps)
@@ -107,7 +107,7 @@ export default defineComponent({
       return (
         <Trigger
           ref={triggerRef.value}
-          popupClassName={classNames(overlayClassName, attrs.class)}
+          popupClassName={classNames(overlayClassName, [attrs.class])}
           prefixCls={prefixCls}
           action={trigger}
           builtinPlacements={placements}
@@ -115,12 +115,12 @@ export default defineComponent({
           popupAlign={align}
           getPopupContainer={getTooltipContainer}
           onPopupVisibleChange={onVisibleChange}
-          afterPopupVisibleChange={afterVisibleChange}
+          onAfterPopupVisibleChange={afterVisibleChange}
           popupMotion={motion}
           defaultPopupVisible={defaultVisible}
           autoDestroy={destroyTooltipOnHide}
           mouseLeaveDelay={mouseLeaveDelay}
-          popupStyle={{ ...overlayStyle, ...attrs.style }}
+          popupStyle={{ ...overlayStyle, ...attrs.style as CSSProperties }}
           mouseEnterDelay={mouseEnterDelay}
           arrow={showArrow}
           {...extraProps}
