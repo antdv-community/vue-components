@@ -62,6 +62,7 @@ export interface PopupProps {
   stretch?: string
   targetWidth?: number
   targetHeight?: number
+  setNodeRef?: (el: any) => void
 }
 
 const Popup = defineComponent<PopupProps>((props, { attrs }) => {
@@ -140,6 +141,7 @@ const Popup = defineComponent<PopupProps>((props, { attrs }) => {
       stretch,
       targetWidth,
       targetHeight,
+      setNodeRef,
     } = props
     // ========================= Render =========================
 
@@ -236,6 +238,7 @@ const Popup = defineComponent<PopupProps>((props, { attrs }) => {
             {open && (
               <div
                 class={[prefixCls, attrs.class]}
+                ref={el => setNodeRef?.(el)}
                 style={
                   {
                     '--arrow-x': `${arrowPos.x || 0}px`,

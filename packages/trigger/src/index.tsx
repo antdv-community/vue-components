@@ -10,7 +10,7 @@ import { isDOM } from '@v-c/util/dist/Dom/findDOMNode.ts'
 import { getShadowRoot } from '@v-c/util/dist/Dom/shadow.ts'
 import isMobile from '@v-c/util/dist/isMobile'
 import classNames from 'classnames'
-import { cloneVNode, computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, shallowRef, useId, watch } from 'vue'
+import { cloneVNode, computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, shallowRef, toValue, useId, watch } from 'vue'
 import { useTriggerContext, useTriggerProvide } from './content.ts'
 import useAction from './hooks/useAction.ts'
 import useAlign from './hooks/useAlign.ts'
@@ -156,6 +156,8 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       const externalPopupRef = shallowRef<HTMLDivElement | null>(null)
 
       const setPopupRef = (node: any) => {
+        node = toValue(node)
+        node = (node as any)?.$el || node
         externalPopupRef.value = node
         if (isDOM(node) && popupEle.value !== node) {
           popupEle.value = node as any
@@ -171,6 +173,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       // Used for forwardRef target. Not use internal
       const externalForwardRef = shallowRef<HTMLElement | null>(null)
       const setTargetRef = (node: any) => {
+        node = node?.$el ?? node
         if (isDOM(node) && targeEle.value !== node) {
           targeEle.value = node as any
           externalForwardRef.value = node as any
@@ -559,66 +562,64 @@ export function generateTrigger(PortalComponent: Component = Portal) {
           maskMotion,
 
         } = props
+        console.log(arrowPos)
         return (
           <>
-            <ResizeObserver disabled={!mergedOpen.value} ref={setTargetRef} onResize={onTargetResize}>
-              <TriggerWrapper getTriggerDOMNode={props.getTriggerDOMNode}>
+            <ResizeObserver disabled={!mergedOpen.value} onResize={onTargetResize}>
+              <TriggerWrapper getTriggerDOMNode={props.getTriggerDOMNode} ref={setTargetRef}>
                 {triggerNode}
               </TriggerWrapper>
-
-              <Popup
-                portal={PortalComponent}
-                ref={setPopupRef}
-                prefixCls={prefixCls}
-                popup={popup}
-                className={classNames(popupClassName, alignedClassName)}
-                style={popupStyle}
-                target={targeEle.value!}
-                {...{
-                  onMouseEnter: onPopupMouseEnter!,
-                  onMouseLeave: onPopupMouseLeave!,
-                  // https://github.com/ant-design/ant-design/issues/43924
-
-                  onPointerEnter: onPopupMouseEnter!,
-                } as any}
-                zIndex={zIndex}
-                // Open
-                open={mergedOpen.value}
-                keepDom={inMotion.value}
-                fresh={fresh}
-                // Click
-                onClick={onPopupClick}
-                onPointerDownCapture={onPopupPointerDown}
-                // Mask
-                mask={mask}
-                // Motion
-                motion={popupMotion}
-                maskMotion={maskMotion}
-                onVisibleChanged={onVisibleChanged}
-                onPrepare={onPrepare}
-                // Portal
-                forceRender={forceRender}
-                autoDestroy={mergedAutoDestroy.value}
-                getPopupContainer={getPopupContainer}
-                // Arrow
-                align={alignInfo}
-                arrow={innerArrow}
-                arrowPos={arrowPos}
-                // Align
-                ready={ready}
-                offsetX={offsetX}
-                offsetY={offsetY}
-                offsetR={offsetR}
-                offsetB={offsetB}
-                onAlign={triggerAlign}
-                // Stretch
-                stretch={stretch}
-                targetWidth={targetWidth.value / scaleX}
-                targetHeight={targetHeight.value / scaleY}
-              >
-              </Popup>
-
             </ResizeObserver>
+            <Popup
+              portal={PortalComponent}
+              setNodeRef={setPopupRef}
+              prefixCls={prefixCls}
+              popup={popup}
+              className={classNames(popupClassName, alignedClassName.value)}
+              style={popupStyle}
+              target={targeEle.value!}
+              {...{
+                onMouseEnter: onPopupMouseEnter!,
+                onMouseLeave: onPopupMouseLeave!,
+                // https://github.com/ant-design/ant-design/issues/43924
+                onPointerEnter: onPopupMouseEnter!,
+              } as any}
+              zIndex={zIndex}
+              // Open
+              open={mergedOpen.value}
+              keepDom={inMotion.value}
+              fresh={fresh}
+              // Click
+              onClick={onPopupClick}
+              onPointerDownCapture={onPopupPointerDown}
+              // Mask
+              mask={mask}
+              // Motion
+              motion={popupMotion}
+              maskMotion={maskMotion}
+              onVisibleChanged={onVisibleChanged}
+              onPrepare={onPrepare}
+              // Portal
+              forceRender={forceRender}
+              autoDestroy={mergedAutoDestroy.value}
+              getPopupContainer={getPopupContainer}
+              // Arrow
+              align={alignInfo}
+              arrow={innerArrow}
+              arrowPos={arrowPos}
+              // Align
+              ready={ready}
+              offsetX={offsetX}
+              offsetY={offsetY}
+              offsetR={offsetR}
+              offsetB={offsetB}
+              onAlign={triggerAlign}
+              // Stretch
+              stretch={stretch}
+              targetWidth={targetWidth.value / scaleX}
+              targetHeight={targetHeight.value / scaleY}
+            >
+            </Popup>
           </>
         )
       }

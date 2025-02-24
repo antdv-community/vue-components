@@ -174,7 +174,6 @@ export default function useAlign(
     const _popupEle = unref(popupEle)
     const _target = unref(target)
     const _open = unref(open)
-
     if (_popupEle && _target && _open) {
       const popupElement = _popupEle
 
