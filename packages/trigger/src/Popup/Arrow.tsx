@@ -35,7 +35,7 @@ const Arrow = defineComponent<ArrowProps>((props) => {
 
       // Top & Bottom
       if (popupTB === targetTB || !['t', 'b'].includes(popupTB)) {
-        alignStyle.top = y
+        alignStyle.top = `${y}px`
       }
       else if (popupTB === 't') {
         alignStyle.top = 0
@@ -46,7 +46,7 @@ const Arrow = defineComponent<ArrowProps>((props) => {
 
       // Left & Right
       if (popupLR === targetLR || !['l', 'r'].includes(popupLR)) {
-        alignStyle.left = x
+        alignStyle.left = `${x}px`
       }
       else if (popupLR === 'l') {
         alignStyle.left = 0

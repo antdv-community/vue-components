@@ -137,14 +137,17 @@ onMounted(() => {
         <Trigger
           :arrow="{ content: 'Arrow' }"
           action="click"
-          popup-transition-name="vc-trigger-popup-zoom"
+          :popup-motion="{
+            name: 'vc-trigger-popup-zoom',
+          }"
           :popup-style="{ boxShadow: '0 0 5px red' }"
           :popup-visible="visible"
-          :get-popup-container="() => popHolderRef"
+          :get-popup-container="() => popHolderRef!"
           :popup-placement="popupPlacement"
           :builtin-placements="builtinPlacements"
           stretch="minWidth"
           @popup-visible-change="(nextVisible) => {
+            console.log('nextVisible:', nextVisible);
             visible = nextVisible;
           }"
           @popup-align="(domNode, align) => {

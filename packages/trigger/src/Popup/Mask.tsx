@@ -26,11 +26,15 @@ const Mask = defineComponent<MaskProps>(
         return null
       }
       return (
-        <Transition {...motion} appear>
-          {open && <div style={{ zIndex }} class={[`${prefixCls}-mask`, attrs.class]}></div>}
+        <Transition {...motion}>
+          {open && <div style={{ zIndex }} class={[`${prefixCls}-mask`, attrs.class]} />}
         </Transition>
       )
     }
+  },
+  {
+    name: 'Mask',
+    inheritAttrs: false,
   },
 )
 

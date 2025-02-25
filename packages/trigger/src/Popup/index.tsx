@@ -1,6 +1,6 @@
 import type { MouseEventHandler } from '@v-c/util/dist/EventInterface'
 import type { CSSMotionProps } from '@v-c/util/dist/utils/transition'
-import type { Component, CSSProperties } from 'vue'
+import type { CSSProperties } from 'vue'
 import type { TriggerProps } from '../index.tsx'
 import type { AlignType, ArrowPos, ArrowTypeOuter } from '../interface.ts'
 import ResizeObserver from '@v-c/resize-observer'
@@ -47,7 +47,7 @@ export interface PopupProps {
   forceRender?: boolean
   getPopupContainer?: TriggerProps['getPopupContainer']
   autoDestroy?: boolean
-  portal: Component
+  portal: any
 
   // Align
   ready: boolean
@@ -96,7 +96,7 @@ const Popup = defineComponent<PopupProps>((props, { attrs }) => {
       prefixCls,
       target,
 
-      onVisibleChanged,
+      // onVisibleChanged,
 
       // Open
       open,
@@ -168,20 +168,20 @@ const Popup = defineComponent<PopupProps>((props, { attrs }) => {
       const alignBottom = dynamicInset && points?.[0]?.[0] === 'b'
 
       if (alignRight) {
-        offsetStyle.right = offsetR
+        offsetStyle.right = `${offsetR}px`
         offsetStyle.left = AUTO
       }
       else {
-        offsetStyle.left = offsetX
+        offsetStyle.left = `${offsetX}px`
         offsetStyle.right = AUTO
       }
 
       if (alignBottom) {
-        offsetStyle.bottom = offsetB
+        offsetStyle.bottom = `${offsetB}px`
         offsetStyle.top = AUTO
       }
       else {
-        offsetStyle.top = offsetY
+        offsetStyle.top = `${offsetY}px`
         offsetStyle.bottom = AUTO
       }
     }
@@ -190,16 +190,16 @@ const Popup = defineComponent<PopupProps>((props, { attrs }) => {
     const miscStyle: CSSProperties = {}
     if (stretch) {
       if (stretch.includes('height') && targetHeight) {
-        miscStyle.height = targetHeight
+        miscStyle.height = `${targetHeight}px`
       }
       else if (stretch.includes('minHeight') && targetHeight) {
-        miscStyle.minHeight = targetHeight
+        miscStyle.minHeight = `${targetHeight}px`
       }
       if (stretch.includes('width') && targetWidth) {
-        miscStyle.width = targetWidth
+        miscStyle.width = `${targetWidth}px`
       }
       else if (stretch.includes('minWidth') && targetWidth) {
-        miscStyle.minWidth = targetWidth
+        miscStyle.minWidth = `${targetWidth}px`
       }
     }
 
@@ -208,10 +208,9 @@ const Popup = defineComponent<PopupProps>((props, { attrs }) => {
     }
     const childNode = typeof popup === 'function' ? popup() : popup
 
-    const Portal1 = Portal as any
-
+    const maskMotionProps = getTransitionProps(maskMotion?.name, maskMotion)
     return (
-      <Portal1
+      <Portal
         open={forceRender || isNodeVisible.value}
         getContainer={getPopupContainer && (() => getPopupContainer(target))}
         autoDestroy={autoDestroy}
@@ -221,19 +220,13 @@ const Popup = defineComponent<PopupProps>((props, { attrs }) => {
           open={open}
           zIndex={zIndex}
           mask={mask}
-          motion={maskMotion}
+          motion={maskMotionProps}
         />
         <ResizeObserver onResize={onAlign} disabled={!open}>
           <Transition
             {...getTransitionProps(motion?.name, motion)}
             onBeforeAppear={onPrepare}
             onBeforeEnter={onPrepare}
-            onAfterEnter={() => {
-              onVisibleChanged?.(true)
-            }}
-            onAfterLeave={() => {
-              onVisibleChanged?.(false)
-            }}
           >
             {open && (
               <div
@@ -264,7 +257,7 @@ const Popup = defineComponent<PopupProps>((props, { attrs }) => {
             )}
           </Transition>
         </ResizeObserver>
-      </Portal1>
+      </Portal>
     )
   }
 }, {

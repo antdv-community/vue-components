@@ -30,12 +30,12 @@ export function getTransitionProps(transitionName?: string, opt: TransitionProps
         // appearFromClass: `${transitionName}-appear ${transitionName}-appear-prepare`,
         // appearActiveClass: `antdv-base-transtion`,
         // appearToClass: `${transitionName}-appear ${transitionName}-appear-active`,
-        enterFromClass: `${transitionName}-enter ${transitionName}-enter-prepare ${transitionName}-enter-start`,
-        enterActiveClass: `${transitionName}-enter ${transitionName}-enter-prepare`,
-        enterToClass: `${transitionName}-enter ${transitionName}-enter-active`,
+        enterFromClass: `${transitionName}-enter ${transitionName}-enter-prepare ${transitionName}-enter-start ${transitionName}`,
+        enterActiveClass: `${transitionName}-enter ${transitionName}-enter-prepare ${transitionName}`,
+        enterToClass: `${transitionName}-enter ${transitionName}-enter-active ${transitionName}`,
         leaveFromClass: ` ${transitionName}-leave`,
-        leaveActiveClass: `${transitionName}-leave ${transitionName}-leave-active`,
-        leaveToClass: `${transitionName}-leave ${transitionName}-leave-active`,
+        leaveActiveClass: `${transitionName}-leave ${transitionName}-leave-active ${transitionName}`,
+        leaveToClass: `${transitionName}-leave ${transitionName}-leave-active ${transitionName}`,
         ...opt,
       }
     : { css: false, ...opt }

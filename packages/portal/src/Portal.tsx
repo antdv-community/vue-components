@@ -105,8 +105,9 @@ const Portal = defineComponent<PortalProps>((props = defaults, { slots }) => {
     // ========================= Render ==========================
     // Do not render when nothing need render
     // When innerContainer is `undefined`, it may not ready since user use ref in the same render
-    if (!mergedRender.value || !canUseDom() || innerContainer.value === undefined)
+    if (!mergedRender.value || !canUseDom() || innerContainer.value === undefined) {
       return null
+    }
     // Render inline
     const renderInline = mergedContainer.value === false
 

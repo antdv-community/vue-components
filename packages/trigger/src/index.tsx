@@ -80,7 +80,7 @@ export interface TriggerProps {
   blurDelay?: number
 
   // ==================== Popup ====================
-  popup: VNodeChild | (() => VNodeChild)
+  popup?: VNodeChild | (() => VNodeChild)
   popupPlacement?: string
   builtinPlacements?: BuildInPlacements
   popupAlign?: AlignType
@@ -428,8 +428,8 @@ export function generateTrigger(PortalComponent: Component = Portal) {
         let onPopupMouseEnter: MouseEventHandler
         let onPopupMouseLeave: VoidFunction
         if (hoverToShow) {
-          wrapperAction('onMouseEnter', true, props.mouseEnterDelay, setMousePosByEvent)
-          wrapperAction('onPointerEnter', false, props.mouseLeaveDelay, setMousePosByEvent)
+          wrapperAction('onMouseenter', true, props.mouseEnterDelay, setMousePosByEvent)
+          wrapperAction('onPointerenter', false, props.mouseLeaveDelay, setMousePosByEvent)
           onPopupMouseEnter = (event) => {
             // Only trigger re-open when popup is visible
             if ((mergedOpen.value || inMotion.value) && popupEle.value?.contains(event.target as HTMLElement)) {
@@ -446,8 +446,8 @@ export function generateTrigger(PortalComponent: Component = Portal) {
         }
 
         if (hoverToHide) {
-          wrapperAction('onMouseLeave', false, props.mouseLeaveDelay)
-          wrapperAction('onPointerLeave', false, props.mouseLeaveDelay)
+          wrapperAction('onMouseleave', false, props.mouseLeaveDelay)
+          wrapperAction('onPointerleave', false, props.mouseLeaveDelay)
           onPopupMouseLeave = () => {
             triggerOpen(false, props.mouseLeaveDelay)
           }
@@ -562,7 +562,6 @@ export function generateTrigger(PortalComponent: Component = Portal) {
           maskMotion,
 
         } = props
-        console.log(arrowPos)
         return (
           <>
             <ResizeObserver disabled={!mergedOpen.value} onResize={onTargetResize}>
@@ -574,7 +573,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
               portal={PortalComponent}
               setNodeRef={setPopupRef}
               prefixCls={prefixCls}
-              popup={popup}
+              popup={slots.popup ?? popup}
               className={classNames(popupClassName, alignedClassName.value)}
               style={popupStyle}
               target={targeEle.value!}
@@ -618,8 +617,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
               stretch={stretch}
               targetWidth={targetWidth.value / scaleX}
               targetHeight={targetHeight.value / scaleY}
-            >
-            </Popup>
+            />
           </>
         )
       }
