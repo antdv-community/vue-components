@@ -4,7 +4,7 @@ import KeyCode from '@v-c/util/dist/KeyCode'
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, ref } from 'vue'
-import Collapse from '../src/index'
+import Collapse, { Panel } from '../src/index'
 
 describe('collapse', () => {
   let changeHook: Mock<any> | null
@@ -664,6 +664,25 @@ describe('collapse', () => {
 
     await wrapper.find('.target').trigger('click')
     expect(clickHandler).toHaveBeenCalled()
+  })
+
+  it('falsy Panel', () => {
+    const wrapper = mount(
+      <Collapse>
+        {null}
+        <Panel header="collapse 1" key="1">
+          <p>Panel 1 content</p>
+        </Panel>
+        {0}
+        <Panel header="collapse 2" key="2">
+          <p>Panel 2 content</p>
+        </Panel>
+        {undefined}
+        {false}
+        {true}
+      </Collapse>,
+    )
+    expect(wrapper.findAll('.vc-collapse-item')).toHaveLength(2)
   })
 
   it('ref should work', async () => {

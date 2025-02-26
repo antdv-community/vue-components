@@ -40,6 +40,10 @@ const CollapsePanel = defineComponent({
       }
     })
 
+    expose({
+      ref: refWrapper,
+    })
+
     return () => {
       const {
         extra,
@@ -132,10 +136,6 @@ const CollapsePanel = defineComponent({
         ...restProps,
         ...attrs,
       }
-
-      expose({
-        ref: refWrapper,
-      })
 
       return (
         <div

@@ -22,7 +22,7 @@ const Collapse = defineComponent({
   props: generatorCollapseProps(),
   name: 'VcCollapse',
   inheritAttrs: false,
-  setup(props, { attrs, expose }) {
+  setup(props, { attrs, expose, slots }) {
     const refWrapper = ref<HTMLDivElement>()
 
     const [activeKey, setActiveKey] = useMergedState<
@@ -54,7 +54,7 @@ const Collapse = defineComponent({
     }
 
     expose({
-      ref: refWrapper
+      ref: refWrapper,
     })
 
     return () => {
@@ -76,7 +76,7 @@ const Collapse = defineComponent({
 
       const mergedProps = { ...props, ...attrs }
 
-      const mergedChildren = useItems(items, {
+      const mergedChildren = useItems(items, slots.default, {
         prefixCls,
         accordion,
         openMotion,
