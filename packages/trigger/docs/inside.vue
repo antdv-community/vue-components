@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef } from 'vue'
+import { onMounted, ref } from 'vue'
 import { Trigger } from '../src'
 import './assets/index.less'
 
@@ -97,7 +97,7 @@ const builtinPlacements = {
 
 const popupPlacement = 'bottomLeft'
 const popupHeight = ref(60)
-const containerRef = useTemplateRef('containerRef')
+const containerRef = ref<HTMLDivElement>()
 onMounted(() => {
   containerRef.value!.scrollLeft = document.defaultView!.innerWidth
   containerRef.value!.scrollTop = document.defaultView!.innerHeight
@@ -137,7 +137,9 @@ defineExpose({
       <Trigger
         arrow
         popup-visible
-        :get-popup-container="(triggerNode) => triggerNode?.parentNode as any"
+        :get-popup-container="() => {
+          return containerRef!
+        }"
         :popup-placement="popupPlacement"
         :builtin-placements="builtinPlacements"
       >

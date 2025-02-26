@@ -243,6 +243,10 @@ export function generateTrigger(PortalComponent: Component = Portal) {
         ) {
           lastTriggerRef.value.push(nextOpen)
           props?.onPopupVisibleChange?.(nextOpen)
+          // clear lastTriggerRef
+          Promise.resolve().then(() => {
+            lastTriggerRef.value = []
+          })
         }
       }
 

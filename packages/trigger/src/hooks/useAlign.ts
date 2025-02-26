@@ -426,8 +426,7 @@ export default function useAlign(
           tmpNextOffsetY -= popupHeight - targetHeight
         }
         else {
-          tmpNextOffsetY
-                      = targetAlignPointTL.y - popupAlignPointBR.y - popupOffsetY
+          tmpNextOffsetY = targetAlignPointTL.y - popupAlignPointBR.y - popupOffsetY
         }
 
         const newVisibleArea = getIntersectionVisibleArea(
@@ -442,8 +441,7 @@ export default function useAlign(
 
         if (
         // Of course use larger one
-          newVisibleArea > originIntersectionVisibleArea
-          || (newVisibleArea === originIntersectionVisibleArea
+          newVisibleArea > originIntersectionVisibleArea || (newVisibleArea === originIntersectionVisibleArea
             && (!isVisibleFirst
             // Choose recommend one
               || newVisibleRecommendArea >= originIntersectionRecommendArea))
@@ -461,7 +459,6 @@ export default function useAlign(
           prevFlipRef.value.bt = false
         }
       }
-
       // Top to Bottom
       if (
         needAdjustY
@@ -508,7 +505,6 @@ export default function useAlign(
           prevFlipRef.value.tb = false
         }
       }
-
       // >>>>>>>>>> Left & Right
       const needAdjustX = supportAdjust(adjustX!)
 
@@ -712,7 +708,6 @@ export default function useAlign(
         scaleY,
         align: nextAlignInfo,
       }
-
       Object.assign(offsetInfo, nextOffsetInfo)
     }
   }
